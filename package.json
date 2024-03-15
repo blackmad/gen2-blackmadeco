@@ -21,6 +21,9 @@
     "@turf/boolean-point-in-polygon": "^6.5.0",
     "@turf/helpers": "^6.5.0",
     "@turf/unkink-polygon": "^6.5.0",
+    "@types/paper": "^0.12.3",
+    "@types/turf": "^3.5.32",
+    "@types/uuid": "^9.0.8",
     "almost-equal": "^1.1.0",
     "axios": "^1.5.0",
     "concaveman": "^1.2.1",
@@ -40,7 +43,8 @@
     "seedrandom": "^3.0.5",
     "simplex-noise": "^4.0.1",
     "simplify-path": "^1.1.0",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.20",

@@ -2,16 +2,16 @@ const Shape = require("@doodle3d/clipper-js");
 import * as jsts from "jsts";
 import * as _ from "lodash";
 import GeoJSON from "geojson";
-import simplify from 'simplify-path';
+import simplify from "simplify-path";
 // import * as simplifyJS from 'simplify-js';
-import turfUnkinkPolygon from '@turf/unkink-polygon';
-import * as turfHelpers from '@turf/helpers';
+import turfUnkinkPolygon from "@turf/unkink-polygon";
+import * as turfHelpers from "@turf/helpers";
 
 export function randomPointInPolygon(
   paper: paper.PaperScope,
   polygon: paper.PathItem,
   rng: () => number
-): paper.Point {
+): paper.Point | undefined {
   let bounds = null;
   if (polygon instanceof paper.Rectangle) {
     bounds = polygon;
@@ -35,14 +35,13 @@ export function randomPointInPolygon(
   }
 }
 
-
 export function bufferPoints(
   paper: paper.PaperScope,
   buffer: number,
   points: paper.Point[]
 ): paper.Point[] {
   const scaleFactor = 100;
-  const scaledPoints = points.map(p => {
+  const scaledPoints = points.map((p) => {
     return { X: p.x * scaleFactor + 0.0001, Y: p.y * scaleFactor + 0.0001 };
   });
   const shape = new Shape.default([scaledPoints]);
@@ -51,14 +50,14 @@ export function bufferPoints(
     jointType: "jtMiter",
     endType: "etClosedPolygon",
     miterLimit: 2.0,
-    roundPrecision: 0.25
+    roundPrecision: 0.25,
   });
 
   if (!roundedShape || !roundedShape.paths || roundedShape.paths.length == 0) {
     return null;
   }
 
-  return roundedShape.paths[0].map(p => {
+  return roundedShape.paths[0].map((p) => {
     return new paper.Point(p.X / 100, p.Y / 100);
   });
 }
@@ -137,7 +136,11 @@ export function randomLineOnRectangle(
 }
 
 export class SimpleCircle {
-  constructor(public x: number, public y: number, public radius: number) {}
+  constructor(
+    public x: number,
+    public y: number,
+    public radius: number
+  ) {}
 }
 
 export function checkCircleCircleIntersection(
@@ -156,7 +159,7 @@ export function checkCircleCircleIntersection(
 
 export function approxShape(paper, shape, numPointsToGet = 200): paper.Point[] {
   // console.log('in appro: ', shape);
-  let points = [];
+  const points = [];
   let shapeToUse = shape;
 
   if (shape instanceof paper.CompoundPath) {
@@ -170,7 +173,7 @@ export function approxShape(paper, shape, numPointsToGet = 200): paper.Point[] {
     );
   }
 
-  return points.map(point => shapeToUse.localToGlobal(point));
+  return points.map((point) => shapeToUse.localToGlobal(point));
 }
 
 export function paperPointsToGeoJsonLineString(
@@ -178,7 +181,7 @@ export function paperPointsToGeoJsonLineString(
 ): GeoJSON.LineString {
   return {
     type: "LineString",
-    coordinates: points.map(point => [point.y, point.x])
+    coordinates: points.map((point) => [point.y, point.x]),
   };
 }
 
@@ -194,7 +197,7 @@ export function paperRectToPoints(rect: paper.Rectangle) {
     rect.bottomLeft,
     rect.bottomRight,
     rect.topRight,
-    rect.topLeft
+    rect.topLeft,
   ];
 }
 
@@ -204,7 +207,7 @@ export function jstsGeometryToPaperJsGeometry(
 ): paper.Path {
   if (geom) {
     const coords = geom.getCoordinates();
-    const points = coords.map(c => new paper.Point(c.y, c.x));
+    const points = coords.map((c) => new paper.Point(c.y, c.x));
     return new paper.Path(points);
   } else {
     return null;
@@ -217,7 +220,7 @@ export function geojsonFeatureToPaperJs(
 ): paper.Path {
   if (feature.geometry.type === "Polygon") {
     const coords = (feature.geometry as GeoJSON.Polygon).coordinates;
-    const points = coords[0].map(c => {
+    const points = coords[0].map((c) => {
       return new paper.Point(c[1], c[0]);
     });
     return new paper.Path(points);
@@ -237,10 +240,10 @@ export function polygonize(
   const polygonizer = new jsts.operation.polygonize.Polygonizer();
   // polygonizer.setCheckRingsValid(false);
   const geojsonLineStrings = shapes.map(paperPointsToGeoJsonLineString);
-  const geoms = geojsonLineStrings.map(l => reader.read(l));
+  const geoms = geojsonLineStrings.map((l) => reader.read(l));
 
   let cleaned = null;
-  geoms.forEach(function(geom, i, array) {
+  geoms.forEach(function (geom, i, array) {
     if (i === 0) {
       cleaned = geom;
     } else {
@@ -250,7 +253,7 @@ export function polygonize(
 
   polygonizer.add(cleaned);
 
-  var polygons = polygonizer.getPolygons().array;
+  const polygons = polygonizer.getPolygons().array;
   // console.log(polygons);
 
   const paperPolys = polygons.map((_polygon: jsts.geom.Polygon) => {
@@ -269,9 +272,9 @@ export function flattenArrayOfPathItems(
   paths: paper.Item[]
 ): paper.Path[] {
   const ret: paper.Path[] = [];
-  paths.forEach(path => {
+  paths.forEach((path) => {
     if (path instanceof paper.CompoundPath) {
-      flattenArrayOfPathItems(paper, path.children).forEach(c => ret.push(c));
+      flattenArrayOfPathItems(paper, path.children).forEach((c) => ret.push(c));
     } else if (path instanceof paper.Path) {
       ret.push(path);
     }
@@ -291,7 +294,7 @@ export function bufferLine(
     hackedPoints = [
       hackedPoints[0],
       tmpLine.getPointAt(tmpLine.length * 0.5),
-      hackedPoints[1]
+      hackedPoints[1],
     ];
   }
   hackedPoints = hackedPoints.concat(points);
@@ -308,48 +311,75 @@ export function bufferLine(
   }
 }
 
-export function getDistanceToLine(point: paper.Point, line: paper.Path.Line): number {
+export function getDistanceToLine(
+  point: paper.Point,
+  line: paper.Path.Line
+): number {
   return point.getDistance(line.getNearestPoint(point));
 }
 
-export function containsOrIntersects({needle, haystack}: {needle: paper.PathItem, haystack: paper.Path}): boolean {
+export function containsOrIntersects({
+  needle,
+  haystack,
+}: {
+  needle: paper.PathItem;
+  haystack: paper.Path;
+}): boolean {
   return needle.isInside(haystack.bounds) || needle.intersects(haystack);
 }
 
-export function simplifyPathToPoints(path: paper.Path, tolerance: number = 0.005): [number, number][] {
+export function simplifyPathToPoints(
+  path: paper.Path,
+  tolerance: number = 0.005
+): [number, number][] {
   const paperPoints = getPointsFromPath(path);
-  const points = paperPoints.map(p => [p.x, p.y]);
+  const points = paperPoints.map((p) => [p.x, p.y]);
   return simplify(points, tolerance);
 }
 
-export function simplifyPath(paper: paper.PaperScope, path: paper.Path, tolerance: number = 0.001): paper.Path {
-  return new paper.Path(simplifyPathToPoints(path, tolerance).map(p => new paper.Point(p)));
+export function simplifyPath(
+  paper: paper.PaperScope,
+  path: paper.Path,
+  tolerance: number = 0.001
+): paper.Path {
+  return new paper.Path(
+    simplifyPathToPoints(path, tolerance).map((p) => new paper.Point(p))
+  );
 }
 
-export function unkinkPath(paper: paper.PaperScope, path: paper.Path): paper.Path {
+export function unkinkPath(
+  paper: paper.PaperScope,
+  path: paper.Path
+): paper.Path {
   path.closePath();
   const paperPoints = getPointsFromPath(path);
-
 
   let coordinates: Array<Array<Array<number>>> = [];
   if (path instanceof paper.CompoundPath) {
     // shapeToUse = shape.children[0];
   } else {
     const paperPoints = getPointsFromPath(path);
-    coordinates = [[...paperPoints.map(p => [p.x, p.y]), [paperPoints[0].x, paperPoints[0].y]]]
+    coordinates = [
+      [
+        ...paperPoints.map((p) => [p.x, p.y]),
+        [paperPoints[0].x, paperPoints[0].y],
+      ],
+    ];
   }
 
   const polygon = turfHelpers.polygon(coordinates);
   const unkinkedTurfPolygon = turfUnkinkPolygon(polygon);
-  const unkinkedPolygons = unkinkedTurfPolygon.features.slice(0, 1).flatMap(feature => {
-    return feature.geometry.coordinates.slice(0, 1).map(polygon => {
-      const points = polygon.map(coord => 
-        new paper.Point(coord[0], coord[1])
-      )
+  const unkinkedPolygons = unkinkedTurfPolygon.features
+    .slice(0, 1)
+    .flatMap((feature) => {
+      return feature.geometry.coordinates.slice(0, 1).map((polygon) => {
+        const points = polygon.map(
+          (coord) => new paper.Point(coord[0], coord[1])
+        );
 
-      return new paper.Path(points);
+        return new paper.Path(points);
+      });
     });
-  });
 
   console.log(unkinkedPolygons);
 

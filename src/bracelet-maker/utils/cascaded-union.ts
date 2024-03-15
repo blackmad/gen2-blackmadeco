@@ -1,7 +1,8 @@
-const uuidv1 = require('uuid/v1');
-import RBush from "rbush";
+import RBush from 'rbush';
 import * as _ from 'lodash';
 import { getPointsFromPath } from './paperjs-utils';
+
+import { v4 as uuidv4 } from 'uuid';
 
 function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
   const toTreeEntry = (path: paper.PathItem): any => {
@@ -9,21 +10,21 @@ function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
       minX: path.bounds.topLeft.x - 0.01,
       minY: path.bounds.topLeft.y - 0.01,
       maxX: path.bounds.bottomRight.x + 0.01,
-      maxY: path.bounds.bottomRight.y + 0.01
+      maxY: path.bounds.bottomRight.y + 0.01,
     };
   };
 
   const tree = new RBush();
   const pathDict = {};
-  paths.forEach(path => {
-    const id = uuidv1();
+  paths.forEach((path) => {
+    const id = uuidv4();
     const scaledUpPath = path.clone();
     scaledUpPath.scale(1.001);
     pathDict[id] = scaledUpPath;
 
     tree.insert({
       id,
-      ...toTreeEntry(path)
+      ...toTreeEntry(path),
     });
   });
 
@@ -36,7 +37,7 @@ function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
       return;
     }
     let currentPath: paper.PathItem = path;
-    
+
     const maybeIntersects = tree.search(toTreeEntry(path));
     maybeIntersects.forEach((maybeIntersectTreeEntry: any) => {
       const otherId = maybeIntersectTreeEntry.id;
