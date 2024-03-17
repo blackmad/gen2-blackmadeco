@@ -1,18 +1,24 @@
-import { MetaParameter, OnOffMetaParameter, RangeMetaParameter } from "./meta-parameter";
+import {
+  MetaParameter,
+  OnOffMetaParameter,
+  RangeMetaParameter,
+} from "./meta-parameter";
 import { Path } from "paper";
 
-export interface HasMetaParameters { 
+export interface HasMetaParameters {
   readonly metaParameters: MetaParameter<any>[];
-
 }
 
 export class InnerCompletedModel {
   paths: paper.PathItem[];
   outline: paper.PathItem;
 
-  constructor({paths, outline}: {
-    paths: paper.PathItem[],
-    outline: paper.PathItem
+  constructor({
+    paths,
+    outline,
+  }: {
+    paths: paper.PathItem[];
+    outline: paper.PathItem;
   }) {
     this.paths = paths;
     this.outline = outline;
@@ -30,10 +36,14 @@ export class CompletedModel {
   holes: paper.PathItem[];
   design: paper.PathItem[];
 
-  constructor({outer, holes, design}: {
-    outer: paper.PathItem,
-    holes: paper.PathItem[],
-    design: paper.PathItem[]
+  constructor({
+    outer,
+    holes,
+    design,
+  }: {
+    outer: paper.PathItem;
+    holes: paper.PathItem[];
+    design: paper.PathItem[];
   }) {
     this.outer = outer;
     this.holes = holes;
@@ -52,9 +62,9 @@ export abstract class OuterPaperModelMaker implements HasMetaParameters {
       new OnOffMetaParameter({
         title: "Debug",
         name: "debug",
-        value: false
+        value: false,
       }),
-      ...this.outerMetaParameters
+      ...this.outerMetaParameters,
     ];
   }
 }

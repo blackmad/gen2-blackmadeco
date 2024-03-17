@@ -1,8 +1,13 @@
 import * as _ from "lodash";
-import * as SimplexNoise from "simplex-noise";
-const seedrandom = require("seedrandom");
+import { NoiseFunction2D, createNoise2D } from "simplex-noise";
+import seedrandom from "seedrandom";
 import ExtendPaperJs from "paperjs-offset";
-import { bufferPath, simplifyPath, unkinkPath } from "../../utils/paperjs-utils";
+
+import {
+  bufferPath,
+  simplifyPath,
+  unkinkPath,
+} from "../../utils/paperjs-utils";
 
 import {
   MetaParameter,
@@ -15,7 +20,7 @@ import { addToDebugLayer } from "../../utils/debug-layers";
 import { makeConcaveOutline } from "../../utils/outline";
 import { roundCorners } from "../../utils/round-corners";
 import { KaleidoscopeMaker } from "./utils/kaleidosope";
-import { removeBadSegments } from '../../utils/remove-bad-segments';
+import { removeBadSegments } from "../../utils/remove-bad-segments";
 
 export interface InnerDesignModel {
   paths: paper.PathItem[];
@@ -23,9 +28,8 @@ export interface InnerDesignModel {
 }
 
 export abstract class FastAbstractInnerDesign implements PaperModelMaker {
-  public rng: () => number;
-  // @ts-ignore
-  public simplex: SimplexNoise;
+  public rng: () => number = () => 12;
+  public simplex: NoiseFunction2D = () => 12;
   public needSubtraction: boolean = true;
   public allowOutline: boolean = false;
   public smoothOutline: boolean = true;
@@ -58,7 +62,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         value: 0.25,
         step: 0.01,
         name: "safeBorderWidth",
-        shouldDisplay: (p) => !p.breakThePlane,
+        shouldDisplay: (p: { breakThePlane: boolean }) => !p.breakThePlane,
       }),
     ];
 
@@ -173,17 +177,14 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     return metaParams;
   }
 
-  private initRNGs(params: any) {
+  private initRNGs(params: { seed: string | number | undefined }) {
     if (params.seed) {
       this.rng = seedrandom(params.seed.toString());
-      // @ts-ignore
-      if (SimplexNoise.default) {
-        // @ts-ignore
-        this.simplex = new SimplexNoise.default(params.seed.toString());
-      } else {
-        // @ts-ignore
-        this.simplex = new SimplexNoise(params.seed.toString());
-      }
+
+      const noiseRng = seedrandom(params.seed.toString());
+
+      // use the seeded random function to initialize the noise function
+      this.simplex = createNoise2D(noiseRng);
     }
   }
 
@@ -215,7 +216,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     paper: paper.PaperScope,
     params: any,
     paths: paper.PathItem[],
-    originalBoundaryModel: paper.Path,
+    originalBoundaryModel: paper.Path
   ) {
     console.log("need to make outline");
     // Make the outline
@@ -224,7 +225,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       paths,
       concavity: params.concavity,
       lengthThreshold: params.lengthThreshold,
-      minimumOutline: originalBoundaryModel.bounds
+      minimumOutline: originalBoundaryModel.bounds,
     });
 
     // Expand it to our outline border
@@ -246,15 +247,15 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       )[0] as paper.Path;
     }
 
-    console.log('about to unkink expanded outline', {outline})
+    console.log("about to unkink expanded outline", { outline });
 
-    removeBadSegments({paper, path: outline})
+    removeBadSegments({ paper, path: outline });
 
     outline = simplifyPath(paper, outline, 0.05);
 
     outline = unkinkPath(paper, outline);
 
-    removeBadSegments({paper, path: outline});
+    removeBadSegments({ paper, path: outline });
 
     outline = roundCorners({
       paper,
@@ -266,8 +267,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     addToDebugLayer(paper, "unkinkedexpandedOutline", outline.clone());
 
-    console.log(outline.exportSVG({    asString: true,
-}));
+    console.log(outline.exportSVG({ asString: true }));
 
     outline.closePath();
     // outline = roundCorners({ paper, path: outline, radius: 0.9 });
@@ -295,10 +295,10 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     params: any,
     _paths: paper.PathItem[],
     design: InnerDesignModel,
-    originalBoundaryModel: paper.Path,
+    originalBoundaryModel: paper.Path
   ) {
-    let outline: paper.PathItem = null;
-    let paths: paper.PathItem[] = _paths;
+    let outline: paper.PathItem | null = null;
+    const paths: paper.PathItem[] = _paths;
 
     const shouldMakeOutline = params.breakThePlane;
 
@@ -352,7 +352,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     addToDebugLayer(paper, "safeCone", params.safeCone.clone());
 
-
     const originalBoundaryModel = params.boundaryModel.clone();
 
     if (params.breakThePlane) {
@@ -367,7 +366,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     } else {
       const originalHeight = params.boundaryModel.bounds.height;
       const heightScale = params.safeBorderWidth / originalHeight;
-      params.boundaryModel.scale(new paper.Point(1, 1 - heightScale))
+      params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
     }
 
     let kaleidoscopeMaker = null;
@@ -390,7 +389,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     const design = await self.makeDesign(paper, params);
 
     // filter out possibly null paths for ease of designs
-    let paths = design.paths.filter((p) => !!p).filter(p => p.bounds.area !== 0)
+    let paths = design.paths
+      .filter((p) => !!p)
+      .filter((p) => p.bounds.area !== 0);
 
     // explode compound paths to make everything easier
     paths = paths.flatMap((path) => {
@@ -406,7 +407,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       params.boundaryModel = kaleidoscopeSavedBoundaryModel;
       console.log("putting back boundary for kaleido / reflecting paths");
       paths = kaleidoscopeMaker.reflectPaths(paths);
-      console.log("done reflecting paths")
+      console.log("done reflecting paths");
     }
 
     // maybe smooth paths
@@ -424,7 +425,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       paths = this.clampPathsToBoundary(paths, params.safeCone);
     }
 
-    const maybeOutline = this.maybeMakeOutline(paper, params, paths, design, originalBoundaryModel);
+    const maybeOutline = this.maybeMakeOutline(
+      paper,
+      params,
+      paths,
+      design,
+      originalBoundaryModel
+    );
     paths = maybeOutline.paths;
     const outline = maybeOutline.outline;
 

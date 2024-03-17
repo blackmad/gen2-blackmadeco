@@ -1,11 +1,13 @@
 const Shape = require("@doodle3d/clipper-js");
-import * as jsts from "jsts";
 import * as _ from "lodash";
 import GeoJSON from "geojson";
 import simplify from "simplify-path";
 // import * as simplifyJS from 'simplify-js';
 import turfUnkinkPolygon from "@turf/unkink-polygon";
 import * as turfHelpers from "@turf/helpers";
+
+import GeoJSONReader from "jsts/org/locationtech/jts/io/GeoJSONReader";
+import Polygonizer from "jsts/org/locationtech/jts/operation/polygonize/Polygonizer";
 
 export function randomPointInPolygon(
   paper: paper.PaperScope,
@@ -234,10 +236,10 @@ export function polygonize(
   buffer?: number
 ): paper.Path[] {
   // @ts-ignore
-  const reader = new jsts.io.GeoJSONReader();
+  const reader = new GeoJSONReader();
 
   // @ts-ignore
-  const polygonizer = new jsts.operation.polygonize.Polygonizer();
+  const polygonizer = new Polygonizer();
   // polygonizer.setCheckRingsValid(false);
   const geojsonLineStrings = shapes.map(paperPointsToGeoJsonLineString);
   const geoms = geojsonLineStrings.map((l) => reader.read(l));

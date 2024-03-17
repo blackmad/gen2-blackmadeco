@@ -1,7 +1,7 @@
 import * as _ from "lodash";
-import * as nyc from './geojson/simplified/nyc.json';
-import turfBBox from '@turf/bbox';
-import turfBooleanPointInPolygon from '@turf/boolean-point-in-polygon';
+import nyc from "./geojson/simplified/nyc.json";
+import turfBBox from "@turf/bbox";
+import turfBooleanPointInPolygon from "@turf/boolean-point-in-polygon";
 
 export enum MetaParameterType {
   Range,
@@ -87,8 +87,7 @@ export class RangeMetaParameter extends MetaParameter<number> {
       return this.value;
     }
 
-    const steps =
-      (this.randMax - this.randMin) / this.step;
+    const steps = (this.randMax - this.randMin) / this.step;
     const randStep = _.random(0, steps);
     const value = this.randMin + randStep * this.step;
 
@@ -146,16 +145,16 @@ export class GeocodeMetaParameter extends MetaParameter<string> {
   }
 
   getRandomValue() {
-    const [minX, minY, maxX, maxY] = turfBBox(nyc.features[0]);
+    const [minX, minY, maxX, maxY] = turfBBox(nyc.features[0] as any);
 
-    console.log('geo rand')
-    
+    console.log("geo rand");
+
     let tries = 0;
 
     while (tries < 1000) {
       const x = _.random(minX, maxX);
       const y = _.random(minY, maxY);
-      console.log('trying', {x, y});
+      console.log("trying", { x, y });
       if (turfBooleanPointInPolygon([x, y], nyc.features[0] as any)) {
         console.log(`${y},${x}`);
         return `${y},${x}`;
