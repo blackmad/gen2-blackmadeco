@@ -37,7 +37,7 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
   }
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
-    const { height, neckSize, debug = false } = options[this.constructor.name];
+    const { height, neckSize } = options[this.constructor.name];
 
     // quarter inch, two bolts
     // quarter inch, two bolts
@@ -47,8 +47,6 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     // start safe area
     // go for length - belt area - 3 inches
     // 3 inches of holes every 0.5 inches
-
-    const safeAreaXPadding = 0.25;
 
     const numHoles = 6;
     const holeDistance = 0.5;
@@ -65,17 +63,22 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     const collarPadding = 4;
     const totalLength = neckSize + collarPadding;
 
-    const models: any = {};
+    const models: {
+      firstBolts?: paper.Path.Circle[];
+      secondBolts?: paper.Path.Circle[];
+      thirdBolts?: paper.Path.Circle[];
+      fourthBolts?: paper.Path.Circle[];
+      slot?: paper.Path.Rectangle;
+      holes?: paper.Path.Circle[];
+    } = {};
 
-    // @ts-ignore
-    let outerModel = new paper.Path.Rectangle(
-      // @ts-ignore
+    let outerModel: paper.PathItem = new paper.Path.Rectangle(
       new paper.Rectangle(0, 0, totalLength, height),
-      height / 2
+      { height: height / 2, width: height / 2 }
     );
 
     let curPos = 0;
-    function makeTwoHolesAt(distance) {
+    function makeTwoHolesAt(distance: number) {
       return makeEvenlySpacedBolts(paper, 2, [distance, 0], [distance, height]);
     }
 
@@ -94,8 +97,10 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
       new paper.Point(curPos, height / 2 - slotHeight),
       new paper.Point(curPos + slotLength, height / 2 + slotHeight)
     );
-    // @ts-ignore
-    models.slot = new paper.Path.Rectangle(slotRectangle, slotHeight);
+    models.slot = new paper.Path.Rectangle(slotRectangle, {
+      width: slotHeight,
+      height: slotHeight,
+    });
 
     curPos += slotLength + slotPadding;
     models.thirdBolts = makeTwoHolesAtCurPos();
@@ -153,12 +158,17 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
-    let allHoles = [];
-    _.forEach(models, (v, k) => allHoles.push(v));
-    allHoles = _.flatten(allHoles);
+    const allHolesAccumulated: Array<
+      paper.Path.Circle[] | paper.Path.Rectangle
+    > = [];
+    _.forEach(models, (v, _k) => {
+      if (v) {
+        allHolesAccumulated.push(v);
+      }
+    });
+    const allHoles = _.flatten(allHolesAccumulated);
 
     if (innerDesign.outline) {
-      // @ts-ignore
       outerModel = outerModel.unite(innerDesign.outline);
     }
 
