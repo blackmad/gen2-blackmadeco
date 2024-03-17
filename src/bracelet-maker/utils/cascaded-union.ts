@@ -13,7 +13,7 @@ function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
   };
 
   const tree = new RBush();
-  const pathDict = {};
+  const pathDict: Record<string, paper.PathItem> = {};
   paths.forEach((path) => {
     const id = uuidv4();
     const scaledUpPath = path.clone();
@@ -26,10 +26,10 @@ function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
     });
   });
 
-  const joinedPaths = [];
-  const deleted = {};
+  const joinedPaths: paper.PathItem[] = [];
+  const deleted: Record<string, boolean> = {};
   let didJoin = false;
-  _.forEach(pathDict, (path: paper.Path, id) => {
+  _.forEach(pathDict, (path: paper.PathItem, id: string) => {
     // console.log(`looking at ${id}`);
     if (deleted[id]) {
       return;
@@ -44,11 +44,10 @@ function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {
         // console.log('otherId was deleted or is identity, skipping')
         return;
       }
-      const otherPath: paper.Path = pathDict[otherId];
+      const otherPath: paper.PathItem = pathDict[otherId];
 
       if (currentPath.intersects(otherPath)) {
         // console.log(`${otherId} does intersect ${id}`)
-        // @ts-ignore
         currentPath = currentPath.unite(otherPath);
         // console.log('intersected and deleted otherId')
         deleted[otherId] = true;

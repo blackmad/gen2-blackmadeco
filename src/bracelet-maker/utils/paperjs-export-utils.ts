@@ -2,11 +2,10 @@ export function makeSVGData(
   paper: any,
   toExport: any,
   shouldClean: boolean,
-  elHydrator: (string) => any
+  elHydrator: (elName: string) => any
 ) {
   const svgData: string = toExport.exportSVG({
     asString: true,
-    // @ts-ignore
     matrix: new paper.Matrix(),
     bounds: "content",
   }) as unknown as string;
@@ -21,7 +20,7 @@ export function makeSVGData(
 }
 
 export function cleanSVGforDownload(svg: any) {
-  function recurse(el) {
+  function recurse(el: Element) {
     for (const x of Array.from(el.children)) {
       el.removeAttribute("transform");
       el.setAttribute("fill", "none");
@@ -36,7 +35,7 @@ export function cleanSVGforDownload(svg: any) {
   recurse(svg);
 }
 
-export function reprocessSVG(paper: any, svg) {
+export function reprocessSVG(paper: any, svg: Element) {
   svg.setAttribute(
     "viewBox",
     `${paper.project.activeLayer.bounds.x} ${paper.project.activeLayer.bounds.y} ${paper.project.activeLayer.bounds.width + 0.05} ${paper.project.activeLayer.bounds.height + 0.05}`
