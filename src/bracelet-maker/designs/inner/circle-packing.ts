@@ -1,15 +1,12 @@
-import {
-  RangeMetaParameter,
-  OnOffMetaParameter,
-  MetaParameter,
-} from "../../meta-parameter";
 import * as _ from "lodash";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+
+import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import {
-  SimpleCircle,
-  randomLineOnRectangle,
   checkCircleCircleIntersection,
+  randomLineOnRectangle,
+  SimpleCircle,
 } from "../../utils/paperjs-utils";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
   allowOutline = true;

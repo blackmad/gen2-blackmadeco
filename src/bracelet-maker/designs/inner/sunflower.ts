@@ -1,6 +1,6 @@
-import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+import { RangeMetaParameter } from "../../meta-parameter";
 import { cascadedUnion } from "../../utils/cascaded-union";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignSunflower extends FastAbstractInnerDesign {
   allowOutline = false;

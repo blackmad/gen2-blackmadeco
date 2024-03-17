@@ -1,7 +1,7 @@
-import { makeConicSection } from "./conic-section";
 import { RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import { makeEvenlySpacedBolts } from "../design-utils";
+import { makeConicSection } from "./conic-section";
 
 export class ConicCuffOuter extends OuterPaperModelMaker {
   public controlInfo = `Measure your wrist with a sewing measuring tape. I suggest measuring pretty tight, this pattern adds some length.<br/>

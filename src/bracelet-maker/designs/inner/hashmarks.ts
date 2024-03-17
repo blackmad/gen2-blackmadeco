@@ -1,7 +1,7 @@
 // how do I make this not happen?
 // http://localhost:8080/#/newPlayground/StraightCuffOuter/InnerDesignHashmarks?StraightCuffOuter.debug=false&StraightCuffOuter.height=2&StraightCuffOuter.wristCircumference=7&StraightCuffOuter.safeBorderWidth=0.25&StraightCuffOuter.forearmCircumference=7.4&InnerDesignHashmarks.seed=1&InnerDesignHashmarks.bufferWidth=0.01&InnerDesignHashmarks.hashWidth=0.525&InnerDesignHashmarks.initialNoiseRange1=3.8&InnerDesignHashmarks.initialNoiseRange2=0&InnerDesignHashmarks.noiseOffset1=0.01&InnerDesignHashmarks.noiseOffset2=0.41&InnerDesignHashmarks.noiseInfluence=1
 
-import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { RangeMetaParameter } from "../../meta-parameter";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 export class InnerDesignHashmarks extends FastAbstractInnerDesign {
   makeDesign(paper: paper.PaperScope, params: any) {

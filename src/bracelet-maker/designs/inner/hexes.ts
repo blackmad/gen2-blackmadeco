@@ -1,5 +1,4 @@
 import { RangeMetaParameter } from "../../meta-parameter";
-
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignHexes extends FastAbstractInnerDesign {

@@ -1,7 +1,6 @@
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-
 import Tactile from "../../tactile/tactile";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 // http://isohedral.ca/other/Spirals/
 

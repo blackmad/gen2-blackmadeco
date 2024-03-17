@@ -1,12 +1,12 @@
-import { makeSVGData } from "../utils/paperjs-export-utils";
 import * as _ from "lodash";
 
 import {
-  OuterPaperModelMaker,
-  PaperModelMaker,
   CompletedModel,
   InnerCompletedModel,
+  OuterPaperModelMaker,
+  PaperModelMaker,
 } from "../model-maker";
+import { makeSVGData } from "../utils/paperjs-export-utils";
 
 export async function demoDesign(
   paper: paper.PaperScope,

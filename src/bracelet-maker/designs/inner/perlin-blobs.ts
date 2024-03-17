@@ -1,17 +1,10 @@
-import * as _ from "lodash";
 import Jimp from "jimp";
 import * as potrace from "potrace";
 
-import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
-import {
-  OnOffMetaParameter,
-  RangeMetaParameter,
-  SelectMetaParameter,
-} from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-
-import { addToDebugLayer } from "../../utils/debug-layers";
+import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
+import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
   allowOutline = false;

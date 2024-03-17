@@ -1,24 +1,21 @@
 import { InnerDesignCirclePacking } from "./circle-packing";
-import { InnerDesignVera } from "./vera";
-import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignCirclesXVera } from "./circles-x-vera";
-import { InnerDesignVoronoi } from "./voronoi";
-import { InnerDesignLattice } from "./lattice";
-import { InnerDesignHexes } from "./hexes";
-import { InnerDesignLines } from "./lines";
-import { InnerDesignMondrian } from "./mondrian";
-import { InnerDesignExplode } from "./explode";
 import { InnerDesignEmpty } from "./empty";
-import { InnerDesignSunflower } from "./sunflower";
-import { InnerDesignTessagon } from "./tessagon";
-import { InnerDesignTactile } from "./tactile";
-
-import { InnerDesignPerlinDots } from "./perlin-dots";
-import { InnerDesignPerlinBlobs } from "./perlin-blobs";
 import { InnerDesignGrid } from "./grid";
-import { InnerDesignSnowflake } from "./snowflake";
+import { InnerDesignHashmarks } from "./hashmarks";
+import { InnerDesignHexes } from "./hexes";
+import { InnerDesignLattice } from "./lattice";
+import { InnerDesignLines } from "./lines";
 import { InnerDesignMap } from "./map";
 import { InnerDesignMaze1 } from "./maze1";
+import { InnerDesignMondrian } from "./mondrian";
+import { InnerDesignPerlinBlobs } from "./perlin-blobs";
+import { InnerDesignPerlinDots } from "./perlin-dots";
+import { InnerDesignSnowflake } from "./snowflake";
+import { InnerDesignSunflower } from "./sunflower";
+import { InnerDesignTessagon } from "./tessagon";
+import { InnerDesignVera } from "./vera";
+import { InnerDesignVoronoi } from "./voronoi";
 
 export const AllInnerDesigns = [
   InnerDesignMaze1,

@@ -1,14 +1,9 @@
-import { ShapeMaker } from "./utils/shape-maker";
-
-import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
-import {
-  MetaParameter,
-  OnOffMetaParameter,
-  RangeMetaParameter,
-  SelectMetaParameter,
-} from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import * as _ from "lodash";
+
+import { RangeMetaParameter, SelectMetaParameter } from "../../meta-parameter";
+import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+import { ShapeMaker } from "./utils/shape-maker";
 
 export class InnerDesignPerlinDots extends FastAbstractInnerDesign {
   allowOutline = false;

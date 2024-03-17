@@ -1,9 +1,4 @@
-import {
-  MetaParameter,
-  OnOffMetaParameter,
-  RangeMetaParameter,
-} from "./meta-parameter";
-import { Path } from "paper";
+import { MetaParameter, OnOffMetaParameter } from "./meta-parameter";
 
 export interface HasMetaParameters {
   readonly metaParameters: MetaParameter<any>[];

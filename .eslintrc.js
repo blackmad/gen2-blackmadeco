@@ -21,16 +21,16 @@ module.exports = {
     "prettier",
     "plugin:prettier/recommended",
   ],
-  plugins: ["react", "jest"],
+  plugins: ["react", "jest", "unused-imports", "simple-import-sort"],
   rules: {
-    "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
     "@typescript-eslint/no-var-requires": "off",
     "react/prop-types": "off",
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",
+
+    "@typescript-eslint/no-unused-vars": "off",
     "no-unused-vars": "off", // or "@typescript-eslint/no-unused-vars": "off",
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
@@ -42,6 +42,8 @@ module.exports = {
         argsIgnorePattern: "^_",
       },
     ],
-    "sort-imports": "error",
+
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
   },
 };

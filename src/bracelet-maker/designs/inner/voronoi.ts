@@ -1,21 +1,15 @@
-import * as _ from "lodash";
-import { Delaunay, Voronoi } from "d3-delaunay";
 import almostEqual from "almost-equal";
-
-import {
-  RangeMetaParameter,
-  MetaParameter,
-  OnOffMetaParameter,
-  SelectMetaParameter,
-} from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-import {
-  randomPointInPolygon,
-  bufferPointstoPathItem,
-  approxShape,
-} from "../../utils/paperjs-utils";
+import { Delaunay } from "d3-delaunay";
 import ExtendPaperJs from "paperjs-offset";
+
+import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
+import {
+  approxShape,
+  bufferPointstoPathItem,
+  randomPointInPolygon,
+} from "../../utils/paperjs-utils";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 function dedupePointsArray(points: number[][]): number[][] {
   const pointsDict = {};

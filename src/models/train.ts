@@ -1,6 +1,6 @@
 import { IDepartureTime } from "./departureTime";
-import { ISeatsAvailable } from "./seatsAvailable";
 import { IPrice } from "./price";
+import { ISeatsAvailable } from "./seatsAvailable";
 
 /**
  * @description Interface for Train

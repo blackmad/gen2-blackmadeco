@@ -1,6 +1,4 @@
-import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
-import * as _ from "lodash";
-
+import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import { roundCorners } from "../../utils/round-corners";
 

@@ -1,8 +1,9 @@
+import * as paper from "paper";
 import { FC, useRef, useState } from "react";
+
 import ReactTypescriptTemplateLogo from "../../assets/images/react-typescript-template.png";
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
-import * as paper from "paper";
 
 const Canvas = (props) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -47,7 +48,6 @@ const Renderer: FC = () => {
   const canvas: HTMLCanvasElement = document.getElementById(
     "myCanvas"
   ) as HTMLCanvasElement;
-  const paper1 = new paper.PaperScope();
   paper.setup(canvas);
   paper.settings.insertItems = false;
   paper.activate();
@@ -92,10 +92,10 @@ const Renderer: FC = () => {
 };
 
 const HomePage: FC = () => {
-  const [innerDesign, setInnerDesign] = useState<string>(
+  const [innerDesign, _setInnerDesign] = useState<string>(
     AllInnerDesigns[0].name
   );
-  const [outerDesign, setOuterDesign] = useState<string>(
+  const [outerDesign, _setOuterDesign] = useState<string>(
     AllOuterDesigns[0].name
   );
 

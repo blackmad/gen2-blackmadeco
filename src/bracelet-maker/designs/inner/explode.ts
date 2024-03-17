@@ -1,9 +1,8 @@
 import * as _ from "lodash";
 
-import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
-
-import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
+import { RangeMetaParameter } from "../../meta-parameter";
 import { pickPointOnRectEdge } from "../../utils/paperjs-utils";
+import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 
 export class InnerDesignExplode extends AbstractExpandInnerDesign {
   async makePaths(paper, params): Promise<paper.Point[][]> {

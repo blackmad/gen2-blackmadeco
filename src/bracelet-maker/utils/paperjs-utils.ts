@@ -1,13 +1,12 @@
 const Shape = require("@doodle3d/clipper-js");
-import * as _ from "lodash";
-import GeoJSON from "geojson";
-import simplify from "simplify-path";
+import * as turfHelpers from "@turf/helpers";
 // import * as simplifyJS from 'simplify-js';
 import turfUnkinkPolygon from "@turf/unkink-polygon";
-import * as turfHelpers from "@turf/helpers";
-
+import GeoJSON from "geojson";
 import GeoJSONReader from "jsts/org/locationtech/jts/io/GeoJSONReader";
 import Polygonizer from "jsts/org/locationtech/jts/operation/polygonize/Polygonizer";
+import * as _ from "lodash";
+import simplify from "simplify-path";
 
 export function randomPointInPolygon(
   paper: paper.PaperScope,

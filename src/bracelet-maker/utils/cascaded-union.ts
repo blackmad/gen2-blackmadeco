@@ -1,7 +1,5 @@
-import RBush from "rbush";
 import * as _ from "lodash";
-import { getPointsFromPath } from "./paperjs-utils";
-
+import RBush from "rbush";
 import { v4 as uuidv4 } from "uuid";
 
 function uniteTouchingPathsOnePass(paths: paper.PathItem[]) {

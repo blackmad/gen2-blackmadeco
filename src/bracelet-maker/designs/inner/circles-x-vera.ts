@@ -1,9 +1,5 @@
+import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
-import {
-  OnOffMetaParameter,
-  MetaParameter,
-  RangeMetaParameter,
-} from "../../meta-parameter";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {

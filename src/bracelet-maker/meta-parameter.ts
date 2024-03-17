@@ -1,7 +1,8 @@
-import * as _ from "lodash";
-import nyc from "./geojson/simplified/nyc.json";
 import turfBBox from "@turf/bbox";
 import turfBooleanPointInPolygon from "@turf/boolean-point-in-polygon";
+import * as _ from "lodash";
+
+import nyc from "./geojson/simplified/nyc.json";
 
 export enum MetaParameterType {
   Range,

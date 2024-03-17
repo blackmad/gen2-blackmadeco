@@ -1,5 +1,5 @@
-import * as topojson from "topojson-client";
 import * as _ from "lodash";
+import * as topojson from "topojson-client";
 const { fetch, Request, Response, Headers } = require("fetch-ponyfill")();
 
 export function lng2tile(lon, zoom) {

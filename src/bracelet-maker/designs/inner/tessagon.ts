@@ -1,21 +1,16 @@
+import { ListAdaptor } from "../..//tessagon/tessagon.adaptors.list_adaptor";
+import { plane } from "../..//tessagon/tessagon.misc.shapes";
 import {
   MetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
-  OnOffMetaParameter,
 } from "../../meta-parameter";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-import * as _ from "lodash";
-
-import { bufferPointstoPathItem } from "../../utils/paperjs-utils";
-
 import {
-  makeTesselationFromName,
-  makeTesselationFromNameAndOptions,
   getAllTesselationNames,
+  makeTesselationFromNameAndOptions,
 } from "../../tessagon/js-entry";
-import { plane } from "../..//tessagon/tessagon.misc.shapes";
-import { ListAdaptor } from "../..//tessagon/tessagon.adaptors.list_adaptor";
+import { bufferPointstoPathItem } from "../../utils/paperjs-utils";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignTessagon extends FastAbstractInnerDesign {
   allowOutline = true;

@@ -1,8 +1,4 @@
-import {
-  OnOffMetaParameter,
-  MetaParameter,
-  RangeMetaParameter,
-} from "../../meta-parameter";
+import { RangeMetaParameter } from "../../meta-parameter";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignLattice extends FastAbstractInnerDesign {

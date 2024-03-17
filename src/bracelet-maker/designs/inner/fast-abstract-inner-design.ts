@@ -1,26 +1,24 @@
 import * as _ from "lodash";
-import { NoiseFunction2D, createNoise2D } from "simplex-noise";
-import seedrandom from "seedrandom";
 import ExtendPaperJs from "paperjs-offset";
+import seedrandom from "seedrandom";
+import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 
+import {
+  MetaParameter,
+  OnOffMetaParameter,
+  RangeMetaParameter,
+} from "../../meta-parameter";
+import { InnerCompletedModel, PaperModelMaker } from "../../model-maker";
+import { addToDebugLayer } from "../../utils/debug-layers";
+import { makeConcaveOutline } from "../../utils/outline";
 import {
   bufferPath,
   simplifyPath,
   unkinkPath,
 } from "../../utils/paperjs-utils";
-
-import {
-  MetaParameter,
-  RangeMetaParameter,
-  OnOffMetaParameter,
-} from "../../meta-parameter";
-import { PaperModelMaker, InnerCompletedModel } from "../../model-maker";
-
-import { addToDebugLayer } from "../../utils/debug-layers";
-import { makeConcaveOutline } from "../../utils/outline";
+import { removeBadSegments } from "../../utils/remove-bad-segments";
 import { roundCorners } from "../../utils/round-corners";
 import { KaleidoscopeMaker } from "./utils/kaleidosope";
-import { removeBadSegments } from "../../utils/remove-bad-segments";
 
 export interface InnerDesignModel {
   paths: paper.PathItem[];

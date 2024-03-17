@@ -1,16 +1,12 @@
-import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
 import * as _ from "lodash";
+
+import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import {
-  makeEvenlySpacedBolts,
   BeltHoleRadius,
+  makeEvenlySpacedBolts,
   RivetRadius,
 } from "../design-utils";
-
-import {
-  PaperModelMaker,
-  CompletedModel,
-  OuterPaperModelMaker,
-} from "../../model-maker";
 
 export class StraightCollarOuter extends OuterPaperModelMaker {
   get outerMetaParameters(): MetaParameter<any>[] {

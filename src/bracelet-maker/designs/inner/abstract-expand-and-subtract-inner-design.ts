@@ -1,12 +1,6 @@
-import * as _ from "lodash";
-
-import {
-  RangeMetaParameter,
-  MetaParameter,
-  OnOffMetaParameter,
-} from "../../meta-parameter";
+import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { polygonize } from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-import { paperRectToPoints, polygonize } from "../../utils/paperjs-utils";
 
 function slope(a, b) {
   if (a.x == b.x) {

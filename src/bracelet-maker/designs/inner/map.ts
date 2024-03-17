@@ -1,26 +1,23 @@
 // TODO: if it's too close to another street, don't use it
 import {
-  MetaParameter,
-  RangeMetaParameter,
-  OnOffMetaParameter,
   GeocodeMetaParameter,
+  OnOffMetaParameter,
+  RangeMetaParameter,
   SelectMetaParameter,
 } from "../../meta-parameter";
-
+import { cascadedUnion } from "../../utils/cascaded-union";
+import { addToDebugLayer } from "../../utils/debug-layers";
+import {
+  bufferLine,
+  flattenArrayOfPathItems,
+  simplifyPath,
+} from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import {
   fetchTopoJsonTiles,
   lineStringCoordinatesToPaperLine,
   multiLneStringCoordinatesToPaperLines,
 } from "./map-utils";
-import * as _ from "lodash";
-import {
-  flattenArrayOfPathItems,
-  bufferLine,
-  simplifyPath,
-} from "../../utils/paperjs-utils";
-import { cascadedUnion } from "../../utils/cascaded-union";
-import { addToDebugLayer } from "../../utils/debug-layers";
 const randomColor = require("randomcolor");
 
 export class InnerDesignMap extends FastAbstractInnerDesign {

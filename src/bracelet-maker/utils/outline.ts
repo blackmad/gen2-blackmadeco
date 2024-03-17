@@ -1,4 +1,5 @@
 import concaveman from "concaveman";
+
 import { addToDebugLayer } from "./debug-layers";
 import { simplifyPath, unkinkPath } from "./paperjs-utils";
 

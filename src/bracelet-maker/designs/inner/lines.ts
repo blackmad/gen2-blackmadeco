@@ -1,13 +1,5 @@
-import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
-import {
-  randomLineEndpointsOnRectangle,
-  paperRectToGeoJsonLineString,
-  paperPointsToGeoJsonLineString,
-  paperRectToPoints,
-  polygonize,
-} from "../../utils/paperjs-utils";
-import * as _ from "lodash";
-
+import { RangeMetaParameter } from "../../meta-parameter";
+import { randomLineEndpointsOnRectangle } from "../../utils/paperjs-utils";
 import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 
 // jsts faster? https://gist.github.com/rclark/6168912

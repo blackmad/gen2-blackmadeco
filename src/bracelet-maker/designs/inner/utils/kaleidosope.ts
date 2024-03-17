@@ -1,18 +1,13 @@
-import * as _ from "lodash";
-
 import {
-  MetaParameter,
-  RangeMetaParameter,
   OnOffMetaParameter,
+  RangeMetaParameter,
 } from "../../../meta-parameter";
-import { FastAbstractInnerDesign } from "../fast-abstract-inner-design";
-import {
-  bufferPath,
-  bufferPoints,
-  bufferPointstoPathItem,
-} from "../../../utils/paperjs-utils";
 import { cascadedUnion } from "../../../utils/cascaded-union";
 import { addToDebugLayer } from "../../../utils/debug-layers";
+import {
+  bufferPath,
+  bufferPointstoPathItem,
+} from "../../../utils/paperjs-utils";
 
 export class KaleidoscopeMaker {
   // input params
