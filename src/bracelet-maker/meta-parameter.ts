@@ -18,7 +18,7 @@ export interface MetaParameterBaseParams<T> {
   target?: string | null;
   group?: string | null;
   help?: string | null;
-  shouldDisplay?: Function;
+  shouldDisplay?: () => boolean;
   parentParam?: OnOffMetaParameter;
 }
 
@@ -29,8 +29,8 @@ export abstract class MetaParameter<T> {
   public group: string | null;
   public help: string | null;
   public value: T;
-  public type: MetaParameterType;
-  public shouldDisplay?: Function;
+  public type: MetaParameterType | null = null;
+  public shouldDisplay?: () => boolean;
   public parentParam?: OnOffMetaParameter;
 
   valueFromString(value: string) {
@@ -48,9 +48,9 @@ export abstract class MetaParameter<T> {
   constructor(params: MetaParameterBaseParams<T>) {
     this.name = params.name;
     this.title = params.title;
-    this.target = params.target;
-    this.group = params.group;
-    this.help = params.help;
+    this.target = params.target ?? null;
+    this.group = params.group ?? null;
+    this.help = params.help ?? null;
     this.value = params.value;
     this.shouldDisplay = params.shouldDisplay;
     this.parentParam = params.parentParam;
@@ -78,8 +78,8 @@ export class RangeMetaParameter extends MetaParameter<number> {
     super(params);
     this.min = params.min;
     this.max = params.max;
-    this.randMin = params.randMin;
-    this.randMax = params.randMax;
+    this.randMin = params.randMin ?? 0;
+    this.randMax = params.randMax ?? 0;
     this.step = params.step;
   }
 

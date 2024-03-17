@@ -1,5 +1,6 @@
 const Shape = require("@doodle3d/clipper-js");
 import * as turfHelpers from "@turf/helpers";
+import { Geometry } from "@turf/helpers";
 // import * as simplifyJS from 'simplify-js';
 import turfUnkinkPolygon from "@turf/unkink-polygon";
 import GeoJSON from "geojson";
@@ -117,7 +118,7 @@ export function pickPointOnRectEdge(
 export function randomLineEndpointsOnRectangle(
   paper: paper.PaperScope,
   model: paper.Rectangle,
-  rng?: () => number
+  rng: () => number
 ): paper.Point[] {
   const p1 = pickPointOnRectEdge(paper, model, rng);
   let p2 = pickPointOnRectEdge(paper, model, rng);
@@ -205,7 +206,7 @@ export function paperRectToPoints(rect: paper.Rectangle) {
 export function jstsGeometryToPaperJsGeometry(
   paper: paper.PaperScope,
   geom: jsts.geom.Geometry
-): paper.Path {
+): paper.Path | null {
   if (geom) {
     const coords = geom.getCoordinates();
     const points = coords.map((c) => new paper.Point(c.y, c.x));
@@ -234,17 +235,18 @@ export function polygonize(
   shapes: paper.Point[][],
   buffer?: number
 ): paper.Path[] {
-  // @ts-ignore
   const reader = new GeoJSONReader();
-
-  // @ts-ignore
   const polygonizer = new Polygonizer();
-  // polygonizer.setCheckRingsValid(false);
-  const geojsonLineStrings = shapes.map(paperPointsToGeoJsonLineString);
-  const geoms = geojsonLineStrings.map((l) => reader.read(l));
 
-  let cleaned = null;
-  geoms.forEach(function (geom, i, array) {
+  // polygonizer.setCheckRingsValid(false);
+
+  const geojsonLineStrings: GeoJSON.LineString[] = shapes.map(
+    paperPointsToGeoJsonLineString
+  );
+  const geoms: Array<Geometry> = geojsonLineStrings.map((l) => reader.read(l));
+
+  let cleaned: Geometry = null;
+  geoms.forEach(function (geom, i, _array) {
     if (i === 0) {
       cleaned = geom;
     } else {
