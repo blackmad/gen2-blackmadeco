@@ -1,10 +1,6 @@
-import {
-  MetaParameter,
-  RangeMetaParameter
-} from '../../meta-parameter';
-import { FastAbstractInnerDesign } from './fast-abstract-inner-design';
+import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import { cascadedUnion } from "../../utils/cascaded-union";
-
 
 export class InnerDesignSunflower extends FastAbstractInnerDesign {
   allowOutline = false;
@@ -12,16 +8,11 @@ export class InnerDesignSunflower extends FastAbstractInnerDesign {
   needSeed = false;
 
   makeDesign(paper: paper.PaperScope, params) {
-    const {
-      boundaryModel,
-      scalingParam,
-      angle,
-      circleSize
-    } = params;
+    const { boundaryModel, scalingParam, angle, circleSize } = params;
     // φ = n ∗ 137.5◦
     // r = c√n,
 
-    let numDots = 5000;
+    const numDots = 5000;
 
     const circles = [];
 
@@ -49,7 +40,7 @@ export class InnerDesignSunflower extends FastAbstractInnerDesign {
     }
 
     return Promise.resolve({
-      paths: cascadedUnion(circles)
+      paths: cascadedUnion(circles),
     });
   }
 
@@ -64,29 +55,29 @@ export class InnerDesignSunflower extends FastAbstractInnerDesign {
       //   name: "circleSize"
       // }),
       new RangeMetaParameter({
-        title: 'angle',
+        title: "angle",
         min: 100,
         max: 140,
         value: 137.3,
         step: 0.2,
-        name: 'angle'
+        name: "angle",
       }),
       new RangeMetaParameter({
-        title: 'Scaling Param',
+        title: "Scaling Param",
         min: 0.01,
         max: 3.0,
         value: 0.1,
         step: 0.01,
-        name: 'scalingParam'
+        name: "scalingParam",
       }),
       new RangeMetaParameter({
-        title: 'Circle Size',
+        title: "Circle Size",
         min: 0.04,
         max: 0.75,
         value: 0.04,
         step: 0.01,
-        name: 'circleSize'
-      })
+        name: "circleSize",
+      }),
     ];
   }
 }

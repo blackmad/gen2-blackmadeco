@@ -2,10 +2,7 @@
 // http://localhost:8080/#/newPlayground/StraightCuffOuter/InnerDesignMaze1?StraightCuffOuter.debug=false&StraightCuffOuter.height=2&StraightCuffOuter.wristCircumference=6.9&StraightCuffOuter.forearmCircumference=7.2&InnerDesignMaze1.debug=false&InnerDesignMaze1.safeBorderWidth=0.25&InnerDesignMaze1.seed=10&InnerDesignMaze1.rows=2&InnerDesignMaze1.cols=3&InnerDesignMaze1.rowRepeat=1&InnerDesignMaze1.colRepeat=2&InnerDesignMaze1.borderSize=0.06&InnerDesignMaze1.maxChainSize=8&InnerDesignMaze1.idealMinChainSize=3&InnerDesignMaze1.mirrorRows=false&InnerDesignMaze1.mirrorCols=true&InnerDesignMaze1.omitTileChance=0&InnerDesignMaze1.shouldSmooth=false&InnerDesignMaze1.smoothingFactor=0.8
 
 import { RangeMetaParameter, OnOffMetaParameter } from "../../meta-parameter";
-import {
-  bufferPath,
-  simplifyPathToPoints,
-} from "../../utils/paperjs-utils";
+import { bufferPath, simplifyPathToPoints } from "../../utils/paperjs-utils";
 import * as _ from "lodash";
 import randomColor from "randomcolor";
 

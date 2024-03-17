@@ -23,14 +23,14 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
     for (let i = 0; i < tiling.numEdgeShapes(); i++) {
       tilingParams.push(params[`tilingParam${i}`]);
     }
-    tiling.setParameters( tilingParams );
+    tiling.setParameters(tilingParams);
 
     // setTilingType
     const edges = [];
     for (let idx = 0; idx < tiling.numEdgeShapes(); ++idx) {
       const ej = [
         { x: 0, y: 0 },
-        { x: 1, y: 0 }
+        { x: 1, y: 0 },
       ];
       edges.push(ej);
     }
@@ -39,7 +39,7 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
 
     const tile_shape = [];
 
-    for (let i of tiling.parts()) {
+    for (const i of tiling.parts()) {
       const ej = edges[i.id];
       let cur = i.rev ? ej.length - 2 : 1;
       const inc = i.rev ? -1 : 1;
@@ -59,7 +59,7 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
       [sc, 0, 0, 0, -sc, 0]
     );
 
-    for (let i of tiling.fillRegionBounds(
+    for (const i of tiling.fillRegionBounds(
       -w - 2.0,
       -h - 2.0,
       w + 2.0,
@@ -73,20 +73,20 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
 
       //     beginShape();
       const points = [];
-      for (let v of tile_shape) {
+      for (const v of tile_shape) {
         const P = Tactile.mul(T, v);
         points.push(new paper.Point(P.x, P.y));
       }
       paths.push(new paper.Path(points));
     }
 
-    return Promise.resolve({paths});
+    return Promise.resolve({ paths });
   }
 
   get designMetaParameters(): Array<MetaParameter<any>> {
     const makeTilingParam = (index) => {
       return new RangeMetaParameter({
-        title: `Tiling Param ${index+1}`,
+        title: `Tiling Param ${index + 1}`,
         min: 0,
         max: 2,
         value: 0,
@@ -96,7 +96,7 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
         //   const tiling = new Tactile.IsohedralTiling(params.titleType);
         //   return tiling.numParameters() > index;
         // }
-      })
+      });
     };
 
     return [
@@ -106,7 +106,7 @@ export class InnerDesignTactile extends FastAbstractInnerDesign {
         max: Tactile.tiling_types.length - 1,
         value: 0,
         step: 1,
-        name: "tilingType"
+        name: "tilingType",
       }),
       makeTilingParam(0),
       makeTilingParam(1),

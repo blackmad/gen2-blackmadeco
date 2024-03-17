@@ -5,6 +5,6 @@
  * @property {number} AC - The number of seats available in the AC class
  */
 export interface ISeatsAvailable {
-  sleeper: number
-  AC: number
+  sleeper: number;
+  AC: number;
 }

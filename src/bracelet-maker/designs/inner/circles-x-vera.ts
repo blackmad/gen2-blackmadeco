@@ -1,5 +1,9 @@
 import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
-import { OnOffMetaParameter, MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import {
+  OnOffMetaParameter,
+  MetaParameter,
+  RangeMetaParameter,
+} from "../../meta-parameter";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
@@ -21,19 +25,19 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
       centerXNoiseDenom2,
       centerYNoiseDenom1,
       centerYNoiseDenom2,
-      patternNoiseInfluence
+      patternNoiseInfluence,
     } = params;
-
 
     const rowCellSize = boundaryModel.bounds.width / cols;
     const widthCellSize = boundaryModel.bounds.height / rows;
 
     let totalPath = null;
 
-    for (var r = 0; r <= rows; r++) {
-      for (var c = 0; c <= cols; c++) {
+    for (let r = 0; r <= rows; r++) {
+      for (let c = 0; c <= cols; c++) {
         const center = new paper.Point(
-          (r % 2) * rowOffset * rowCellSize + boundaryModel.bounds.x +
+          (r % 2) * rowOffset * rowCellSize +
+            boundaryModel.bounds.x +
             c * rowCellSize +
             patternNoiseInfluence *
               SimplexNoiseUtils.noise2DInRange(
@@ -43,7 +47,8 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
                 -rowCellSize * 2,
                 rowCellSize * 2
               ),
-          yOffset + boundaryModel.bounds.y +
+          yOffset +
+            boundaryModel.bounds.y +
             (c % 2) * colOffset +
             (r * widthCellSize +
               patternNoiseInfluence *
@@ -77,21 +82,28 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
           // }
           // totalPath = totalPath.subtract(new paper.Path.Circle(center, circleSize - borderSize))
 
-          const innerCircle = new paper.Path.Circle(center, circleSize - borderSize);
-          const finalCircle = possibleCircle.subtract(innerCircle, {insert: false});
+          const innerCircle = new paper.Path.Circle(
+            center,
+            circleSize - borderSize
+          );
+          const finalCircle = possibleCircle.subtract(innerCircle, {
+            insert: false,
+          });
           if (totalPath == null) {
-            totalPath = finalCircle
+            totalPath = finalCircle;
           } else {
-            totalPath = totalPath.unite(finalCircle, {insert: false});
+            totalPath = totalPath.unite(finalCircle, { insert: false });
           }
         }
       }
     }
 
     if (params.invert) {
-      return Promise.resolve({paths: [totalPath]})
+      return Promise.resolve({ paths: [totalPath] });
     } else {
-      return Promise.resolve({paths: [boundaryModel.subtract(totalPath, {insert: false})]})
+      return Promise.resolve({
+        paths: [boundaryModel.subtract(totalPath, { insert: false })],
+      });
     }
   }
 
@@ -103,7 +115,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 0.25,
         value: 0.04,
         step: 0.01,
-        name: "borderSize"
+        name: "borderSize",
       }),
       new RangeMetaParameter({
         title: "Cols",
@@ -111,7 +123,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 10,
         value: 5,
         step: 1,
-        name: "cols"
+        name: "cols",
       }),
       new RangeMetaParameter({
         title: "Rows",
@@ -119,7 +131,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 10,
         value: 5,
         step: 1,
-        name: "rows"
+        name: "rows",
       }),
       new RangeMetaParameter({
         title: "Min Circle Size",
@@ -127,7 +139,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 2.0,
         value: 0.5,
         step: 0.01,
-        name: "minCircleSize"
+        name: "minCircleSize",
       }),
       new RangeMetaParameter({
         title: "Max Circle Size",
@@ -135,7 +147,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 3.0,
         value: 1.5,
         step: 0.01,
-        name: "maxCircleSize"
+        name: "maxCircleSize",
       }),
       new RangeMetaParameter({
         title: "Pattern Noise Influence",
@@ -143,7 +155,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 2.0,
         value: 1.0,
         step: 0.01,
-        name: "patternNoiseInfluence"
+        name: "patternNoiseInfluence",
       }),
       new RangeMetaParameter({
         title: "Center X Noise Demon 1",
@@ -151,7 +163,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 400,
         value: 20,
         step: 1,
-        name: "centerXNoiseDenom1"
+        name: "centerXNoiseDenom1",
       }),
       new RangeMetaParameter({
         title: "Center X Noise Demon 2",
@@ -159,7 +171,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 400,
         value: 20,
         step: 1,
-        name: "centerXNoiseDenom2"
+        name: "centerXNoiseDenom2",
       }),
       new RangeMetaParameter({
         title: "Center Y Noise Demon 1",
@@ -167,7 +179,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 400,
         value: 20,
         step: 1,
-        name: "centerYNoiseDenom1"
+        name: "centerYNoiseDenom1",
       }),
       new RangeMetaParameter({
         title: "Center Y Noise Demon 2",
@@ -175,7 +187,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 400,
         value: 10,
         step: 1,
-        name: "centerYNoiseDenom2"
+        name: "centerYNoiseDenom2",
       }),
       new RangeMetaParameter({
         title: "Y Offset",
@@ -183,7 +195,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 3.0,
         value: 0.0,
         step: 0.01,
-        name: "yOffset"
+        name: "yOffset",
       }),
       new RangeMetaParameter({
         title: "Row Offset",
@@ -191,7 +203,7 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.2,
         step: 0.01,
-        name: "rowOffset"
+        name: "rowOffset",
       }),
       new RangeMetaParameter({
         title: "Col Offset",
@@ -199,12 +211,12 @@ export class InnerDesignCirclesXVera extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.2,
         step: 0.01,
-        name: "colOffset"
+        name: "colOffset",
       }),
       new OnOffMetaParameter({
         title: "Invert",
         value: false,
-        name: "invert"
+        name: "invert",
       }),
     ];
   }

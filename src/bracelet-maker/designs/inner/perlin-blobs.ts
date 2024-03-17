@@ -1,17 +1,17 @@
-import * as _ from 'lodash';
-import Jimp from 'jimp';
-import * as potrace from 'potrace';
+import * as _ from "lodash";
+import Jimp from "jimp";
+import * as potrace from "potrace";
 
-import { SimplexNoiseUtils } from '../../utils/simplex-noise-utils';
+import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
 import {
   OnOffMetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
-} from '../../meta-parameter';
-import { FastAbstractInnerDesign } from './fast-abstract-inner-design';
+} from "../../meta-parameter";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
-import { addToDebugLayer } from '../../utils/debug-layers';
-import { flattenArrayOfPathItems } from '../../utils/paperjs-utils';
+import { addToDebugLayer } from "../../utils/debug-layers";
+import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
 
 export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
   allowOutline = false;
@@ -34,7 +34,7 @@ export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
     const imageSizeX = boundaryModel.bounds.width * scale;
     const imageSizeY = boundaryModel.bounds.height * scale;
 
-    const image = new Jimp(imageSizeX, imageSizeY, 'black', (err, image) => {
+    const image = new Jimp(imageSizeX, imageSizeY, "black", (err, image) => {
       if (err) throw err;
     });
 
@@ -74,20 +74,20 @@ export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
     );
 
     console.log(image.bitmap.data.length);
-    const buffer = await image.getBufferAsync('image/bmp');
+    const buffer = await image.getBufferAsync("image/bmp");
 
     if (params.debug) {
       image.getBase64(Jimp.MIME_JPEG, function (err, src) {
         let img: HTMLImageElement | null = document.querySelector(
-          '#designScratchArea img'
+          "#designScratchArea img"
         );
         console.log(img);
         if (!img) {
           console.log(img);
-          img = document.createElement('img');
-          img.style.width = '100%';
+          img = document.createElement("img");
+          img.style.width = "100%";
           console.log(img);
-          document.querySelector('#designScratchArea')?.append(img);
+          document.querySelector("#designScratchArea")?.append(img);
         }
         img.src = src;
       });
@@ -97,7 +97,7 @@ export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
     return await new Promise<{ paths: paper.Path[] }>((resolve, reject) => {
       trace.loadImage(buffer, function (err) {
         if (err) {
-          console.log('error', err);
+          console.log("error", err);
           reject({ paths: [] });
         }
         const svg = trace.getSVG();
@@ -116,7 +116,7 @@ export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
           path.closePath();
 
           if (smooth) {
-            path.smooth({ type: 'continuous' });
+            path.smooth({ type: "continuous" });
           }
 
           if (simplificationTolerance > 0) {
@@ -132,62 +132,62 @@ export class InnerDesignPerlinBlobs extends FastAbstractInnerDesign {
   get designMetaParameters() {
     return [
       new OnOffMetaParameter({
-        title: 'Grayscale Algorithm',
+        title: "Grayscale Algorithm",
         value: true,
-        name: 'useNoiseInBitmap',
+        name: "useNoiseInBitmap",
       }),
       new RangeMetaParameter({
-        title: 'Border Size (in)',
+        title: "Border Size (in)",
         min: 0.02,
         max: 0.75,
         value: 0.04,
         step: 0.01,
-        name: 'bufferWidth',
+        name: "bufferWidth",
       }),
       new RangeMetaParameter({
-        title: 'Inch to Noise Space Scale',
+        title: "Inch to Noise Space Scale",
         min: 10.0,
         max: 250,
         step: 1,
         value: 70,
-        name: 'scale',
+        name: "scale",
       }),
       new RangeMetaParameter({
-        title: 'X Noise Divisor',
+        title: "X Noise Divisor",
         min: 10.0,
         max: 5000.0,
         step: 1,
         value: 150,
-        name: 'xNoiseDivisor',
+        name: "xNoiseDivisor",
       }),
       new RangeMetaParameter({
-        title: 'Y Noise Divisor',
+        title: "Y Noise Divisor",
         min: 10.0,
         max: 5000.0,
         step: 1,
         value: 150,
-        name: 'yNoiseDivisor',
+        name: "yNoiseDivisor",
       }),
       new RangeMetaParameter({
-        title: 'Chance inclusion',
+        title: "Chance inclusion",
         min: 0.01,
         max: 1.0,
         value: 0.7,
         step: 0.01,
-        name: 'chanceProbability',
+        name: "chanceProbability",
       }),
       new OnOffMetaParameter({
-        title: 'Smooth blobs',
+        title: "Smooth blobs",
         value: false,
-        name: 'smooth',
+        name: "smooth",
       }),
       new RangeMetaParameter({
-        title: 'Simplification Tolerance',
+        title: "Simplification Tolerance",
         min: 0,
         max: 1000,
         value: 0.0,
         step: 1,
-        name: 'simplificationTolerance',
+        name: "simplificationTolerance",
       }),
     ];
   }

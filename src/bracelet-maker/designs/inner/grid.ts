@@ -1,10 +1,7 @@
 import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
-import {
-  randomLineEndpointsOnRectangle,
-} from "../../utils/paperjs-utils";
+import { randomLineEndpointsOnRectangle } from "../../utils/paperjs-utils";
 import * as _ from "lodash";
-import { SimplexNoiseUtils } from '../../utils/simplex-noise-utils';
-
+import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
 
 import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 
@@ -20,7 +17,7 @@ export class InnerDesignGrid extends AbstractExpandInnerDesign {
     numLines,
     bounds,
     numCols,
-    numRows
+    numRows,
   }: {
     paper: paper.PaperScope;
     numLines: number;
@@ -43,7 +40,10 @@ export class InnerDesignGrid extends AbstractExpandInnerDesign {
     return lines;
   }
 
-  public async makePaths(paper: paper.PaperScope, params: any): Promise<paper.Point[][]> {
+  public async makePaths(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<paper.Point[][]> {
     const { boundaryModel, numRows, numCols } = params;
 
     const lines: paper.Point[][] = [];
@@ -52,34 +52,48 @@ export class InnerDesignGrid extends AbstractExpandInnerDesign {
     const cellSizeY = boundaryModel.bounds.height / numRows;
 
     for (let r = -1; r <= numRows + 1; r++) {
-      const noise = 
-        SimplexNoiseUtils.noise2DInRange(
-          this.simplex, r * 1, r * 1, -cellSizeY/2, cellSizeY/2
-        )
+      const noise = SimplexNoiseUtils.noise2DInRange(
+        this.simplex,
+        r * 1,
+        r * 1,
+        -cellSizeY / 2,
+        cellSizeY / 2
+      );
 
       lines.push([
         new paper.Point(0, cellSizeY * r + noise),
-        new paper.Point(boundaryModel.bounds.width, cellSizeY * r)
-      ])
+        new paper.Point(boundaryModel.bounds.width, cellSizeY * r),
+      ]);
     }
 
     for (let c = -1; c <= numCols + 1; c++) {
-      const noise = 
-        SimplexNoiseUtils.noise2DInRange(
-          this.simplex, c * 1, c * 1, -cellSizeX/2, cellSizeX/2
-        )
+      const noise = SimplexNoiseUtils.noise2DInRange(
+        this.simplex,
+        c * 1,
+        c * 1,
+        -cellSizeX / 2,
+        cellSizeX / 2
+      );
 
-      const otherNoise = 
-        SimplexNoiseUtils.noise2DInRange(
-          this.simplex, c * 1, c * 1, -boundaryModel.bounds.height, boundaryModel.bounds.height
-        )
+      const otherNoise = SimplexNoiseUtils.noise2DInRange(
+        this.simplex,
+        c * 1,
+        c * 1,
+        -boundaryModel.bounds.height,
+        boundaryModel.bounds.height
+      );
       lines.push([
-        new paper.Point(cellSizeX * c + noise , 0),
-        new paper.Point(cellSizeX * c, boundaryModel.bounds.height + otherNoise)
-      ])
+        new paper.Point(cellSizeX * c + noise, 0),
+        new paper.Point(
+          cellSizeX * c,
+          boundaryModel.bounds.height + otherNoise
+        ),
+      ]);
     }
 
-    return lines.map(shape => shape.map(p => p.add(boundaryModel.bounds.topLeft)));
+    return lines.map((shape) =>
+      shape.map((p) => p.add(boundaryModel.bounds.topLeft))
+    );
   }
 
   get pathDesignMetaParameters() {
@@ -90,7 +104,7 @@ export class InnerDesignGrid extends AbstractExpandInnerDesign {
         max: 100,
         value: 5,
         step: 1,
-        name: "numRows"
+        name: "numRows",
       }),
       new RangeMetaParameter({
         title: "Num Cols",
@@ -98,9 +112,8 @@ export class InnerDesignGrid extends AbstractExpandInnerDesign {
         max: 100,
         value: 8,
         step: 1,
-        name: "numCols"
+        name: "numCols",
       }),
-
     ];
   }
 }

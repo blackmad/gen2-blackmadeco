@@ -1,1 +1,1 @@
-declare module 'paperjs-offset';
+declare module "paperjs-offset";

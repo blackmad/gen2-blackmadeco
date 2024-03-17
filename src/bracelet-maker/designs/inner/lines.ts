@@ -1,8 +1,14 @@
-import { RangeMetaParameter, MetaParameter } from '../../meta-parameter';
-import { randomLineEndpointsOnRectangle, paperRectToGeoJsonLineString, paperPointsToGeoJsonLineString, paperRectToPoints, polygonize } from '../../utils/paperjs-utils';
-import * as _ from 'lodash';
+import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
+import {
+  randomLineEndpointsOnRectangle,
+  paperRectToGeoJsonLineString,
+  paperPointsToGeoJsonLineString,
+  paperRectToPoints,
+  polygonize,
+} from "../../utils/paperjs-utils";
+import * as _ from "lodash";
 
-import { AbstractExpandInnerDesign } from './abstract-expand-and-subtract-inner-design';
+import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 
 // jsts faster? https://gist.github.com/rclark/6168912
 // jsts this https://gist.github.com/rclark/6123614
@@ -15,7 +21,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
     numLines,
     bounds,
     numCols,
-    numRows
+    numRows,
   }: {
     paper: paper.PaperScope;
     numLines: number;
@@ -38,7 +44,10 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
     return lines;
   }
 
-  public async makePaths(paper: paper.PaperScope, params: any): Promise<paper.Point[][]> {
+  public async makePaths(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<paper.Point[][]> {
     const { boundaryModel, outerModel, numLines } = params;
 
     const numRows = 1;
@@ -49,7 +58,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
       numLines,
       bounds: outerModel.bounds,
       numRows,
-      numCols
+      numCols,
     });
     const lines = [];
 
@@ -69,7 +78,8 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
           // get x within cell ()
           const np = new paper.Point(
             startOfCellX + (colOffset - (point.x - colOffset * col)),
-            point.y);
+            point.y
+          );
           // console.log(point.x, point.y, np.x, np.y);
           return np;
         };
@@ -77,13 +87,17 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
         const mirrorY = (point) => {
           const np = new paper.Point(
             point.x,
-            startOfCellY + (rowOffset - (point.y - rowOffset * row)));
+            startOfCellY + (rowOffset - (point.y - rowOffset * row))
+          );
           // console.log(point.x, point.y, np.x, np.y)
           return np;
         };
 
         const offsetPoint = (point) => {
-          return new paper.Point(point.x + colOffset * col, point.y + rowOffset * row);
+          return new paper.Point(
+            point.x + colOffset * col,
+            point.y + rowOffset * row
+          );
         };
 
         const transformPoint = (point) => {
@@ -98,9 +112,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
         };
 
         initialLines.forEach((line) => {
-          lines.push(
-            line.map(transformPoint)
-          )
+          lines.push(line.map(transformPoint));
         });
       }
     }
@@ -111,13 +123,13 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
   get pathDesignMetaParameters() {
     return [
       new RangeMetaParameter({
-        title: 'Num Lines',
+        title: "Num Lines",
         min: 1,
         max: 100,
         value: 20,
         step: 1,
-        name: 'numLines'
-      })
+        name: "numLines",
+      }),
     ];
   }
 }

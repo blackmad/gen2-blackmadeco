@@ -18,7 +18,7 @@ import { InnerDesignPerlinBlobs } from "./perlin-blobs";
 import { InnerDesignGrid } from "./grid";
 import { InnerDesignSnowflake } from "./snowflake";
 import { InnerDesignMap } from "./map";
-import { InnerDesignMaze1 } from './maze1';
+import { InnerDesignMaze1 } from "./maze1";
 
 export const AllInnerDesigns = [
   InnerDesignMaze1,
@@ -43,7 +43,6 @@ export const AllInnerDesigns = [
   InnerDesignEmpty,
 ];
 
-
 export const InnerDesignsToAnimate = [
   // InnerDesignMaze1,
   // InnerDesignVoronoi,
@@ -54,5 +53,3 @@ export const InnerDesignsToAnimate = [
   // InnerDesignTactile, - UNFINISHED
   // InnerDesignExplode, - BROKEN
 ];
-
-

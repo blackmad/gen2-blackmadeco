@@ -4,20 +4,24 @@ import {
   RangeMetaParameter,
   OnOffMetaParameter,
   GeocodeMetaParameter,
-  SelectMetaParameter
+  SelectMetaParameter,
 } from "../../meta-parameter";
 
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import {
   fetchTopoJsonTiles,
   lineStringCoordinatesToPaperLine,
-  multiLneStringCoordinatesToPaperLines
+  multiLneStringCoordinatesToPaperLines,
 } from "./map-utils";
 import * as _ from "lodash";
-import { flattenArrayOfPathItems, bufferLine, simplifyPath } from "../../utils/paperjs-utils";
+import {
+  flattenArrayOfPathItems,
+  bufferLine,
+  simplifyPath,
+} from "../../utils/paperjs-utils";
 import { cascadedUnion } from "../../utils/cascaded-union";
 import { addToDebugLayer } from "../../utils/debug-layers";
-var randomColor = require("randomcolor");
+const randomColor = require("randomcolor");
 
 export class InnerDesignMap extends FastAbstractInnerDesign {
   needSubtraction = false;
@@ -33,7 +37,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
     invertLatLng: boolean
   ): paper.Point[][] {
     const paths: paper.Point[][] = [];
-    features.map(f => {
+    features.map((f) => {
       if (f.geometry.type === "LineString") {
         paths.push(
           lineStringCoordinatesToPaperLine(
@@ -47,7 +51,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
           paper,
           f.geometry.coordinates,
           invertLatLng
-        ).forEach(l => paths.push(l));
+        ).forEach((l) => paths.push(l));
       } else {
         console.log(`cannot understand ${f.geometry.type}`);
       }
@@ -56,7 +60,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
   }
 
   filterFeatures(features: GeoJSON.Feature[]): GeoJSON.Feature[] {
-    return features.filter(f => {
+    return features.filter((f) => {
       return (
         ["road", "major_road", "minor_road"].includes(f.properties.kind) &&
         f.properties.kind_detail != "service" // these seem to very often be parking lot outlines;
@@ -99,7 +103,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       minlng: centerLng - lngSpan / 2,
       maxlat: centerLat + latSpan / 2,
       maxlng: centerLng + lngSpan / 2,
-      zoom
+      zoom,
     });
 
     const filteredFeatures = this.filterFeatures(features);
@@ -108,8 +112,8 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       filteredFeatures,
       invertLatLng
     );
-    const bufferedPaths: paper.PathItem[] = pointPaths.map(path => {
-      const centerAt = (function(centerAt) {
+    const bufferedPaths: paper.PathItem[] = pointPaths.map((path) => {
+      const centerAt = (function (centerAt) {
         switch (centerAt) {
           case "topLeft":
             return boundaryModel.bounds.topLeft;
@@ -121,7 +125,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       })(params.centerAt);
 
       // translate map coordinates to our coordinate system, center on our center and scale
-      const points = path.map(point => {
+      const points = path.map((point) => {
         return new paper.Point(
           (point.x - centerX) * scaleX,
           // make this second one negative so north is "up" in our coordinate system
@@ -152,25 +156,29 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
     });
 
     // Now union all the buffered lines together
-    const unionedPaths = cascadedUnion(bufferedPaths.filter(b => b != null));
+    const unionedPaths = cascadedUnion(bufferedPaths.filter((b) => b != null));
     // Explode all the compound paths because that way we can isolate the ones that touch the edge
     const explodedUnionedPaths = flattenArrayOfPathItems(paper, unionedPaths);
 
-    const simplifiedPaths = explodedUnionedPaths.map(path => simplifyPath(paper, path, 0.05));
+    const simplifiedPaths = explodedUnionedPaths.map((path) =>
+      simplifyPath(paper, path, 0.05)
+    );
 
     // After unioning, we end up with a set of cuts that will cause the inside of the design to drop out,
     // so we carefully invert it ...
     // find the inside paths, these are good holes
-    const insidePaths = simplifiedPaths.filter(p =>
+    const insidePaths = simplifiedPaths.filter((p) =>
       p.isInside(boundaryModel.bounds)
     );
     // find the paths that touch the edge
     const outsidePaths = explodedUnionedPaths.filter(
-      p => !p.isInside(boundaryModel.bounds)
+      (p) => !p.isInside(boundaryModel.bounds)
     );
     // Invert those
     let invertedPath = boundaryModel;
-    outsidePaths.forEach(path => (invertedPath = invertedPath.subtract(path)));
+    outsidePaths.forEach(
+      (path) => (invertedPath = invertedPath.subtract(path))
+    );
 
     const ret = [invertedPath, ...insidePaths];
 
@@ -183,7 +191,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
         title: "Center",
         text: "111 8th avenue, nyc",
         value: "40.74,-74",
-        name: "center"
+        name: "center",
       }),
       new RangeMetaParameter({
         title: "Scale X",
@@ -191,7 +199,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
         max: 1000,
         value: 500,
         step: 1,
-        name: "scaleX"
+        name: "scaleX",
       }),
       new RangeMetaParameter({
         title: "X/Y ratio",
@@ -199,7 +207,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
         max: 10,
         value: 1.0,
         step: 0.001,
-        name: "xyRatio"
+        name: "xyRatio",
       }),
       new RangeMetaParameter({
         title: "Line Width",
@@ -207,20 +215,20 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
         max: 0.5,
         value: 0.1,
         step: 0.001,
-        name: "lineWidth"
+        name: "lineWidth",
       }),
       new OnOffMetaParameter({
         title: "Invert Lat/Lng",
         value: false,
-        name: "invertLatLng"
+        name: "invertLatLng",
       }),
       new SelectMetaParameter({
         title: "Center At",
         options: ["topLeft", "bottomLeft", "center"],
         value: "center",
         name: "centerAt",
-        help: 'bottomLeft is probably what you want for kaleido mode'
-      })
+        help: "bottomLeft is probably what you want for kaleido mode",
+      }),
     ];
   }
 }

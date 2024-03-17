@@ -6,6 +6,6 @@
  * @property {number} AC - The price of the AC class
  */
 export interface IPrice {
-  sleeper: number
-  AC: number
+  sleeper: number;
+  AC: number;
 }

@@ -1,44 +1,47 @@
-import { RangeMetaParameter, MetaParameter } from '../../meta-parameter';
-import * as _ from 'lodash';
+import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
+import * as _ from "lodash";
 import {
   makeEvenlySpacedBolts,
   BeltHoleRadius,
-  RivetRadius
-} from '../design-utils';
+  RivetRadius,
+} from "../design-utils";
 
-import { PaperModelMaker, CompletedModel, OuterPaperModelMaker } from '../../model-maker';
+import {
+  PaperModelMaker,
+  CompletedModel,
+  OuterPaperModelMaker,
+} from "../../model-maker";
 
 export class StraightCollarOuter extends OuterPaperModelMaker {
   get outerMetaParameters(): MetaParameter<any>[] {
     return [
       new RangeMetaParameter({
-        title: 'Height',
+        title: "Height",
         min: 1,
         max: 5,
         value: 2,
         step: 0.25,
-        name: 'height'
+        name: "height",
       }),
       new RangeMetaParameter({
-        title: 'Neck Size',
+        title: "Neck Size",
         min: 8,
         max: 18,
         value: 13,
         step: 0.1,
-        name: 'neckSize'
-      })
+        name: "neckSize",
+      }),
     ];
   }
 
-  public controlInfo = 'Measure your neck with a sewing tape measure.<br/>If you don\'t have one handy, 13.5 inches is usually a good size for a cis woman, and 15 inches for a cis man. Don\'t worry, this pattern generates extra length.<br/>Note that a straight collar taller than about 2 inches will not be very comfortable.'
+  public controlInfo =
+    "Measure your neck with a sewing tape measure.<br/>If you don't have one handy, 13.5 inches is usually a good size for a cis woman, and 15 inches for a cis man. Don't worry, this pattern generates extra length.<br/>Note that a straight collar taller than about 2 inches will not be very comfortable.";
   constructor(public subModel: any) {
     super();
   }
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
-    let { height, neckSize, debug = false } = options[
-      this.constructor.name
-    ];
+    const { height, neckSize, debug = false } = options[this.constructor.name];
 
     // quarter inch, two bolts
     // quarter inch, two bolts
@@ -72,7 +75,7 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     let outerModel = new paper.Path.Rectangle(
       // @ts-ignore
       new paper.Rectangle(0, 0, totalLength, height),
-      height/2
+      height / 2
     );
 
     let curPos = 0;
@@ -132,7 +135,7 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
         height
       )
     );
-    safeArea.strokeColor = new paper.Color('green');
+    safeArea.strokeColor = new paper.Color("green");
     safeArea.strokeWidth = 0.001;
     // safeArea.remove();
 
@@ -164,9 +167,9 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     }
 
     return new CompletedModel({
-      outer: outerModel, 
+      outer: outerModel,
       holes: allHoles,
-      design: innerDesign.paths
+      design: innerDesign.paths,
     });
   }
 }

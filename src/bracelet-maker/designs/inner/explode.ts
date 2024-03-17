@@ -1,11 +1,8 @@
 import * as _ from "lodash";
 
-import {
-  RangeMetaParameter,
-  MetaParameter
-} from "../../meta-parameter";
+import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
 
-import { AbstractExpandInnerDesign } from './abstract-expand-and-subtract-inner-design'
+import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 import { pickPointOnRectEdge } from "../../utils/paperjs-utils";
 
 export class InnerDesignExplode extends AbstractExpandInnerDesign {
@@ -15,10 +12,14 @@ export class InnerDesignExplode extends AbstractExpandInnerDesign {
     const paths = [];
     const boundaryRect = outerModel.bounds;
 
-    let centers = _.times(numCenters, i => new paper.Point(
-      boundaryRect.x + (boundaryRect.width * ((i + 1) / (numCenters + 1))),
-      boundaryRect.y + (boundaryRect.height * ((i + 1) / (numCenters + 1)))
-    ));
+    const centers = _.times(
+      numCenters,
+      (i) =>
+        new paper.Point(
+          boundaryRect.x + boundaryRect.width * ((i + 1) / (numCenters + 1)),
+          boundaryRect.y + boundaryRect.height * ((i + 1) / (numCenters + 1))
+        )
+    );
 
     // if (numCenters == 1) {
     //   centers = [
@@ -51,7 +52,7 @@ export class InnerDesignExplode extends AbstractExpandInnerDesign {
         max: 100,
         value: 30,
         step: 1,
-        name: "numLines"
+        name: "numLines",
       }),
       new RangeMetaParameter({
         title: "Num Centers",
@@ -59,8 +60,8 @@ export class InnerDesignExplode extends AbstractExpandInnerDesign {
         max: 3,
         value: 1,
         step: 1,
-        name: "numCenters"
-      })
+        name: "numCenters",
+      }),
     ];
   }
 }

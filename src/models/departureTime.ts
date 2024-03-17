@@ -6,7 +6,7 @@
  * @property {number} Seconds - The seconds of the departure time
  */
 export interface IDepartureTime {
-  Hours: number
-  Minutes: number
-  Seconds: number
+  Hours: number;
+  Minutes: number;
+  Seconds: number;
 }

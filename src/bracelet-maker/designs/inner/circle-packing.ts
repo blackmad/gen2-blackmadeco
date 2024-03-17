@@ -1,14 +1,14 @@
 import {
   RangeMetaParameter,
   OnOffMetaParameter,
-  MetaParameter
+  MetaParameter,
 } from "../../meta-parameter";
 import * as _ from "lodash";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import {
   SimpleCircle,
   randomLineOnRectangle,
-  checkCircleCircleIntersection
+  checkCircleCircleIntersection,
 } from "../../utils/paperjs-utils";
 
 export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
@@ -21,7 +21,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
     testCircle: paper.Path.Circle,
     lines: paper.Path.Line[]
   ): boolean {
-    return _.every(lines, l => !testCircle.intersects(l));
+    return _.every(lines, (l) => !testCircle.intersects(l));
   }
 
   circleDoesntTouchCircles(
@@ -31,7 +31,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
   ): boolean {
     return _.every(
       circles,
-      c => !checkCircleCircleIntersection(c, testCircle, borderSize)
+      (c) => !checkCircleCircleIntersection(c, testCircle, borderSize)
     );
   }
 
@@ -43,14 +43,14 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
   }
 
   makeDesign(paper, params) {
-    let {
+    const {
       height = 2,
       width = 10,
       boundaryModel,
       minCircleSize,
       maxCircleSize,
       borderSize,
-      numLines
+      numLines,
     } = params;
 
     const goingOutside =
@@ -74,7 +74,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
     const simpleCircles: SimpleCircle[] = [];
     const outline: paper.Path.Circle[] = [];
 
-    var radius = maxCircleSize;
+    let radius = maxCircleSize;
 
     const lines = _.times(numLines, () => {
       return randomLineOnRectangle(paper, boundaryRect, this.rng);
@@ -114,7 +114,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
 
     return Promise.resolve({
       paths: circles,
-      outlinePaths: outline
+      outlinePaths: outline,
     });
   }
 
@@ -126,7 +126,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         max: 0.25,
         value: 0.1,
         step: 0.01,
-        name: "borderSize"
+        name: "borderSize",
       }),
 
       new RangeMetaParameter({
@@ -135,7 +135,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         max: 0.4,
         value: 0.1,
         step: 0.01,
-        name: "outlineSize"
+        name: "outlineSize",
       }),
       new RangeMetaParameter({
         title: "Min Circle Size",
@@ -143,7 +143,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         max: 2.0,
         value: 0.02,
         step: 0.01,
-        name: "minCircleSize"
+        name: "minCircleSize",
       }),
       new RangeMetaParameter({
         title: "Max Circle Size",
@@ -151,7 +151,7 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         max: 3.0,
         value: 0.75,
         step: 0.01,
-        name: "maxCircleSize"
+        name: "maxCircleSize",
       }),
       new RangeMetaParameter({
         title: "Num Invisible Lines",
@@ -159,13 +159,13 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         max: 10,
         value: 1,
         step: 1,
-        name: "numLines"
+        name: "numLines",
       }),
       new OnOffMetaParameter({
         title: "ConstrainCircles",
         value: false,
-        name: "constrainCircles"
-      })
+        name: "constrainCircles",
+      }),
     ];
   }
 }

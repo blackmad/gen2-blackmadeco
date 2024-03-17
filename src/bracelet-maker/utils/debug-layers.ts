@@ -1,4 +1,4 @@
-import randomColor from 'randomcolor';
+import randomColor from "randomcolor";
 
 const debugLayers = {};
 const debugLayerNames = [];

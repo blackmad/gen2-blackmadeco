@@ -1,7 +1,7 @@
 import {
   OnOffMetaParameter,
   MetaParameter,
-  RangeMetaParameter
+  RangeMetaParameter,
 } from "../../meta-parameter";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
@@ -18,17 +18,17 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
       borderSize,
       yOffset,
       colOffset,
-      rowOffset
+      rowOffset,
     } = params;
 
     const cols = boundaryModel.bounds.width / shapeWidth;
     const rows = boundaryModel.bounds.height / shapeHeight + 1;
 
-    let paths: paper.PathItem[] = [];
+    const paths: paper.PathItem[] = [];
     let totalPath = null;
 
-    for (var r = 0; r < rows; r++) {
-      for (var c = 0; c <= cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c <= cols; c++) {
         const center = new paper.Point(
           (r % 2) * rowOffset * shapeWidth +
             boundaryModel.bounds.x +
@@ -62,7 +62,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
           innerCircle.scale(1, shapeWidth / shapeHeight);
 
           const finalCircle = possibleCircle.subtract(innerCircle, {
-            insert: false
+            insert: false,
           });
           if (totalPath == null) {
             totalPath = finalCircle;
@@ -77,7 +77,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
     //   return [totalPath]
     // } else {
     return Promise.resolve({
-      paths: [boundaryModel.subtract(totalPath, { insert: false })]
+      paths: [boundaryModel.subtract(totalPath, { insert: false })],
     });
     // }
   }
@@ -90,7 +90,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 0.25,
         value: 0.04,
         step: 0.01,
-        name: "borderSize"
+        name: "borderSize",
       }),
       new RangeMetaParameter({
         title: "Shape Width",
@@ -98,7 +98,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 2.0,
         value: 0.5,
         step: 0.01,
-        name: "shapeWidth"
+        name: "shapeWidth",
       }),
       new RangeMetaParameter({
         title: "Shape Height",
@@ -106,7 +106,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 3.0,
         value: 0.5,
         step: 0.01,
-        name: "shapeHeight"
+        name: "shapeHeight",
       }),
       new RangeMetaParameter({
         title: "Y Offset",
@@ -114,7 +114,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 3.0,
         value: 0.0,
         step: 0.01,
-        name: "yOffset"
+        name: "yOffset",
       }),
       new RangeMetaParameter({
         title: "Row Offset",
@@ -122,7 +122,7 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.5,
         step: 0.01,
-        name: "rowOffset"
+        name: "rowOffset",
       }),
       new RangeMetaParameter({
         title: "Col Offset",
@@ -130,8 +130,8 @@ export class InnerDesignLattice extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.0,
         step: 0.01,
-        name: "colOffset"
-      })
+        name: "colOffset",
+      }),
       // new OnOffMetaParameter({
       //   title: "Invert",
       //   value: false,

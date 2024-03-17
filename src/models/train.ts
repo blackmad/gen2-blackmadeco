@@ -1,6 +1,6 @@
-import { IDepartureTime } from './departureTime'
-import { ISeatsAvailable } from './seatsAvailable'
-import { IPrice } from './price'
+import { IDepartureTime } from "./departureTime";
+import { ISeatsAvailable } from "./seatsAvailable";
+import { IPrice } from "./price";
 
 /**
  * @description Interface for Train
@@ -13,10 +13,10 @@ import { IPrice } from './price'
  * @property {number} delayedBy - The delay of the train in minutes
  */
 export interface ITrain {
-  trainName: string
-  trainNumber: string
-  departureTime: IDepartureTime
-  seatsAvailable: ISeatsAvailable
-  price: IPrice
-  delayedBy: number
+  trainName: string;
+  trainNumber: string;
+  departureTime: IDepartureTime;
+  seatsAvailable: ISeatsAvailable;
+  price: IPrice;
+  delayedBy: number;
 }

@@ -114,7 +114,7 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
   }
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
-    let {
+    const {
       wristCircumference: originalWristCircumference,
       forearmCircumference: originalForearmCircumference,
     } = options.StraightCuffOuter;

@@ -1,7 +1,7 @@
-import { makeConicSection } from './conic-section';
-import { RangeMetaParameter } from '../../meta-parameter';
-import { CompletedModel, OuterPaperModelMaker } from '../../model-maker';
-import { makeEvenlySpacedBolts } from '../design-utils';
+import { makeConicSection } from "./conic-section";
+import { RangeMetaParameter } from "../../meta-parameter";
+import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
+import { makeEvenlySpacedBolts } from "../design-utils";
 
 export class ConicCuffOuter extends OuterPaperModelMaker {
   public controlInfo = `Measure your wrist with a sewing measuring tape. I suggest measuring pretty tight, this pattern adds some length.<br/>
@@ -11,7 +11,12 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
     super();
   }
 
-  public addRivetHoles(paper: paper.PaperScope, height, cuffModel, cuffModelInner): paper.Path[] {
+  public addRivetHoles(
+    paper: paper.PaperScope,
+    height,
+    cuffModel,
+    cuffModelInner
+  ): paper.Path[] {
     /***** START RIVET HOLES *****/
     const boltGuideLine1P1 = new paper.Point(
       cuffModel.shortRadius * Math.cos(cuffModelInner.widthOffset.radians / 2),
@@ -73,16 +78,15 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
   }
 
   public async make(paper: paper.PaperScope, options) {
-    const {
-      height,
-      wristCircumference,
-      safeBorderWidth
-    } = options.ConicCuffOuter;
+    const { height, wristCircumference, safeBorderWidth } =
+      options.ConicCuffOuter;
 
     let { forearmCircumference } = options.ConicCuffOuter;
 
     if (wristCircumference > forearmCircumference) {
-      throw new Error(`wristCircumference ${wristCircumference} must be less than forearmCircumference ${forearmCircumference}`);
+      throw new Error(
+        `wristCircumference ${wristCircumference} must be less than forearmCircumference ${forearmCircumference}`
+      );
     }
 
     if (forearmCircumference - wristCircumference < 0.05) {
@@ -96,7 +100,7 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
       topCircumference: wristCircumference + 1.0,
       bottomCircumference: forearmCircumference + 1.0,
       height,
-      filletRadius: 0.2
+      filletRadius: 0.2,
     });
 
     const cuffModelInner = makeConicSection({
@@ -105,7 +109,7 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
       bottomCircumference: forearmCircumference + 1.0,
       height,
       widthOffset: 1.1,
-      heightOffset: safeBorderWidth
+      heightOffset: safeBorderWidth,
     });
 
     const rivetHoles = this.addRivetHoles(
@@ -116,9 +120,13 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
     );
 
     const tmpCuffModel = new paper.CompoundPath({
-      children: [cuffModel.model, cuffModelInner.model, ...rivetHoles]
+      children: [cuffModel.model, cuffModelInner.model, ...rivetHoles],
     });
-    this.rotateConicSectionToZeroZero(paper, tmpCuffModel, cuffModel.alpha.degrees);
+    this.rotateConicSectionToZeroZero(
+      paper,
+      tmpCuffModel,
+      cuffModel.alpha.degrees
+    );
 
     /***** START DESIGN *****/
     // Now make the design and clamp it to the inner/safe arc we built
@@ -176,38 +184,38 @@ export class ConicCuffOuter extends OuterPaperModelMaker {
     /***** END DESIGN *****/
 
     return new CompletedModel({
-      outer: cuffModel.model, 
+      outer: cuffModel.model,
       holes: rivetHoles,
-      design: innerDesign.paths
-    })
+      design: innerDesign.paths,
+    });
   }
 
   get outerMetaParameters() {
     return [
       new RangeMetaParameter({
-        title: 'Height',
+        title: "Height",
         min: 1,
         max: 5,
         value: 2,
         step: 0.25,
-        name: 'height'
+        name: "height",
       }),
       new RangeMetaParameter({
-        title: 'Wrist Circumference',
+        title: "Wrist Circumference",
         min: 4,
         max: 10,
         value: 7,
         step: 0.1,
-        name: 'wristCircumference'
+        name: "wristCircumference",
       }),
       new RangeMetaParameter({
-        title: 'Wide Wrist Circumference',
+        title: "Wide Wrist Circumference",
         min: 4,
         max: 10,
         value: 7.4,
         step: 0.1,
-        name: 'forearmCircumference'
-      })
+        name: "forearmCircumference",
+      }),
     ];
   }
 }

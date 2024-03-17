@@ -1,5 +1,5 @@
 import { makeSVGData } from "../utils/paperjs-export-utils";
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
 import {
   OuterPaperModelMaker,
@@ -18,22 +18,23 @@ export async function demoDesign(
   minimumAreaRatio: number = 0.0,
   numMetaParametersToChange: number = 1000
 ) {
-  const params = {...initialParams};
+  const params = { ...initialParams };
 
-  _.shuffle(designClass.metaParameters).slice(0, numMetaParametersToChange).forEach(
-    (metaParam) => {
+  _.shuffle(designClass.metaParameters)
+    .slice(0, numMetaParametersToChange)
+    .forEach((metaParam) => {
       if (shouldRandomize) {
         params[metaParam.name] = metaParam.getRandomValue();
       } else {
-        params[metaParam.name] = metaParam.value
+        params[metaParam.name] = metaParam.value;
       }
-  });
+    });
 
   (params as any).breakThePlane = false;
 
-  params['seed'] = shouldRandomize ? params['seed']: 1;
+  params["seed"] = shouldRandomize ? params["seed"] : 1;
 
-  const inputParams = {...params};
+  const inputParams = { ...params };
 
   params[designClass.constructor.name] = params;
 
@@ -44,7 +45,7 @@ export async function demoDesign(
   params["outerModel"] = outerRect;
   params["safeCone"] = boundaryRect;
 
-  let innerDesign = await designClass.make(paper, params);
+  const innerDesign = await designClass.make(paper, params);
 
   let paths: paper.PathItem[] = [];
   if (innerDesign instanceof CompletedModel) {
@@ -69,16 +70,16 @@ export async function demoDesign(
   const outerArea = outerRect.area;
   const innerArea = path.area;
 
-  console.log({outerArea, innerArea}, innerArea/outerArea);
+  console.log({ outerArea, innerArea }, innerArea / outerArea);
 
   let svg;
-  if ((innerArea/outerArea) > minimumAreaRatio) {
+  if (innerArea / outerArea > minimumAreaRatio) {
     paper.project.activeLayer.addChild(path);
     svg = makeSVGData(paper, paper.project, false, elHydrator);
   }
 
   return {
     svg,
-    params: inputParams
-  }
+    params: inputParams,
+  };
 }

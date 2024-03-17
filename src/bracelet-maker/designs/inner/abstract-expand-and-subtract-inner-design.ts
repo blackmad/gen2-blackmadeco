@@ -1,13 +1,16 @@
-import * as _ from 'lodash';
+import * as _ from "lodash";
 
-import { RangeMetaParameter, MetaParameter, OnOffMetaParameter } from '../../meta-parameter';
-import { FastAbstractInnerDesign } from './fast-abstract-inner-design';
-import { paperRectToPoints, polygonize } from '../../utils/paperjs-utils';
-
+import {
+  RangeMetaParameter,
+  MetaParameter,
+  OnOffMetaParameter,
+} from "../../meta-parameter";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+import { paperRectToPoints, polygonize } from "../../utils/paperjs-utils";
 
 function slope(a, b) {
   if (a.x == b.x) {
-      return null;
+    return null;
   }
 
   return (b.y - a.y) / (b.x - a.x);
@@ -15,16 +18,14 @@ function slope(a, b) {
 
 function yIntercept(point, slope) {
   if (slope === null) {
-      // vertical line
-      return point.x;
+    // vertical line
+    return point.x;
   }
 
   return point.y - slope * point.x;
 }
 
-export abstract class AbstractExpandInnerDesign
-  extends FastAbstractInnerDesign {
-
+export abstract class AbstractExpandInnerDesign extends FastAbstractInnerDesign {
   get designMetaParameters(): MetaParameter<any>[] {
     return [
       new RangeMetaParameter({
@@ -33,18 +34,21 @@ export abstract class AbstractExpandInnerDesign
         max: 0.5,
         value: 0.1,
         step: 0.001,
-        name: "lineWidth"
+        name: "lineWidth",
       }),
-      ...this.pathDesignMetaParameters
+      ...this.pathDesignMetaParameters,
     ];
   }
-  abstract pathDesignMetaParameters: MetaParameter<any>[]
+  abstract pathDesignMetaParameters: MetaParameter<any>[];
 
   abstract makePaths(scope: paper.PaperScope, params): Promise<paper.Point[][]>;
-  
-  async makeDesign(paper: paper.PaperScope, params): Promise<{paths: paper.PathItem[]}> {
+
+  async makeDesign(
+    paper: paper.PaperScope,
+    params
+  ): Promise<{ paths: paper.PathItem[] }> {
     const lines = await this.makePaths(paper, params);
     // lines.push(paperRectToPoints(params.boundaryModel.bounds));
-    return {paths: polygonize(paper, lines, -params.lineWidth/2)};
+    return { paths: polygonize(paper, lines, -params.lineWidth / 2) };
   }
 }

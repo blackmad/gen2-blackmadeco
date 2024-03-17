@@ -3,10 +3,14 @@ import * as _ from "lodash";
 import {
   MetaParameter,
   RangeMetaParameter,
-  OnOffMetaParameter
+  OnOffMetaParameter,
 } from "../../../meta-parameter";
 import { FastAbstractInnerDesign } from "../fast-abstract-inner-design";
-import { bufferPath, bufferPoints, bufferPointstoPathItem } from "../../../utils/paperjs-utils";
+import {
+  bufferPath,
+  bufferPoints,
+  bufferPointstoPathItem,
+} from "../../../utils/paperjs-utils";
 import { cascadedUnion } from "../../../utils/cascaded-union";
 import { addToDebugLayer } from "../../../utils/debug-layers";
 
@@ -23,35 +27,42 @@ export class KaleidoscopeMaker {
   boundarySegment: paper.PathItem;
   segmentAngleDegrees: number;
 
-  constructor(paper: paper.PaperScope, params: {
-    segments: number;
-    kaleido: boolean;
-    segmentBuffer: number;
-    debug: boolean;
-    boundaryModel: paper.Path;
-  }) {
+  constructor(
+    paper: paper.PaperScope,
+    params: {
+      segments: number;
+      kaleido: boolean;
+      segmentBuffer: number;
+      debug: boolean;
+      boundaryModel: paper.Path;
+    }
+  ) {
     this.paper = paper;
     this.segments = params.segments;
     this.kaleido = params.kaleido;
     this.segmentBuffer = params.segmentBuffer;
     this.debug = params.debug;
     this.boundaryModel = params.boundaryModel;
-    
+
     if (this.segmentBuffer > 0) {
-      this.boundaryModel = bufferPath(paper, this.segmentBuffer, params.boundaryModel);
+      this.boundaryModel = bufferPath(
+        paper,
+        this.segmentBuffer,
+        params.boundaryModel
+      );
     }
 
     this.segmentAngleDegrees = 360 / this.segments;
     this.boundarySegment = this.makeBoundarySegment();
   }
 
-  public getBoundarySegment() { 
+  public getBoundarySegment() {
     return this.boundarySegment;
   }
 
   private makeBoundarySegment(): paper.PathItem {
     const paper = this.paper;
-    
+
     const boundarySegmentDistance = Math.max(
       this.boundaryModel.bounds.width / 2,
       this.boundaryModel.bounds.height / 2
@@ -59,7 +70,7 @@ export class KaleidoscopeMaker {
 
     // draw reflection axes
     if (this.debug) {
-      for (var i = 0; i < this.segments; ++i) {
+      for (let i = 0; i < this.segments; ++i) {
         const line = new paper.Path.Line(
           this.boundaryModel.bounds.center,
           new paper.Point(
@@ -68,7 +79,10 @@ export class KaleidoscopeMaker {
           )
         );
 
-        line.rotate(this.segmentAngleDegrees * i, this.boundaryModel.bounds.center);
+        line.rotate(
+          this.segmentAngleDegrees * i,
+          this.boundaryModel.bounds.center
+        );
 
         addToDebugLayer(paper, "axes", line);
       }
@@ -80,22 +94,29 @@ export class KaleidoscopeMaker {
     ).rotate(this.segmentAngleDegrees, this.boundaryModel.bounds.center);
     let segmentPoints = [
       this.boundaryModel.bounds.center,
-      new paper.Point(this.boundaryModel.bounds.center.x, -boundarySegmentDistance),
-      p3
+      new paper.Point(
+        this.boundaryModel.bounds.center.x,
+        -boundarySegmentDistance
+      ),
+      p3,
     ];
-    let boundarySegment: paper.PathItem = new paper.Path(segmentPoints);  
-    
+    let boundarySegment: paper.PathItem = new paper.Path(segmentPoints);
+
     if (this.segments == 2) {
       const halfRectangle = new paper.Path.Rectangle(
         this.boundaryModel.bounds.topCenter,
         this.boundaryModel.bounds.bottomRight
       );
       boundarySegment = halfRectangle;
-      segmentPoints = halfRectangle.segments.map(s => s.point);
+      segmentPoints = halfRectangle.segments.map((s) => s.point);
     }
 
     if (this.segmentBuffer > 0) {
-      boundarySegment = bufferPointstoPathItem(paper, -this.segmentBuffer, segmentPoints);
+      boundarySegment = bufferPointstoPathItem(
+        paper,
+        -this.segmentBuffer,
+        segmentPoints
+      );
     }
 
     boundarySegment.closePath();
@@ -110,12 +131,12 @@ export class KaleidoscopeMaker {
   public reflectPaths(_paths: paper.PathItem[]): paper.PathItem[] {
     if (this.debug) {
       _paths.forEach((path) =>
-        addToDebugLayer(this.paper, 'segmentPaths', path.clone())
+        addToDebugLayer(this.paper, "segmentPaths", path.clone())
       );
     }
 
     const clippedPaths = [];
-    _paths.forEach(path => {
+    _paths.forEach((path) => {
       const clippedPath = path.intersect(this.boundarySegment);
       clippedPaths.push(clippedPath);
     });
@@ -123,15 +144,21 @@ export class KaleidoscopeMaker {
     const finalPaths = [];
     for (let s = 0; s < this.segments; s++) {
       clippedPaths.forEach((p: paper.Path) => {
-        let newPath: paper.Path = p.clone() as paper.Path;
-        newPath.rotate(s * this.segmentAngleDegrees, this.boundaryModel.bounds.center);
+        const newPath: paper.Path = p.clone() as paper.Path;
+        newPath.rotate(
+          s * this.segmentAngleDegrees,
+          this.boundaryModel.bounds.center
+        );
 
         if (this.kaleido) {
           if (this.segments % 2 === 0 && s % 2 !== 0) {
             newPath.scale(1, -1, this.boundaryModel.bounds.center);
 
             if (this.segments % 4 === 0) {
-              newPath.rotate(this.segmentAngleDegrees, this.boundaryModel.bounds.center);
+              newPath.rotate(
+                this.segmentAngleDegrees,
+                this.boundaryModel.bounds.center
+              );
             }
           }
 
@@ -141,7 +168,7 @@ export class KaleidoscopeMaker {
         }
 
         // if (newPath.intersects(this.boundaryModel) || newPath.isInside(this.boundaryModel.bounds)) {
-          finalPaths.push(newPath);
+        finalPaths.push(newPath);
         // }
       });
     }
@@ -157,7 +184,7 @@ export class KaleidoscopeMaker {
     return [
       new OnOffMetaParameter({
         title: "kaleidoscope",
-        help: 'This should really only be false if segment buffer > 0',
+        help: "This should really only be false if segment buffer > 0",
         value: true,
         name: "kaleido",
         group: "Kaleidoscope",
@@ -183,7 +210,7 @@ export class KaleidoscopeMaker {
         group: "Kaleidoscope",
         randMin: 1,
         randMax: 12,
-      })
+      }),
     ];
   }
 }

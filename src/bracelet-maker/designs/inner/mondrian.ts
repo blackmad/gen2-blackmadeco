@@ -1,10 +1,7 @@
-import {
-  RangeMetaParameter,
-  MetaParameter
-} from "../../meta-parameter";
+import { RangeMetaParameter, MetaParameter } from "../../meta-parameter";
 import * as _ from "lodash";
 
-import { FastAbstractInnerDesign } from './fast-abstract-inner-design';
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignMondrian extends FastAbstractInnerDesign {
   rects: any[] = [];
@@ -23,20 +20,19 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
   splitRect(lo, hi, depth = 0) {
     const self = this;
     function makeThisRect() {
-      const rect = 
-        new self.paper.Path.Rectangle(
-            new self.paper.Rectangle(
-              lo[0] + self.borderSize / 2, 
-              lo[1] + self.borderSize / 2,
-              hi[0] - lo[0] - self.borderSize,
-              hi[1] - lo[1] - self.borderSize
-          )
+      const rect = new self.paper.Path.Rectangle(
+        new self.paper.Rectangle(
+          lo[0] + self.borderSize / 2,
+          lo[1] + self.borderSize / 2,
+          hi[0] - lo[0] - self.borderSize,
+          hi[1] - lo[1] - self.borderSize
         )
-        
+      );
+
       self.rects.push(rect);
     }
 
-    const randNum = this.rng()
+    const randNum = this.rng();
     if (depth > this.maxDepth || randNum > this.splitChance) {
       makeThisRect();
       return;
@@ -46,16 +42,15 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
     const splitPercent = this.rng() * 0.6 + 0.2;
 
     if (splitX) {
-      const splitSize = (hi[0] - lo[0]) * splitPercent
+      const splitSize = (hi[0] - lo[0]) * splitPercent;
 
-      let smallX = (hi[0] - lo[0]) * splitPercent
+      let smallX = (hi[0] - lo[0]) * splitPercent;
 
       if (splitPercent > 0.5) {
-        smallX = (hi[0] - lo[0]) * (1.0 - splitPercent)
+        smallX = (hi[0] - lo[0]) * (1.0 - splitPercent);
       }
-     
 
-      if ((smallX - this.borderSize*2) < this.minCellSize) {
+      if (smallX - this.borderSize * 2 < this.minCellSize) {
         makeThisRect();
         return;
       }
@@ -65,12 +60,12 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
     } else {
       const splitSize = splitPercent * (hi[1] - lo[1]);
 
-      let smallY = (hi[1] - lo[1]) * splitPercent
+      let smallY = (hi[1] - lo[1]) * splitPercent;
       if (splitPercent > 0.5) {
-        smallY = (hi[1] - lo[1]) * (1.0 - splitPercent)
+        smallY = (hi[1] - lo[1]) * (1.0 - splitPercent);
       }
 
-      if ((smallY - this.borderSize*2) < this.minCellSize) {
+      if (smallY - this.borderSize * 2 < this.minCellSize) {
         makeThisRect();
         return;
       }
@@ -87,7 +82,7 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
       maxDepth,
       splitChance,
       xyBias,
-      minCellSize
+      minCellSize,
     } = params;
 
     this.paper = paper;
@@ -101,12 +96,18 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
     this.minCellSize = minCellSize;
 
     this.splitRect(
-      [boundaryModel.bounds.topLeft.x - borderSize/2, boundaryModel.bounds.topLeft.y  - borderSize/2],
-      [boundaryModel.bounds.bottomRight.x  + borderSize/2, boundaryModel.bounds.bottomRight.y + borderSize/2],
+      [
+        boundaryModel.bounds.topLeft.x - borderSize / 2,
+        boundaryModel.bounds.topLeft.y - borderSize / 2,
+      ],
+      [
+        boundaryModel.bounds.bottomRight.x + borderSize / 2,
+        boundaryModel.bounds.bottomRight.y + borderSize / 2,
+      ],
       0
-    )
+    );
 
-    return Promise.resolve({paths: this.rects});
+    return Promise.resolve({ paths: this.rects });
   }
 
   get designMetaParameters() {
@@ -117,7 +118,7 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
         max: 0.5,
         value: 0.15,
         step: 0.01,
-        name: "borderSize"
+        name: "borderSize",
       }),
       new RangeMetaParameter({
         title: "Max Depth",
@@ -125,7 +126,7 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
         max: 10,
         value: 4,
         step: 1,
-        name: "maxDepth"
+        name: "maxDepth",
       }),
       new RangeMetaParameter({
         title: "Split Chance",
@@ -133,7 +134,7 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.99,
         step: 0.01,
-        name: "splitChance"
+        name: "splitChance",
       }),
       new RangeMetaParameter({
         title: "X/Y Bias",
@@ -141,7 +142,7 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
         max: 1.0,
         value: 0.5,
         step: 0.01,
-        name: "xyBias"
+        name: "xyBias",
       }),
       new RangeMetaParameter({
         title: "Min Cell Size",
@@ -149,8 +150,8 @@ export class InnerDesignMondrian extends FastAbstractInnerDesign {
         max: 1,
         value: 0.1,
         step: 0.01,
-        name: "minCellSize"
-      })
+        name: "minCellSize",
+      }),
     ];
   }
 }

@@ -1,17 +1,16 @@
-
 // why so broken: https://127.0.0.1:4501/static/#StraightCuffOuter.debug=false&StraightCuffOuter.height=2&StraightCuffOuter.wristCircumference=7&StraightCuffOuter.safeBorderWidth=0.22&StraightCuffOuter.forearmCircumference=7.4&InnerDesignVera.debug=false&InnerDesignVera.seed=8148&InnerDesignVera.shapeSize1=0.26&InnerDesignVera.shapeSize2=0.26&InnerDesignVera.bufferWidth=0.1&InnerDesignVera.xNoiseCoefficient=0.01&InnerDesignVera.yNoiseCoefficient=0.01&InnerDesignVera.xScaleNoiseCoefficient=0.01&InnerDesignVera.yScaleNoiseCoefficient=0.01&InnerDesignVera.minScale=0.5&InnerDesignVera.maxScale=1.25&InnerDesignVera.shapeName=Rectangle&InnerDesignVera.constrainShapes=false&InnerDesignVera.forceContainment=false&InnerDesignVera.outlineSize=0.1&InnerDesignVera.boundaryDilation=0.22
 
-import { ShapeMaker } from './utils/shape-maker';
+import { ShapeMaker } from "./utils/shape-maker";
 
-import { SimplexNoiseUtils } from '../../utils/simplex-noise-utils';
+import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
 import {
   MetaParameter,
   OnOffMetaParameter,
   RangeMetaParameter,
-  SelectMetaParameter
-} from '../../meta-parameter';
-import { FastAbstractInnerDesign } from './fast-abstract-inner-design';
-import * as _ from 'lodash';
+  SelectMetaParameter,
+} from "../../meta-parameter";
+import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+import * as _ from "lodash";
 
 export class InnerDesignVera extends FastAbstractInnerDesign {
   allowOutline = true;
@@ -31,7 +30,7 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
       maxScale,
       shapeName,
       constrainShapes,
-      boundaryModel
+      boundaryModel,
     } = params;
 
     let models = [];
@@ -43,9 +42,14 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
 
     function makeRow(c) {
       const rowModels = [];
-      for (var r = 0; r < rows; r++) {  
-        var path = ShapeMaker.makeShape(paper, shapeName, shapeSize1, shapeSize2)
-  
+      for (let r = 0; r < rows; r++) {
+        const path = ShapeMaker.makeShape(
+          paper,
+          shapeName,
+          shapeSize1,
+          shapeSize2
+        );
+
         path.rotate(
           SimplexNoiseUtils.noise2DInRange(
             this.simplex,
@@ -56,7 +60,7 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
           ),
           new paper.Point(shapeSize1 / 2, shapeSize2 / 2)
         );
-  
+
         path.scale(
           SimplexNoiseUtils.noise2DInRange(
             this.simplex,
@@ -66,7 +70,7 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
             maxScale
           )
         );
-  
+
         path.translate(
           new paper.Point(
             r * gridCellSizeX +
@@ -90,98 +94,98 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
         path.translate(boundaryModel.bounds.topLeft);
         rowModels.push(path);
       }
-      return rowModels
+      return rowModels;
     }
 
-    for (var c = 0; c < cols; c++) {
+    for (let c = 0; c < cols; c++) {
       const rowModels = _.bind(makeRow, this)(c);
       models = models.concat(rowModels);
     }
 
-    return Promise.resolve({paths: models}); 
+    return Promise.resolve({ paths: models });
   }
 
   get designMetaParameters(): Array<MetaParameter<any>> {
     return [
       new SelectMetaParameter({
-        title: 'Shape',
+        title: "Shape",
         options: ShapeMaker.modelNames,
-        name: 'shapeName',
-        value: 'Rectangle'
+        name: "shapeName",
+        value: "Rectangle",
       }),
       new RangeMetaParameter({
-        title: 'Shape Width',
+        title: "Shape Width",
         min: 0.02,
         max: 2.0,
         value: 0.2,
         step: 0.01,
-        name: 'shapeSize1'
+        name: "shapeSize1",
       }),
       new RangeMetaParameter({
-        title: 'Shape Height',
+        title: "Shape Height",
         min: 0.02,
         max: 2.0,
         value: 0.2,
         step: 0.01,
-        name: 'shapeSize2'
+        name: "shapeSize2",
       }),
 
       new RangeMetaParameter({
-        title: 'Border Size (in)',
+        title: "Border Size (in)",
         min: 0.1,
         max: 0.75,
         value: 0.1,
         step: 0.01,
-        name: 'bufferWidth'
+        name: "bufferWidth",
       }),
       new RangeMetaParameter({
-        title: 'X Noise Coefficient',
+        title: "X Noise Coefficient",
         min: 0.0,
         max: 0.2,
         step: 0.001,
         value: 0.01,
-        name: 'xNoiseCoefficient'
+        name: "xNoiseCoefficient",
       }),
       new RangeMetaParameter({
-        title: 'Y Noise Coefficient',
+        title: "Y Noise Coefficient",
         min: 0.0,
         max: 0.2,
         step: 0.001,
         value: 0.01,
-        name: 'yNoiseCoefficient'
+        name: "yNoiseCoefficient",
       }),
       new RangeMetaParameter({
-        title: 'X Scale Noise Coefficient',
+        title: "X Scale Noise Coefficient",
         min: 0.0,
         max: 0.2,
         step: 0.001,
         value: 0.01,
-        name: 'xScaleNoiseCoefficient'
+        name: "xScaleNoiseCoefficient",
       }),
       new RangeMetaParameter({
-        title: 'Y Scale Noise Coefficient',
+        title: "Y Scale Noise Coefficient",
         min: 0.0,
         max: 0.2,
         step: 0.001,
         value: 0.01,
-        name: 'yScaleNoiseCoefficient'
+        name: "yScaleNoiseCoefficient",
       }),
 
       new RangeMetaParameter({
-        title: 'Min scaling',
+        title: "Min scaling",
         min: 0.1,
         max: 1.0,
         value: 0.5,
         step: 0.01,
-        name: 'minScale'
+        name: "minScale",
       }),
       new RangeMetaParameter({
-        title: 'Max scaling',
+        title: "Max scaling",
         min: 1.0,
         max: 1.5,
         value: 1.25,
         step: 0.01,
-        name: 'maxScale'
+        name: "maxScale",
       }),
       // new OnOffMetaParameter({
       //   title: 'constrainShapes',

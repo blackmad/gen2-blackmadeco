@@ -1,7 +1,6 @@
 import concaveman from "concaveman";
 import { addToDebugLayer } from "./debug-layers";
-import { simplifyPath, unkinkPath } from './paperjs-utils';
-
+import { simplifyPath, unkinkPath } from "./paperjs-utils";
 
 export function makeConcaveOutline({
   paper,
@@ -26,7 +25,7 @@ export function makeConcaveOutline({
   }
 
   paths.forEach((path: paper.Path) => {
-    path.segments.forEach(s => addPoint(s.point));
+    path.segments.forEach((s) => addPoint(s.point));
     for (let offset = 0; offset < 1; offset += 0.025) {
       addPoint(path.getPointAt(path.length * offset));
     }
@@ -34,15 +33,20 @@ export function makeConcaveOutline({
 
   const minimumOutlinePath = new paper.Path.Rectangle(minimumOutline);
   for (let offset = 0; offset < 1; offset += 0.025) {
-    addPoint(minimumOutlinePath.getPointAt(minimumOutlinePath.length * offset), true);
+    addPoint(
+      minimumOutlinePath.getPointAt(minimumOutlinePath.length * offset),
+      true
+    );
   }
 
   const concaveHull = concaveman(allPoints, concavity, lengthThreshold);
-  const concavePath = new paper.Path(concaveHull.map(p => new paper.Point(p[0], p[1])));
+  const concavePath = new paper.Path(
+    concaveHull.map((p) => new paper.Point(p[0], p[1]))
+  );
   addToDebugLayer(paper, "concavePath", concavePath.clone());
   const unkinkedConcavePath = unkinkPath(paper, concavePath);
 
-  const simplifedPath =  simplifyPath(paper, unkinkedConcavePath, 0.01);
+  const simplifedPath = simplifyPath(paper, unkinkedConcavePath, 0.01);
 
   return unkinkedConcavePath;
 }

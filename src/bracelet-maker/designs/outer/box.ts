@@ -13,7 +13,7 @@ export class BoxOuter extends OuterPaperModelMaker {
         max: 20,
         value: 3,
         step: 0.01,
-        name: "height"
+        name: "height",
       }),
       new RangeMetaParameter({
         title: "TopWidth",
@@ -21,7 +21,7 @@ export class BoxOuter extends OuterPaperModelMaker {
         max: 20,
         value: 3,
         step: 0.01,
-        name: "topWidth"
+        name: "topWidth",
       }),
       new RangeMetaParameter({
         title: "Bottom Width",
@@ -29,16 +29,16 @@ export class BoxOuter extends OuterPaperModelMaker {
         max: 20,
         value: 3,
         step: 0.01,
-        name: "bottomWidth"
+        name: "bottomWidth",
       }),
       new RangeMetaParameter({
         title: "Smoothing Factor",
-        min: 0.00,
+        min: 0.0,
         max: 1.0,
         value: 0.0,
         step: 0.01,
-        name: "smoothingFactor"
-      })
+        name: "smoothingFactor",
+      }),
     ];
   }
 
@@ -49,31 +49,43 @@ export class BoxOuter extends OuterPaperModelMaker {
   public controlInfo = "It's a box";
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
-    let { height, topWidth, bottomWidth, debug = false, smoothingFactor } = options[
-      this.constructor.name
-    ];
+    const {
+      height,
+      topWidth,
+      bottomWidth,
+      debug = false,
+      smoothingFactor,
+    } = options[this.constructor.name];
 
     let outerModel: paper.Path = new paper.Path();
 
     if (topWidth >= bottomWidth) {
       outerModel.add(new paper.Point(0, 0));
       outerModel.add(new paper.Point((topWidth - bottomWidth) / 2, height));
-      outerModel.add(new paper.Point((topWidth - bottomWidth) / 2 + bottomWidth, height));
+      outerModel.add(
+        new paper.Point((topWidth - bottomWidth) / 2 + bottomWidth, height)
+      );
       outerModel.add(new paper.Point(topWidth, 0));
       outerModel.closePath();
     } else {
       outerModel.add(new paper.Point((bottomWidth - topWidth) / 2, 0));
       outerModel.add(new paper.Point(0, height));
       outerModel.add(new paper.Point(bottomWidth, height));
-      outerModel.add(new paper.Point((bottomWidth - topWidth) / 2 + topWidth, 0));
+      outerModel.add(
+        new paper.Point((bottomWidth - topWidth) / 2 + topWidth, 0)
+      );
       outerModel.closePath();
     }
 
-    outerModel = roundCorners({ paper, path: outerModel, radius: smoothingFactor })
+    outerModel = roundCorners({
+      paper,
+      path: outerModel,
+      radius: smoothingFactor,
+    });
 
     const innerOptions = options[this.subModel.constructor.name] || {};
     innerOptions.boundaryModel = outerModel;
-    innerOptions.safeCone = outerModel.clone().scale(5, 5)
+    innerOptions.safeCone = outerModel.clone().scale(5, 5);
     innerOptions.outerModel = outerModel;
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
@@ -88,7 +100,7 @@ export class BoxOuter extends OuterPaperModelMaker {
     return new CompletedModel({
       outer: outerModel,
       holes: [],
-      design: innerDesign.paths
+      design: innerDesign.paths,
     });
   }
 }

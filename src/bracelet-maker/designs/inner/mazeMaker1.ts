@@ -91,13 +91,12 @@ export class MazePatternMaker1 {
     this.colTileBoundary = colTileBoundary;
 
     if (this.rows * this.cols <= this.idealMinChainSize) {
-      this.idealMinChainSize = Math.floor((this.rows * this.cols) * 0.75);
+      this.idealMinChainSize = Math.floor(this.rows * this.cols * 0.75);
     }
 
     if (this.idealMinChainSize > this.maxChainSize) {
       this.maxChainSize = this.idealMinChainSize;
     }
-
   }
 
   private sample<T>(items: T[]): T {
@@ -128,9 +127,9 @@ export class MazePatternMaker1 {
   }
 
   private printGrid(grid: number[][]) {
-    var buffer = "";
-    for (var i = 0; i < grid.length; i++) {
-      for (var x = 0; x < grid[i].length; x++) {
+    let buffer = "";
+    for (let i = 0; i < grid.length; i++) {
+      for (let x = 0; x < grid[i].length; x++) {
         buffer += grid[i][x].toString().padStart(3);
       }
       buffer += "\n\n";
@@ -207,7 +206,7 @@ export class MazePatternMaker1 {
 
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
-        const tileKey = this.makeKey([r,c]);
+        const tileKey = this.makeKey([r, c]);
         for (let i = 0; i < this.tile[tileKey].ids.length; i++) {
           if (this.rng() < this.omitTileChance) {
             this.tile[tileKey].ids[i] = undefined;
@@ -231,10 +230,8 @@ export class MazePatternMaker1 {
         const tileRow = Math.floor(r / this.rows);
         const tileCol = Math.floor(c / this.cols);
 
-        const shouldMirrorRow =
-          this.mirrorRows && tileRow % 2 == 0;
-        const shouldMirrorCol =
-          this.mirrorCols && tileCol % 2 == 0;
+        const shouldMirrorRow = this.mirrorRows && tileRow % 2 == 0;
+        const shouldMirrorCol = this.mirrorCols && tileCol % 2 == 0;
 
         if (shouldMirrorRow) {
           relativeR = this.rows - 1 - relativeR;
@@ -272,11 +269,11 @@ export class MazePatternMaker1 {
         }
 
         if (shouldMirrorRow) {
-         ids = [...ids].reverse();
+          ids = [...ids].reverse();
         }
 
-        let rowTag = 'a';
-        let colTag = 'a';
+        let rowTag = "a";
+        let colTag = "a";
         if (this.rowTileBoundary) {
           rowTag = tileRow.toString();
         }
@@ -286,7 +283,7 @@ export class MazePatternMaker1 {
 
         finalGrid[r][c] = {
           type,
-          ids: ids.map(id => id + '-' + rowTag + '-' + colTag)
+          ids: ids.map((id) => id + "-" + rowTag + "-" + colTag),
         };
       }
     }
@@ -301,7 +298,7 @@ export class MazePatternMaker1 {
       }
 
       labelsToSquares[label].push(shape);
-    }
+    };
 
     // Go over the grid, generate a square for each, add it to a hash map and then we're
     // going to do a cascaded union
@@ -325,7 +322,7 @@ export class MazePatternMaker1 {
 
     const allChains = _.flatten(_.values(groups));
 
-    return allChains.filter(chain => chain.length > this.minChainSize);
+    return allChains.filter((chain) => chain.length > this.minChainSize);
   }
 
   private unionTriangles(triangles: Point[][]) {
@@ -355,7 +352,7 @@ export class MazePatternMaker1 {
             makingProgress = true;
           }
         }
-        triangles = _.filter(triangles, function(item, index) {
+        triangles = _.filter(triangles, function (item, index) {
           return !usedTriangles.includes(index);
         });
         // console.log(`used ${usedTriangles.length}, have ${triangles.length} left`);
