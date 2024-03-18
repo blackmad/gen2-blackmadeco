@@ -6,7 +6,7 @@ import {
   OuterPaperModelMaker,
   PaperModelMaker,
 } from "../model-maker";
-import { makeSVGData } from "../utils/paperjs-export-utils";
+import { makeSVGData } from "../utils/svg-utils";
 
 export async function demoDesign(
   paper: paper.PaperScope,

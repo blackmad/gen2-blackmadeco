@@ -9,9 +9,13 @@ import {
   OuterPaperModelMaker,
 } from "../../bracelet-maker/model-maker";
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
-import { makeSVGData } from "../../bracelet-maker/utils/paperjs-export-utils";
+import {
+  makeSVGData,
+  svgStringHydrator,
+} from "../../bracelet-maker/utils/svg-utils";
 import { MetaParameterChange } from "../../meta-parameter-builder";
 import DebugLayers from "./DebugLayers";
+import DownloadButtons from "./DownloadButtons";
 import { MetaParamsContainer } from "./MetaParamsContainer";
 
 const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
@@ -128,18 +132,17 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   });
 
-  const elHydrator = (svgData: string) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(svgData, "image/svg+xml");
-    return doc.firstChild;
-  };
-
-  const svgData = makeSVGData(paper, paper.project, false, elHydrator);
+  const svgData = makeSVGData(paper, paper.project, false, svgStringHydrator);
   console.log({ svgData });
 
   return (
     <div>
       <div id="svgArea" dangerouslySetInnerHTML={{ __html: svgData }} />
+      <DownloadButtons
+        modelMaker={modelMaker}
+        params={modelParams}
+        paper={paper}
+      />
       <MetaParamsContainer
         modelMaker={modelMaker}
         params={modelParams}

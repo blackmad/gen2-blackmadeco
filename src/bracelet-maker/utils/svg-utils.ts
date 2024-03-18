@@ -1,6 +1,6 @@
 export function makeSVGData(
   paper: paper.PaperScope,
-  toExport: paper.Project,
+  toExport: Pick<paper.Project, "exportSVG">,
   shouldClean: boolean,
   elHydrator: (svgData: string) => any
 ) {
@@ -43,3 +43,9 @@ export function reprocessSVG(paper: paper.PaperScope, svg: Element) {
   svg.setAttribute("height", paper.project.activeLayer.bounds.height + "in");
   svg.setAttribute("width", paper.project.activeLayer.bounds.width + "in");
 }
+
+export const svgStringHydrator = (svgData: string) => {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(svgData, "image/svg+xml");
+  return doc.firstChild;
+};
