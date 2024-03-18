@@ -11,6 +11,7 @@ import {
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 import { makeSVGData } from "../../bracelet-maker/utils/paperjs-export-utils";
 import { MetaParameterChange } from "../../meta-parameter-builder";
+import DebugLayers from "./DebugLayers";
 import { MetaParamsContainer } from "./MetaParamsContainer";
 
 const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
@@ -77,13 +78,17 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   }, [modelMaker]);
 
+  const rerender = useCallback(() => {
+    modelMaker.make(paper, modelParams).then(setCurrentModel);
+  }, [modelMaker, modelParams]);
+
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {
       const parts = change.metaParameter.name.split(".");
       modelParams[parts[0]][parts[1]] = change.value;
-      modelMaker.make(paper, modelParams).then(setCurrentModel);
+      rerender();
     },
-    [modelMaker, modelParams]
+    [modelMaker, modelParams, rerender]
   );
 
   useEffect(() => {
@@ -91,8 +96,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       return;
     }
     console.log("making model");
-    modelMaker.make(paper, modelParams).then(setCurrentModel);
-  }, [modelMaker, modelParams]);
+    rerender();
+  }, [modelMaker, modelParams, rerender]);
 
   if (!currentModel) {
     return <div>Loading...</div>;
@@ -118,6 +123,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   _.forEach(getDebugLayers(), (v: paper.Group, _k: string) => {
     if (v.visible) {
+      console.log(`adding debug layer ${_k}`, v);
       paper.project.activeLayer.addChild(v);
     }
   });
@@ -139,6 +145,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
         params={modelParams}
         onChange={changeCallback}
       />
+      <DebugLayers onChange={rerender} />
     </div>
   );
 };

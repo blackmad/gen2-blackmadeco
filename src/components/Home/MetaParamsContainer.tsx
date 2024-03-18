@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import { OuterPaperModelMaker } from "../../bracelet-maker/model-maker";
+import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 import {
   MetaParameterBuilder,
   MetaParameterChangeCallback,
 } from "../../meta-parameter-builder";
-import DebugLayers from "./DebugLayers";
 
 export const MetaParamsContainer = ({
   params,
@@ -16,6 +16,8 @@ export const MetaParamsContainer = ({
   modelMaker: OuterPaperModelMaker;
   onChange: MetaParameterChangeCallback;
 }) => {
+  console.log(getDebugLayers());
+
   const [metaParamBuilder, setMetaParamBuilder] =
     useState<MetaParameterBuilder | null>(null);
 
@@ -69,7 +71,6 @@ export const MetaParamsContainer = ({
           className="row clear-on-reinit"
         ></div>
       </div>
-
       <div id="parameterSection" className="m-3">
         <h1 className="title">Design</h1>
         <div className="patternInfo">
@@ -87,8 +88,6 @@ export const MetaParamsContainer = ({
           className="row design-params-row"
         ></div>
       </div>
-
-      <DebugLayers />
     </div>
   );
 };

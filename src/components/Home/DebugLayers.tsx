@@ -1,12 +1,9 @@
-import {
-  getDebugLayerNames,
-  getDebugLayers,
-} from "../../bracelet-maker/utils/debug-layers";
+import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 
-export default function DebugLayers({}) {
+export default function DebugLayers({ onChange }: { onChange: () => void }) {
   const debugLayers = getDebugLayers();
-  const debugLayerNames = getDebugLayerNames();
-  if (!debugLayers.length) {
+  const debugLayerNames = Object.keys(debugLayers);
+  if (!debugLayerNames.length) {
     return;
   }
 
@@ -20,7 +17,8 @@ export default function DebugLayers({}) {
     value.visible = !value.visible;
 
     console.log("toggling debug layer ", name, "on");
-    // this.rerender();
+
+    onChange();
   }
 
   return (
