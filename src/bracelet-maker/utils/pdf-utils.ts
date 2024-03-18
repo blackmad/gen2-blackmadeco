@@ -1,5 +1,5 @@
-import blobStream from "blob-stream";
 import PDFDocument from "pdfkit";
+import streamToBlob from "stream-to-blob";
 import SVGtoPDF from "svg-to-pdfkit";
 
 import { OuterPaperModelMaker } from "../model-maker";
@@ -18,6 +18,8 @@ export function downloadPDFHelper({
   modelMaker: OuterPaperModelMaker;
   params: any;
 }) {
+  initPDF();
+
   const widthInches = paper.project.activeLayer.bounds.width;
   const heightInches = paper.project.activeLayer.bounds.height;
 
@@ -28,37 +30,25 @@ export function downloadPDFHelper({
 
   SVGtoPDF(doc, svg, 0, 0);
 
-  function blobToDataURL(
-    blob: Blob,
-    callback: (s: string | ArrayBuffer | null) => void
-  ) {
-    const a = new FileReader();
-
-    a.onload = function (e) {
-      callback(e?.target?.result ?? null);
-    };
-    a.readAsDataURL(blob);
-  }
-
   const filename = makeFilename({
     extension: "pdf",
     modelMaker,
     params,
   });
 
-  const stream = doc.pipe(blobStream());
-  stream.on("finish", function () {
-    const blob = stream.toBlob("application/pdf");
-    blobToDataURL(blob, (dataUri) => {
-      if (!dataUri) {
-        throw new Error("No dataUri");
+  streamToBlob(doc, "application/pdf").then((blob) => {
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const base64data = reader.result;
+      console.log(base64data);
+      if (typeof base64data !== "string") {
+        throw new Error("base64data is not a string");
       }
-      if (dataUri instanceof ArrayBuffer) {
-        throw new Error("dataUri is ArrayBuffer");
-      }
-      sendFileToUser({ dataUri, filename });
-    });
+      sendFileToUser({ dataUri: base64data, filename });
+    };
+    reader.readAsDataURL(blob);
   });
+
   doc.end();
 }
 
@@ -99,3 +89,32 @@ export function downloadPDFHelper({
 //     return $wholeDesign[0].outerHTML;
 //   });
 // }
+
+/*** INIT PDF SECTION */
+// the fs here is not node fs but the provided virtual one
+import fs from "fs";
+
+function initPDF() {
+  function _registerBinaryFiles(ctx: __WebpackModuleApi.RequireContext) {
+    ctx.keys().forEach((key) => {
+      // extracts "./" from beginning of the key
+      fs.writeFileSync(key.substring(2), ctx(key));
+    });
+  }
+
+  function registerAFMFonts(ctx: __WebpackModuleApi.RequireContext) {
+    ctx.keys().forEach((key) => {
+      const match = key.match(/([^/]*\.afm$)/);
+      if (match) {
+        // afm files must be stored on data path
+        fs.writeFileSync(`data/${match[0]}`, ctx(key));
+      }
+    });
+  }
+
+  // register AFM fonts distributed with pdfkit
+  // is good practice to register only required fonts to avoid the bundle size increase too much
+  registerAFMFonts(
+    require.context("pdfkit/js/data", false, /Helvetica.*\.afm$/)
+  );
+}
