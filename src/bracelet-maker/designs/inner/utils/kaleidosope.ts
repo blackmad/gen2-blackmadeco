@@ -9,6 +9,14 @@ import {
   bufferPointstoPathItem,
 } from "../../../utils/paperjs-utils";
 
+export type KaleidoscopeMakerParams = {
+  segments: number;
+  kaleido: boolean;
+  segmentBuffer: number;
+  debug: boolean;
+  boundaryModel: paper.PathItem;
+};
+
 export class KaleidoscopeMaker {
   // input params
   segments: number;
@@ -22,16 +30,7 @@ export class KaleidoscopeMaker {
   boundarySegment: paper.PathItem;
   segmentAngleDegrees: number;
 
-  constructor(
-    paper: paper.PaperScope,
-    params: {
-      segments: number;
-      kaleido: boolean;
-      segmentBuffer: number;
-      debug: boolean;
-      boundaryModel: paper.Path;
-    }
-  ) {
+  constructor(paper: paper.PaperScope, params: KaleidoscopeMakerParams) {
     this.paper = paper;
     this.segments = params.segments;
     this.kaleido = params.kaleido;
@@ -130,15 +129,15 @@ export class KaleidoscopeMaker {
       );
     }
 
-    const clippedPaths = [];
+    const clippedPaths: paper.PathItem[] = [];
     _paths.forEach((path) => {
       const clippedPath = path.intersect(this.boundarySegment);
       clippedPaths.push(clippedPath);
     });
 
-    const finalPaths = [];
+    const finalPaths: paper.PathItem[] = [];
     for (let s = 0; s < this.segments; s++) {
-      clippedPaths.forEach((p: paper.Path) => {
+      clippedPaths.forEach((p) => {
         const newPath: paper.Path = p.clone() as paper.Path;
         newPath.rotate(
           s * this.segmentAngleDegrees,

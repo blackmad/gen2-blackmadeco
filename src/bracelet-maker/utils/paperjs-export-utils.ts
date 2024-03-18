@@ -35,7 +35,7 @@ export function cleanSVGforDownload(svg: any) {
   recurse(svg);
 }
 
-export function reprocessSVG(paper: any, svg: Element) {
+export function reprocessSVG(paper: paper.PaperScope, svg: Element) {
   svg.setAttribute(
     "viewBox",
     `${paper.project.activeLayer.bounds.x} ${paper.project.activeLayer.bounds.y} ${paper.project.activeLayer.bounds.width + 0.05} ${paper.project.activeLayer.bounds.height + 0.05}`

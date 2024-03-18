@@ -59,8 +59,8 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
   filterFeatures(features: GeoJSON.Feature[]): GeoJSON.Feature[] {
     return features.filter((f) => {
       return (
-        ["road", "major_road", "minor_road"].includes(f.properties.kind) &&
-        f.properties.kind_detail != "service" // these seem to very often be parking lot outlines;
+        ["road", "major_road", "minor_road"].includes(f.properties?.kind) &&
+        f.properties?.kind_detail != "service" // these seem to very often be parking lot outlines;
         // these are cool but break parks
         // (f.properties.kind == "path" && f.properties.kind_detail == "footway")
       );

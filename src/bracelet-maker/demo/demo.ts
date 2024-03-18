@@ -11,7 +11,7 @@ import { makeSVGData } from "../utils/paperjs-export-utils";
 export async function demoDesign(
   paper: paper.PaperScope,
   designClass: PaperModelMaker | OuterPaperModelMaker,
-  elHydrator: (svg) => any,
+  elHydrator: (svgData: string) => any,
   shouldRandomize: boolean,
   bounds: paper.Rectangle = new paper.Rectangle(0, 0, 3, 3),
   initialParams: any = {},
@@ -49,7 +49,6 @@ export async function demoDesign(
 
   let paths: paper.PathItem[] = [];
   if (innerDesign instanceof CompletedModel) {
-    const pathItem: paper.PathItem = (<CompletedModel>innerDesign).outer;
     paths = [(<CompletedModel>innerDesign).outer];
   } else {
     const innerPaths = (<InnerCompletedModel>innerDesign).paths;
@@ -57,9 +56,7 @@ export async function demoDesign(
     paths = [outerRect, ...innerPaths];
   }
 
-  // @ts-ignore
   const path = new paper.CompoundPath({
-    // @ts-ignore
     children: paths,
     strokeColor: "red",
     strokeWidth: "0.005",

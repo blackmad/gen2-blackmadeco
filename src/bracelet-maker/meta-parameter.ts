@@ -18,7 +18,7 @@ export interface MetaParameterBaseParams<T> {
   target?: string | null;
   group?: string | null;
   help?: string | null;
-  shouldDisplay?: () => boolean;
+  shouldDisplay?: (params: any) => boolean;
   parentParam?: OnOffMetaParameter;
 }
 
