@@ -1,28 +1,17 @@
+import * as _ from "lodash";
 import * as paper from "paper";
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import ReactTypescriptTemplateLogo from "../../assets/images/react-typescript-template.png";
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
+import {
+  CompletedModel,
+  OuterPaperModelMaker,
+} from "../../bracelet-maker/model-maker";
+import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
+import { makeSVGData } from "../../bracelet-maker/utils/paperjs-export-utils";
 
-const Canvas = (props) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const canvas = canvasRef.current;
-
-  if (!canvas) {
-    return <div>Bad Canvas</div>;
-  }
-
-  // const context = canvas.getContext("2d");
-
-  paper.setup(canvas);
-  paper.settings.insertItems = false;
-  paper.activate();
-
-  return <canvas ref={canvasRef} {...props} />;
-};
-
-const Renderer: FC = () => {
+const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   // const previewDiv = document.getElementById("previewArea");
 
   // $("body").addClass("loading");
@@ -30,42 +19,78 @@ const Renderer: FC = () => {
   // $(".playArea").show();
 
   // rebuild params from X.a to {X: {a: }}
-  let modelParams = new Map<string, any>();
-  if (this.modelMaker.subModel) {
-    _.each(this.params, (value, key) => {
-      const parts = key.split(".");
-      if (parts.length == 2) {
-        modelParams[parts[0]] = modelParams[parts[0]] || {};
-        modelParams[parts[0]][parts[1]] = value;
-      } else {
-        throw new Error("param does not have a dot: " + key);
-      }
-    });
-  } else {
-    modelParams = new Map(this.params);
-  }
+  // let modelParams = new Map<string, any>();
+  // if (modelMaker.subModel) {
+  //   _.each(this.params, (value, key) => {
+  //     const parts = key.split(".");
+  //     if (parts.length == 2) {
+  //       modelParams[parts[0]] = modelParams[parts[0]] || {};
+  //       modelParams[parts[0]][parts[1]] = value;
+  //     } else {
+  //       throw new Error("param does not have a dot: " + key);
+  //     }
+  //   });
+  // } else {
+  //   modelParams = new Map(this.params);
+  // }
 
-  const canvas: HTMLCanvasElement = document.getElementById(
-    "myCanvas"
-  ) as HTMLCanvasElement;
-  paper.setup(canvas);
+  // const canvas: HTMLCanvasElement = document.getElementById(
+  //   "myCanvas"
+  // ) as HTMLCanvasElement;
+  paper.setup(null);
   paper.settings.insertItems = false;
   paper.activate();
 
   if (paper != null && paper.project != null) {
     paper.project.activeLayer.removeChildren();
-    _.forEach(getDebugLayers(), (v: paper.Group, k) => {
+    _.forEach(getDebugLayers(), (v: paper.Group, _k) => {
       v.removeChildren();
     });
   }
 
-  this.currentModel = await this.modelMaker.make(paper, modelParams);
+  const [currentModel, setCurrentModel] = useState<CompletedModel | null>(null);
+
+  const initialOuterParams: Record<string, number | string> = {};
+
+  modelMaker.outerMetaParameters.forEach((metaParam) => {
+    initialOuterParams[metaParam.name] = metaParam.value;
+  });
+
+  // modelMaker.metaParameters.forEach((metaParam) => {
+  //   initialParams[metaParam.name] = metaParam.value;
+  // });
+
+  const modelParams = {};
+  modelParams[modelMaker.constructor.name] = initialOuterParams;
+
+  // (params as any).breakThePlane = false;
+
+  // params["seed"] = 1;
+
+  // const inputParams = {...params};
+
+  // params[designClass.constructor.name] = params;
+
+  // // const outerRect = new paper.Path.Rectangle(bounds);
+  // // const boundaryRect = outerRect.clone();
+  // // boundaryRect.scale(0.95);
+  // // params["boundaryModel"] = boundaryRect;
+  // // params["outerModel"] = outerRect;
+  // // params["safeCone"] = boundaryRect;
+
+  useEffect(() => {
+    modelMaker.make(paper, modelParams).then(setCurrentModel);
+  }, [modelMaker, modelParams]);
+
+  if (!currentModel) {
+    return <div>Loading...</div>;
+  }
 
   const compoundPath = new paper.CompoundPath({
     children: [
-      this.currentModel.outer,
-      ...this.currentModel.holes,
-      ...this.currentModel.design,
+      currentModel.outer,
+      ...currentModel.holes,
+      ...currentModel.design,
     ],
     strokeColor: "red",
     strokeWidth: "0.005",
@@ -75,20 +100,22 @@ const Renderer: FC = () => {
 
   paper.project.activeLayer.addChild(compoundPath);
 
-  _.forEach(getDebugLayers(), (v: paper.Group, k: string) => {
+  _.forEach(getDebugLayers(), (v: paper.Group, _k: string) => {
     if (v.visible) {
       paper.project.activeLayer.addChild(v);
     }
   });
 
-  $("#svgArea")[0].innerHTML = makeSVGData(
-    paper,
-    paper.project,
-    false,
-    (svg) => $(svg)[0]
-  );
+  const elHydrator = (svgData: string) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(svgData, "image/svg+xml");
+    return doc.firstChild;
+  };
 
-  $("body").removeClass("loading");
+  const svgData = makeSVGData(paper, paper.project, false, elHydrator);
+  console.log({ svgData });
+
+  return <div dangerouslySetInnerHTML={{ __html: svgData }} />;
 };
 
 const HomePage: FC = () => {
@@ -106,19 +133,11 @@ const HomePage: FC = () => {
     return <div>Design not found</div>;
   }
 
-  const modelMaker = new outerDesignClass(new innerDesignClass());
-
-  return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold my-2">React Typescript Template</h1>
-      <img
-        src={ReactTypescriptTemplateLogo}
-        width={500}
-        className="mx-auto"
-        alt="React-Typescript-Template"
-      />
-    </div>
+  const modelMaker: OuterPaperModelMaker = new outerDesignClass(
+    new innerDesignClass()
   );
+
+  return <Renderer modelMaker={modelMaker} />;
 };
 
 export default HomePage;

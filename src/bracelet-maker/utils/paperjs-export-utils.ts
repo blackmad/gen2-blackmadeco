@@ -1,8 +1,8 @@
 export function makeSVGData(
-  paper: any,
-  toExport: any,
+  paper: paper.PaperScope,
+  toExport: paper.Project,
   shouldClean: boolean,
-  elHydrator: (elName: string) => any
+  elHydrator: (svgData: string) => any
 ) {
   const svgData: string = toExport.exportSVG({
     asString: true,

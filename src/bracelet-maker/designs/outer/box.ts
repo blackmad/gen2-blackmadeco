@@ -89,8 +89,6 @@ export class BoxOuter extends OuterPaperModelMaker {
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
     if (innerDesign.outline) {
-      const oldCuffOuter = outerModel;
-
       // @ts-ignore
       outerModel = outerModel.unite(innerDesign.outline);
     }

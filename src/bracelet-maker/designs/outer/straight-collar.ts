@@ -8,6 +8,8 @@ import {
   RivetRadius,
 } from "../design-utils";
 
+type ModelParameters = Record<string, number | string>;
+
 export class StraightCollarOuter extends OuterPaperModelMaker {
   get outerMetaParameters(): MetaParameter<any>[] {
     return [
@@ -36,7 +38,10 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     super();
   }
 
-  public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
+  public async make(
+    paper: paper.PaperScope,
+    options: ModelParameters
+  ): Promise<CompletedModel> {
     const { height, neckSize } = options[this.constructor.name];
 
     // quarter inch, two bolts
