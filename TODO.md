@@ -1,3 +1,7 @@
+- get debug layers working again
+
+- get outer/inner picker working
+- fix images
 
 - fix inner top height rendering
 - get exporting working again

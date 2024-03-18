@@ -12,7 +12,7 @@ export default function DebugLayers({}) {
 
   function cssColor(name: string) {
     const value = debugLayers[name];
-    return value.style.strokeColor.toCSS();
+    return value.style.strokeColor?.toCSS(true) ?? "#000000";
   }
 
   function toggleVisibility(name: string) {
