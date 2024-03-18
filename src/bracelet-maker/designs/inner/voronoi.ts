@@ -184,6 +184,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     // console.log(seedPoints);
     // console.log(JSON.stringify(seedPoints));
 
+    console.log({ seedPoints });
+
     const delaunay = Delaunay.from(dedupePointsArray(seedPoints));
     let cellPolygonIterator;
 
@@ -223,6 +225,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         }
       }
 
+      console.log({ points, borderSize: params.borderSize });
+
       points.pop();
       const bufferedShape = bufferPointstoPathItem(
         paper,
@@ -230,12 +234,16 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         points
       );
 
+      console.log({ bufferedShape });
+
       if (!isOnEdge || !removeEdgePolygons) {
         polys.push(bufferedShape);
         addToDebugLayer(paper, "voronoiShape", new paper.Path(points));
         addToDebugLayer(paper, "bufferedVoronoiShape", bufferedShape.clone());
       }
     }
+
+    console.log({ polys });
 
     return Promise.resolve({ paths: polys });
   }

@@ -61,8 +61,15 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
         initialOuterParams[metaParam.name] = metaParam.value;
       });
 
+      const initialInnerParams: Record<string, number | string> = {};
+
+      modelMaker.subModel.metaParameters.forEach((metaParam) => {
+        initialInnerParams[metaParam.name] = metaParam.value;
+      });
+
       const modelParams = {};
       modelParams[modelMaker.constructor.name] = initialOuterParams;
+      modelParams[modelMaker.subModel.constructor.name] = initialInnerParams;
 
       setModelParams(modelParams);
     }

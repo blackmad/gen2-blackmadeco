@@ -1,4 +1,10 @@
-- get it rendering at all
+- get inner rendering
+
+- implement sliders and params and things
+
+- bring back kaleido
+- bring back breakThePlane
+
 - zero eslint errors
 - zero eslint warnings
 
@@ -8,8 +14,6 @@
 - implement sacred geometry
 - implement multi-row/multi-column
 - dive deeper into tiling designs
-
-- 
 
 - spelunk and document and uncouple how params are passed around
 
