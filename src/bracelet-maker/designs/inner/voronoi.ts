@@ -41,18 +41,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     numBorderPoints,
     mirror,
   }) {
-    console.log({ boundaryModel });
     const numPoints = numTotalPoints; // (rows * cols);
 
     const colOffset = boundaryModel.bounds.width / cols;
     const rowOffset = boundaryModel.bounds.height / rows;
-
-    console.log({
-      colOffset,
-      rowOffset,
-      w: boundaryModel.bounds.width,
-      h: boundaryModel.bounds.height,
-    });
 
     addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
@@ -168,8 +160,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
 
-    console.log({ boundaryModel });
-
     const seedPoints = this.makeRandomPoints({
       paper,
       boundaryModel,
@@ -183,8 +173,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     // console.log(seedPoints.length);
     // console.log(seedPoints);
     // console.log(JSON.stringify(seedPoints));
-
-    console.log({ seedPoints });
 
     const delaunay = Delaunay.from(dedupePointsArray(seedPoints));
     let cellPolygonIterator;
@@ -225,8 +213,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         }
       }
 
-      console.log({ points, borderSize: params.borderSize });
-
       points.pop();
       const bufferedShape = bufferPointstoPathItem(
         paper,
@@ -234,16 +220,12 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         points
       );
 
-      console.log({ bufferedShape });
-
       if (!isOnEdge || !removeEdgePolygons) {
         polys.push(bufferedShape);
         addToDebugLayer(paper, "voronoiShape", new paper.Path(points));
         addToDebugLayer(paper, "bufferedVoronoiShape", bufferedShape.clone());
       }
     }
-
-    console.log({ polys });
 
     return Promise.resolve({ paths: polys });
   }
