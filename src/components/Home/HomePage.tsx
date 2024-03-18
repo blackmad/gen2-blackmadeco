@@ -45,13 +45,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   paper.settings.insertItems = false;
   paper.activate();
 
-  if (paper != null && paper.project != null) {
-    paper.project.activeLayer.removeChildren();
-    _.forEach(getDebugLayers(), (v: paper.Group, _k) => {
-      v.removeChildren();
-    });
-  }
-
   const [currentModel, setCurrentModel] = useState<CompletedModel | null>(null);
   const [modelParams, setModelParams] = useState<any>(null);
 
@@ -79,6 +72,13 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   }, [modelMaker]);
 
   const rerender = useCallback(() => {
+    if (paper != null && paper.project != null) {
+      paper.project.activeLayer.removeChildren();
+      _.forEach(getDebugLayers(), (v: paper.Group, _k) => {
+        v.removeChildren();
+      });
+    }
+
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);
 

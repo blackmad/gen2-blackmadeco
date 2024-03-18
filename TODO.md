@@ -1,5 +1,3 @@
-- get debug layers working again
-
 - get outer/inner picker working
 - fix images
 
@@ -7,6 +5,8 @@
 - get exporting working again
 
 - bring back kaleido
+
+- get param saving working
 
 - fix map design
 

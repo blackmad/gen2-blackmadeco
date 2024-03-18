@@ -1,7 +1,6 @@
 import randomColor from "randomcolor";
 
 const debugLayers: Record<string, paper.Group> = {};
-const debugLayerNames: string[] = [];
 
 export function addToDebugLayer(
   paper: paper.PaperScope,
@@ -11,7 +10,6 @@ export function addToDebugLayer(
   if (!debugLayers[layerName]) {
     const newLayer = new paper.Group();
     debugLayers[layerName] = newLayer;
-    debugLayerNames.push(layerName);
     newLayer.visible = false;
 
     newLayer.style = {
@@ -28,6 +26,14 @@ export function addToDebugLayer(
     path = item;
   }
   debugLayers[layerName].addChild(path);
+  console.log(
+    "added to debug layer ",
+    layerName,
+    " with ",
+    path,
+    " from ",
+    item
+  );
   path.style = debugLayers[layerName].style;
 }
 
@@ -36,5 +42,5 @@ export function getDebugLayers() {
 }
 
 export function getDebugLayerNames() {
-  return debugLayerNames;
+  return Object.keys(debugLayers);
 }
