@@ -1,15 +1,12 @@
+
 - fix inner top height rendering
 - get exporting working again
-- why is forearmCircumference not rendering
-- very basic styling
-- make the params actually call back
 
 - bring back kaleido
 
 - fix map design
 
 - bring back breakThePlane
-
 
 - zero eslint errors
 - zero eslint warnings

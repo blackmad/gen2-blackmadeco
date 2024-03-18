@@ -48,8 +48,9 @@ export class CompletedModel {
 
 export abstract class OuterPaperModelMaker implements HasMetaParameters {
   subModel: PaperModelMaker;
-  abstract make(scope: paper.PaperScope, params: any): Promise<CompletedModel>;
   controlInfo: string;
+
+  abstract make(scope: paper.PaperScope, params: any): Promise<CompletedModel>;
   abstract get outerMetaParameters(): MetaParameter<any>[];
 
   get metaParameters() {
@@ -57,7 +58,7 @@ export abstract class OuterPaperModelMaker implements HasMetaParameters {
       new OnOffMetaParameter({
         title: "Debug",
         name: "debug",
-        value: false,
+        value: true,
       }),
       ...this.outerMetaParameters,
     ];

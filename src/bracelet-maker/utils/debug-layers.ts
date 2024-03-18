@@ -1,7 +1,7 @@
 import randomColor from "randomcolor";
 
-const debugLayers = {};
-const debugLayerNames = [];
+const debugLayers: Record<string, paper.Group> = {};
+const debugLayerNames: string[] = [];
 
 export function addToDebugLayer(
   paper: paper.PaperScope,
@@ -21,7 +21,7 @@ export function addToDebugLayer(
     };
   }
 
-  let path: paper.Item = null;
+  let path: paper.Item | null = null;
   if (item instanceof paper.Point) {
     path = new paper.Path.Circle(item, 0.05);
   } else {

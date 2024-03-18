@@ -3,6 +3,13 @@ import "rangeslider.js";
 import $ from "jquery";
 import * as _ from "lodash";
 
+export type MetaParameterChange = {
+  metaParameter: MetaParameter<any>;
+  value: any;
+};
+
+export type MetaParameterChangeCallback = (change: MetaParameterChange) => void;
+
 import {
   GeocodeMetaParameter,
   MetaParameter,
@@ -364,7 +371,7 @@ export class MetaParameterBuilder {
 
   constructor(
     public initialParams: any,
-    public _onParamChange: any
+    public _onParamChange: MetaParameterChangeCallback
   ) {
     this.params = { ...initialParams };
   }

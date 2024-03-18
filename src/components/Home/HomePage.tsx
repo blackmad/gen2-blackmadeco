@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import * as paper from "paper";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
@@ -10,99 +10,8 @@ import {
 } from "../../bracelet-maker/model-maker";
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 import { makeSVGData } from "../../bracelet-maker/utils/paperjs-export-utils";
-import { MetaParameterBuilder } from "../../meta-parameter-builder";
-import DebugLayers from "./DebugLayers";
-
-const OuterMetaParamsContainer = ({
-  params,
-  modelMaker,
-}: {
-  params: any;
-  modelMaker: OuterPaperModelMaker;
-}) => {
-  const [metaParamBuilder, setMetaParamBuilder] =
-    useState<MetaParameterBuilder | null>(null);
-
-  const outerParameterDivRef = useRef<HTMLDivElement>(null);
-  const innerParameterDivRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const metaParamBuilder = new MetaParameterBuilder(
-      params,
-      (change: any) => {
-        console.log("change!", change);
-      }
-      // _.bind(this.onParamChange, this)
-    );
-    setMetaParamBuilder(metaParamBuilder);
-  }, [params]);
-  // this.metaParamBuilder.buildMetaParametersForModel(
-  //   this.modelMaker,
-  //   document.getElementById("outerParameterDiv")
-  // );
-
-  useEffect(() => {
-    if (
-      !metaParamBuilder ||
-      !modelMaker ||
-      !outerParameterDivRef.current ||
-      !innerParameterDivRef.current
-    ) {
-      return;
-    }
-
-    metaParamBuilder.buildMetaParametersForModel(
-      modelMaker,
-      outerParameterDivRef.current
-    );
-
-    metaParamBuilder.buildMetaParametersForModel(
-      modelMaker.subModel,
-      innerParameterDivRef.current
-    );
-
-    metaParamBuilder.rerender(params);
-  }, [metaParamBuilder, modelMaker, params]);
-
-  return (
-    <div className="container px-xs-3 px-sm-3 px-md-4 px-lg-5">
-      <div className="previewAreaPadding"></div>
-      <div className="m-3">
-        <h1 className="title">Sizing</h1>
-        <small>
-          <div className="sizingInfo patternInfo">
-            {modelMaker ? modelMaker.controlInfo : ""}
-          </div>
-        </small>
-        <div
-          id="outerParameterDiv"
-          ref={outerParameterDivRef}
-          className="row clear-on-reinit"
-        ></div>
-      </div>
-
-      <div id="parameterSection" className="m-3">
-        <h1 className="title">Design</h1>
-        <div className="patternInfo">
-          <small>
-            Not all of these variables do what they say. Consider them various
-            ways to play with the randomness until you find a design you like.
-          </small>
-        </div>
-
-        {/* <button @click="randomize">Randomize</button> */}
-
-        <div
-          id="innerParameterDiv"
-          ref={innerParameterDivRef}
-          className="row design-params-row"
-        ></div>
-      </div>
-
-      <DebugLayers />
-    </div>
-  );
-};
+import { MetaParameterChange } from "../../meta-parameter-builder";
+import { MetaParamsContainer } from "./MetaParamsContainer";
 
 const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   // const previewDiv = document.getElementById("previewArea");
@@ -168,6 +77,15 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   }, [modelMaker]);
 
+  const changeCallback = useCallback(
+    (change: MetaParameterChange) => {
+      const parts = change.metaParameter.name.split(".");
+      modelParams[parts[0]][parts[1]] = change.value;
+      modelMaker.make(paper, modelParams).then(setCurrentModel);
+    },
+    [modelMaker, modelParams]
+  );
+
   useEffect(() => {
     if (!modelParams) {
       return;
@@ -215,8 +133,12 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   return (
     <div>
-      <div dangerouslySetInnerHTML={{ __html: svgData }} />
-      <OuterMetaParamsContainer modelMaker={modelMaker} params={modelParams} />
+      <div id="svgArea" dangerouslySetInnerHTML={{ __html: svgData }} />
+      <MetaParamsContainer
+        modelMaker={modelMaker}
+        params={modelParams}
+        onChange={changeCallback}
+      />
     </div>
   );
 };
