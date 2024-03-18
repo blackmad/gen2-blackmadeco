@@ -141,6 +141,7 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
         height
       )
     );
+
     safeArea.strokeColor = new paper.Color("green");
     safeArea.strokeWidth = 0.001;
     // safeArea.remove();

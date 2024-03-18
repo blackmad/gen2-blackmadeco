@@ -18,8 +18,8 @@ import { InnerDesignVera } from "./vera";
 import { InnerDesignVoronoi } from "./voronoi";
 
 export const AllInnerDesigns = [
-  InnerDesignMaze1,
   InnerDesignVoronoi,
+  InnerDesignMaze1,
   InnerDesignTessagon,
   InnerDesignHashmarks,
   InnerDesignVera,

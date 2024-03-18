@@ -11,11 +11,7 @@ import {
 import { InnerCompletedModel, PaperModelMaker } from "../../model-maker";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { makeConcaveOutline } from "../../utils/outline";
-import {
-  bufferPath,
-  simplifyPath,
-  unkinkPath,
-} from "../../utils/paperjs-utils";
+import { simplifyPath, unkinkPath } from "../../utils/paperjs-utils";
 import { removeBadSegments } from "../../utils/remove-bad-segments";
 import { roundCorners } from "../../utils/round-corners";
 import { KaleidoscopeMaker } from "./utils/kaleidosope";
@@ -26,8 +22,12 @@ export interface InnerDesignModel {
 }
 
 export abstract class FastAbstractInnerDesign implements PaperModelMaker {
-  public rng: () => number = () => 12;
-  public simplex: NoiseFunction2D = () => 12;
+  public rng: () => number = () => {
+    throw new Error("rng not initialized");
+  };
+  public simplex: NoiseFunction2D = () => {
+    throw new Error("simplex not initialized");
+  };
   public needSubtraction: boolean = true;
   public allowOutline: boolean = false;
   public smoothOutline: boolean = true;
@@ -176,14 +176,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
   }
 
   private initRNGs(params: { seed: string | number | undefined }) {
-    if (params.seed) {
-      this.rng = seedrandom(params.seed.toString());
+    const seed = params.seed ?? new Date();
+    this.rng = seedrandom(seed.toString());
 
-      const noiseRng = seedrandom(params.seed.toString());
+    const noiseRng = seedrandom(seed.toString());
 
-      // use the seeded random function to initialize the noise function
-      this.simplex = createNoise2D(noiseRng);
-    }
+    // use the seeded random function to initialize the noise function
+    this.simplex = createNoise2D(noiseRng);
   }
 
   private maybeSmooth(
@@ -352,31 +351,33 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const originalBoundaryModel = params.boundaryModel.clone();
 
-    if (params.breakThePlane) {
-      params.boundaryModel = bufferPath(
-        paper,
-        params.extendOutward,
-        params.boundaryModel
-      );
-      params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
-        insert: false,
-      });
-    } else {
-      const originalHeight = params.boundaryModel.bounds.height;
-      const heightScale = params.safeBorderWidth / originalHeight;
-      params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
-    }
+    // TODO(blackmad): bring back
+    // if (params.breakThePlane) {
+    //   params.boundaryModel = bufferPath(
+    //     paper,
+    //     params.extendOutward,
+    //     params.boundaryModel
+    //   );
+    //   params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
+    //     insert: false,
+    //   });
+    // } else {
+    //   const originalHeight = params.boundaryModel.bounds.height;
+    //   const heightScale = params.safeBorderWidth / originalHeight;
+    //   params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
+    // }
 
-    let kaleidoscopeMaker = null;
-    let kaleidoscopeSavedBoundaryModel = null;
-    if (this.canKaleido && params.segments > 1) {
-      kaleidoscopeMaker = new KaleidoscopeMaker(paper, params);
-      kaleidoscopeSavedBoundaryModel = params.boundaryModel.clone();
-      params.boundaryModel = kaleidoscopeMaker.getBoundarySegment();
-      params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
-        insert: false,
-      });
-    }
+    const kaleidoscopeMaker = null;
+    const kaleidoscopeSavedBoundaryModel = null;
+    // TODO(blackmad): bring back
+    // if (this.canKaleido && params.segments > 1) {
+    //   kaleidoscopeMaker = new KaleidoscopeMaker(paper, params);
+    //   kaleidoscopeSavedBoundaryModel = params.boundaryModel.clone();
+    //   params.boundaryModel = kaleidoscopeMaker.getBoundarySegment();
+    //   params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
+    //     insert: false,
+    //   });
+    // }
 
     addToDebugLayer(
       paper,

@@ -37,6 +37,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   // const canvas: HTMLCanvasElement = document.getElementById(
   //   "myCanvas"
   // ) as HTMLCanvasElement;
+  console.log("setting up paper");
   paper.setup(null);
   paper.settings.insertItems = false;
   paper.activate();
@@ -49,42 +50,37 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   }
 
   const [currentModel, setCurrentModel] = useState<CompletedModel | null>(null);
-
-  const initialOuterParams: Record<string, number | string> = {};
-
-  modelMaker.outerMetaParameters.forEach((metaParam) => {
-    initialOuterParams[metaParam.name] = metaParam.value;
-  });
-
-  // modelMaker.metaParameters.forEach((metaParam) => {
-  //   initialParams[metaParam.name] = metaParam.value;
-  // });
-
-  const modelParams = {};
-  modelParams[modelMaker.constructor.name] = initialOuterParams;
-
-  // (params as any).breakThePlane = false;
-
-  // params["seed"] = 1;
-
-  // const inputParams = {...params};
-
-  // params[designClass.constructor.name] = params;
-
-  // // const outerRect = new paper.Path.Rectangle(bounds);
-  // // const boundaryRect = outerRect.clone();
-  // // boundaryRect.scale(0.95);
-  // // params["boundaryModel"] = boundaryRect;
-  // // params["outerModel"] = outerRect;
-  // // params["safeCone"] = boundaryRect;
+  const [modelParams, setModelParams] = useState<any>(null);
 
   useEffect(() => {
+    if (modelMaker) {
+      console.log("setting model params");
+      const initialOuterParams: Record<string, number | string> = {};
+
+      modelMaker.outerMetaParameters.forEach((metaParam) => {
+        initialOuterParams[metaParam.name] = metaParam.value;
+      });
+
+      const modelParams = {};
+      modelParams[modelMaker.constructor.name] = initialOuterParams;
+
+      setModelParams(modelParams);
+    }
+  }, [modelMaker]);
+
+  useEffect(() => {
+    if (!modelParams) {
+      return;
+    }
+    console.log("making model");
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);
 
   if (!currentModel) {
     return <div>Loading...</div>;
   }
+
+  console.log("rendering model");
 
   const compoundPath = new paper.CompoundPath({
     children: [
@@ -99,6 +95,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   });
 
   paper.project.activeLayer.addChild(compoundPath);
+
+  console.log("added child layer");
 
   _.forEach(getDebugLayers(), (v: paper.Group, _k: string) => {
     if (v.visible) {

@@ -41,10 +41,18 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     numBorderPoints,
     mirror,
   }) {
+    console.log({ boundaryModel });
     const numPoints = numTotalPoints; // (rows * cols);
 
     const colOffset = boundaryModel.bounds.width / cols;
     const rowOffset = boundaryModel.bounds.height / rows;
+
+    console.log({
+      colOffset,
+      rowOffset,
+      w: boundaryModel.bounds.width,
+      h: boundaryModel.bounds.height,
+    });
 
     addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
@@ -145,7 +153,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     return seedPoints;
   }
 
-  makeDesign(paper: paper.PaperScope, params) {
+  makeDesign(paper: paper.PaperScope, params: any) {
     ExtendPaperJs(paper);
 
     const {
@@ -159,6 +167,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
+
+    console.log({ boundaryModel });
 
     const seedPoints = this.makeRandomPoints({
       paper,
