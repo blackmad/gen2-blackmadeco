@@ -11,6 +11,7 @@ import {
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 import { makeSVGData } from "../../bracelet-maker/utils/paperjs-export-utils";
 import { MetaParameterBuilder } from "../../meta-parameter-builder";
+import DebugLayers from "./DebugLayers";
 
 const OuterMetaParamsContainer = ({
   params,
@@ -98,21 +99,7 @@ const OuterMetaParamsContainer = ({
         ></div>
       </div>
 
-      <div
-        id="parameterSection"
-        className="m-3"
-        v-if="debugLayerNames.length > 0"
-      >
-        <h1 className="title">Debug Layers</h1>
-
-        {/* <div v-for="name in debugLayerNames" :key="name">
-      <label :style="{ color: cssColor(name) }">
-        <input type="checkbox" @click="toggleVisibility(name)" />
-        {{ name }}
-      </label>
-
-    </div> */}
-      </div>
+      <DebugLayers />
     </div>
   );
 };

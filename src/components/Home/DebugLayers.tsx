@@ -1,6 +1,7 @@
-import { getDebugLayers } from "@/bracelet-maker/utils/debug-layers";
-
-import { getDebugLayerNames } from "../../bracelet-maker/utils/debug-layers";
+import {
+  getDebugLayerNames,
+  getDebugLayers,
+} from "../../bracelet-maker/utils/debug-layers";
 
 export default function DebugLayers({}) {
   const debugLayers = getDebugLayers();

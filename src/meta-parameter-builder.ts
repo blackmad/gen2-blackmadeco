@@ -455,7 +455,9 @@ export class MetaParameterBuilder {
 
     this.renderedMetaParameters.forEach(
       (renderedMetaParameter: RenderedMetaParameter) => {
-        console.log({ renderedMetaParameter });
+        console.log(renderedMetaParameter.metaParameter.name, {
+          renderedMetaParameter,
+        });
         const metaParameter = renderedMetaParameter.metaParameter;
         if (metaParameter.parentParam) {
           console.log("has parent param", metaParameter.parentParam);
