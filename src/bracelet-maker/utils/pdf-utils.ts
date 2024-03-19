@@ -40,7 +40,6 @@ export function downloadPDFHelper({
     const reader = new FileReader();
     reader.onloadend = function () {
       const base64data = reader.result;
-      console.log(base64data);
       if (typeof base64data !== "string") {
         throw new Error("base64data is not a string");
       }

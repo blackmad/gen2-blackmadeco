@@ -45,7 +45,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   // const canvas: HTMLCanvasElement = document.getElementById(
   //   "myCanvas"
   // ) as HTMLCanvasElement;
-  console.log("setting up paper");
   paper.setup(null);
   paper.settings.insertItems = false;
   paper.activate();
@@ -55,7 +54,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   useEffect(() => {
     if (modelMaker) {
-      console.log("setting model params");
       const initialOuterParams: Record<string, number | string> = {};
 
       modelMaker.outerMetaParameters.forEach((metaParam) => {
@@ -90,6 +88,17 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       });
     }
 
+    const hashParams = _.flatMap(
+      modelParams,
+      (k: Record<string, any>, outerName: string) => {
+        return _.map(k, (paramValue, paramName) => {
+          return encodeURIComponent(`${outerName}.${paramName}=${paramValue}`);
+        });
+      }
+    ).join("&");
+
+    window.location.hash = hashParams;
+
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);
 
@@ -105,15 +114,12 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     if (!modelParams) {
       return;
     }
-    console.log("making model");
     rerender();
   }, [modelMaker, modelParams, rerender]);
 
   if (!currentModel) {
     return <div>Loading...</div>;
   }
-
-  console.log("rendering model");
 
   const compoundPath = new paper.CompoundPath({
     children: [
@@ -129,17 +135,13 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   paper.project.activeLayer.addChild(compoundPath);
 
-  console.log("added child layer");
-
   _.forEach(getDebugLayers(), (v: paper.Group, _k: string) => {
     if (v.visible) {
-      console.log(`adding debug layer ${_k}`, v);
       paper.project.activeLayer.addChild(v);
     }
   });
 
   const svgData = makeSVGData(paper, paper.project, false, svgStringHydrator);
-  console.log({ svgData });
 
   return (
     <>

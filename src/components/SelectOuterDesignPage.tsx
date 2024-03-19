@@ -11,7 +11,6 @@ export default function SelectOuterDesignPage() {
       designs={AllOuterDesigns}
       shapeName="outer"
       onClick={(name: string) => {
-        console.log(`Redirecting to /${name}`);
         return navigate(`/${name}`);
       }}
     />

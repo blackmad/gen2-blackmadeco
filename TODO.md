@@ -1,13 +1,14 @@
-- fix map design
---> figure out what it needs for yuva's map
---> get it to default to unrounded? or much less rounded?
+- get param saving working
+
 
 - fix inner top height rendering (only on straight cuff?)
 
 - bring back kaleido
 -> why kaleido unhappy middle
 
-- get param saving working
+- fix map design
+--> figure out what it needs for yuva's map
+--> get it to default to unrounded? or much less rounded?
 
 - make colTileBoundary be a number
 

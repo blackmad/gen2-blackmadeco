@@ -24,8 +24,6 @@ export function removeBadSegments({ paper, path }) {
     const prevPoint = segments[i - 1 < 0 ? segments.length - 1 : i - 1].point;
     const angle = find_angle(prevPoint, curPoint, nextPoint);
 
-    // console.log('angle', angle);
-
     const isBad = isNaN(angle) || angle < 1 || angle > 3;
 
     if (!isBad) {

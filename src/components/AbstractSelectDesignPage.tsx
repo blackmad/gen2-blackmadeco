@@ -25,7 +25,6 @@ export default function AbstractSelectDesignPage({
                 designClassName={design.name}
                 key={design.name}
                 onClick={() => {
-                  console.log("clicking");
                   onClick(design.name);
                 }}
               />

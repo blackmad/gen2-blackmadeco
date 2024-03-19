@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { OuterPaperModelMaker } from "../../bracelet-maker/model-maker";
-import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
 import {
   MetaParameterBuilder,
   MetaParameterChangeCallback,
@@ -18,8 +17,6 @@ export const MetaParamsContainer = ({
   onChange: MetaParameterChangeCallback;
   rerenderCallback: () => void;
 }) => {
-  console.log(getDebugLayers());
-
   const [metaParamBuilder, setMetaParamBuilder] =
     useState<MetaParameterBuilder | null>(null);
 

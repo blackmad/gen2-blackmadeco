@@ -148,16 +148,12 @@ export class GeocodeMetaParameter extends MetaParameter<string> {
   getRandomValue() {
     const [minX, minY, maxX, maxY] = turfBBox(nyc.features[0] as any);
 
-    console.log("geo rand");
-
     let tries = 0;
 
     while (tries < 1000) {
       const x = _.random(minX, maxX);
       const y = _.random(minY, maxY);
-      console.log("trying", { x, y });
       if (turfBooleanPointInPolygon([x, y], nyc.features[0] as any)) {
-        console.log(`${y},${x}`);
         return `${y},${x}`;
       }
       tries += 1;

@@ -16,8 +16,6 @@ export default function DebugLayers({ onChange }: { onChange: () => void }) {
     const value = debugLayers[name];
     value.visible = !value.visible;
 
-    console.log("toggling debug layer ", name, "on");
-
     onChange();
   }
 
