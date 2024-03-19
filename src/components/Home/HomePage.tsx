@@ -136,20 +136,31 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   console.log({ svgData });
 
   return (
-    <div>
-      <div id="svgArea" dangerouslySetInnerHTML={{ __html: svgData }} />
-      <DownloadButtons
-        modelMaker={modelMaker}
-        params={modelParams}
-        paper={paper}
-      />
-      <MetaParamsContainer
-        modelMaker={modelMaker}
-        params={modelParams}
-        onChange={changeCallback}
-      />
-      <DebugLayers onChange={rerender} />
-    </div>
+    <>
+      <div id="previewArea">
+        <div
+          id="svgArea"
+          style={{
+            justifyContent: "center",
+            display: "flex",
+          }}
+          dangerouslySetInnerHTML={{ __html: svgData }}
+        />
+        <DownloadButtons
+          modelMaker={modelMaker}
+          params={modelParams}
+          paper={paper}
+        />
+      </div>
+      <div>
+        <MetaParamsContainer
+          modelMaker={modelMaker}
+          params={modelParams}
+          onChange={changeCallback}
+        />
+        <DebugLayers onChange={rerender} />
+      </div>
+    </>
   );
 };
 

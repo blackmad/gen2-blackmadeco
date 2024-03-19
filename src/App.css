@@ -1,16 +1,10 @@
-h1 {
-  color: red;
-}
-
-/* TODO: make this all better scoped */
-
-body {
+/* body {
   font-family:
     Source Code Pro,
     Consolas,
     Menlo,
     monospace !important;
-}
+} */
 
 #gridArea {
   width: 100%;
@@ -114,16 +108,16 @@ input[type="number"] {
   padding-bottom: 10px;
 }
 
-a.downloadButton {
+button.downloadButton {
   /* text-decoration: underline !important; */
   cursor: pointer !important;
   color: #007bff !important;
   padding-right: 10px;
 }
-a.downloadButton:hover {
+button.downloadButton:hover {
   text-decoration: none !important;
 }
-a.downloadButton:last-child {
+button.downloadButton:last-child {
   padding-right: 0;
 }
 
