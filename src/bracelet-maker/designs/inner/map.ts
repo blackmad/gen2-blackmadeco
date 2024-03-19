@@ -1,4 +1,5 @@
 // TODO: if it's too close to another street, don't use it
+
 import {
   GeocodeMetaParameter,
   OnOffMetaParameter,
@@ -12,9 +13,10 @@ import {
   flattenArrayOfPathItems,
   simplifyPath,
 } from "../../utils/paperjs-utils";
+import { DefaultDict, isNonNullable } from "../../utils/type-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import {
-  fetchTopoJsonTiles,
+  fetchGeoJsonTiles,
   lineStringCoordinatesToPaperLine,
   multiLneStringCoordinatesToPaperLines,
 } from "./map-utils";
@@ -57,13 +59,29 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
   }
 
   filterFeatures(features: GeoJSON.Feature[]): GeoJSON.Feature[] {
+    const classDict = new DefaultDict(0);
+    const subClassDict = new DefaultDict(0);
+
+    features.forEach((f) => {
+      classDict[f["properties"]["class"]]++;
+      subClassDict[f["properties"]["subclass"]]++;
+    });
+
+    console.log({ classDict });
+    console.log({ subClassDict });
+
     return features.filter((f) => {
       return (
-        ["road", "major_road", "minor_road"].includes(f.properties?.kind) &&
-        f.properties?.kind_detail != "service" // these seem to very often be parking lot outlines;
-        // these are cool but break parks
-        // (f.properties.kind == "path" && f.properties.kind_detail == "footway")
+        f["geometry"]["type"] !== "Polygon" &&
+        f["geometry"]["type"] !== "MultiPolygon" &&
+        f["properties"]["class"] != "service"
       );
+      // return true;
+
+      // ["road", "major_road", "minor_road"].includes(f.properties?.kind) &&
+      // f.properties?.kind_detail != "service" // these seem to very often be parking lot outlines;
+      // these are cool but break parks
+      // (f.properties.kind == "path" && f.properties.kind_detail == "footway")
     });
   }
 
@@ -95,7 +113,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       zoom = 13;
     }
 
-    const features = await fetchTopoJsonTiles({
+    const features = await fetchGeoJsonTiles({
       minlat: centerLat - latSpan / 2,
       minlng: centerLng - lngSpan / 2,
       maxlat: centerLat + latSpan / 2,
@@ -103,54 +121,59 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       zoom,
     });
 
+    console.log({ features });
     const filteredFeatures = this.filterFeatures(features);
+    console.log({ filteredFeatures });
     const pointPaths: paper.Point[][] = this.extractPointPathsFromFeatures(
       paper,
       filteredFeatures,
       invertLatLng
     );
-    const bufferedPaths: paper.PathItem[] = pointPaths.map((path) => {
-      const centerAt = (function (centerAt) {
-        switch (centerAt) {
-          case "topLeft":
-            return boundaryModel.bounds.topLeft;
-          case "bottomLeft":
-            return boundaryModel.bounds.bottomLeft;
-          case "center":
-            return boundaryModel.bounds.center;
+    console.log({ pointPaths });
+    const bufferedPaths: paper.PathItem[] = pointPaths
+      .map((path) => {
+        const centerAt = (function (centerAt) {
+          switch (centerAt) {
+            case "topLeft":
+              return boundaryModel.bounds.topLeft;
+            case "bottomLeft":
+              return boundaryModel.bounds.bottomLeft;
+            case "center":
+              return boundaryModel.bounds.center;
+          }
+        })(params.centerAt);
+
+        // translate map coordinates to our coordinate system, center on our center and scale
+        const points = path.map((point) => {
+          return new paper.Point(
+            (point.x - centerX) * scaleX,
+            // make this second one negative so north is "up" in our coordinate system
+            (point.y - centerY) * -scaleY
+          ).add(centerAt);
+        });
+
+        const line = new paper.Path(points);
+
+        if (debug) {
+          addToDebugLayer(paper, "lines", line);
         }
-      })(params.centerAt);
 
-      // translate map coordinates to our coordinate system, center on our center and scale
-      const points = path.map((point) => {
-        return new paper.Point(
-          (point.x - centerX) * scaleX,
-          // make this second one negative so north is "up" in our coordinate system
-          (point.y - centerY) * -scaleY
-        ).add(centerAt);
-      });
-
-      const line = new paper.Path(points);
-
-      if (debug) {
-        addToDebugLayer(paper, "lines", line);
-      }
-
-      // Only consider line segments that are inside or touching our boundaries
-      const shrunkBondaryModel = boundaryModel.clone();
-      shrunkBondaryModel.scale(0.99);
-      if (
-        line.isInside(boundaryModel.bounds) ||
-        shrunkBondaryModel.intersects(line)
-      ) {
-        const fatLine = bufferLine(paper, points, lineWidth);
-        if (fatLine) {
-          return fatLine.intersect(boundaryModel);
-        } else {
-          return null;
+        // Only consider line segments that are inside or touching our boundaries
+        const shrunkBondaryModel = boundaryModel.clone();
+        shrunkBondaryModel.scale(0.99);
+        if (
+          line.isInside(boundaryModel.bounds) ||
+          shrunkBondaryModel.intersects(line)
+        ) {
+          const fatLine = bufferLine(paper, points, lineWidth);
+          if (fatLine) {
+            return fatLine.intersect(boundaryModel);
+          } else {
+            return null;
+          }
         }
-      }
-    });
+      })
+      .filter(isNonNullable);
 
     // Now union all the buffered lines together
     const unionedPaths = cascadedUnion(bufferedPaths.filter((b) => b != null));

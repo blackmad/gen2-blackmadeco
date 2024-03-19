@@ -1,7 +1,7 @@
 import * as _ from "lodash";
 import * as paper from "paper";
 import { FC, useCallback, useEffect, useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
@@ -76,6 +76,12 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   }, [modelMaker]);
 
+  const navigate = useNavigate();
+
+  const changeDesign = useCallback(() => {
+    navigate("/");
+  }, [navigate]);
+
   const rerender = useCallback(() => {
     if (paper != null && paper.project != null) {
       paper.project.activeLayer.removeChildren();
@@ -91,9 +97,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     (change: MetaParameterChange) => {
       const parts = change.metaParameter.name.split(".");
       modelParams[parts[0]][parts[1]] = change.value;
-      rerender();
     },
-    [modelMaker, modelParams, rerender]
+    [modelParams]
   );
 
   useEffect(() => {
@@ -158,8 +163,18 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
           modelMaker={modelMaker}
           params={modelParams}
           onChange={changeCallback}
+          rerenderCallback={rerender}
         />
         <DebugLayers onChange={rerender} />
+
+        <div className="row justify-content-center">
+          <button
+            className="btn btn-primary m-1 changeDesign"
+            onClick={changeDesign}
+          >
+            Change Design
+          </button>
+        </div>
       </div>
     </>
   );

@@ -371,7 +371,8 @@ export class MetaParameterBuilder {
 
   constructor(
     public initialParams: any,
-    public _onParamChange: MetaParameterChangeCallback
+    public _onParamChange: MetaParameterChangeCallback,
+    public _rerenderCallback: () => void
   ) {
     this.params = { ...initialParams };
   }
@@ -379,6 +380,7 @@ export class MetaParameterBuilder {
   onParamChange = ({ metaParameter, value }) => {
     // this.params[metaParameter.name] = value;
     this._onParamChange({ metaParameter, value });
+    this._rerenderCallback();
   };
 
   public buildMetaParameterWidget(metaParam: MetaParameter<any>) {
@@ -488,11 +490,12 @@ export class MetaParameterBuilder {
     );
   }
 
-  public randomize(onParamChange: () => void) {
+  public randomize() {
     this.renderedMetaParameters.forEach(
       (renderedMetaParameter: RenderedMetaParameter) => {
-        renderedMetaParameter.randomize(onParamChange);
+        renderedMetaParameter.randomize(this._onParamChange);
       }
     );
+    this._rerenderCallback();
   }
 }

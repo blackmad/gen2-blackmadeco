@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { OuterPaperModelMaker } from "../../bracelet-maker/model-maker";
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
@@ -11,10 +11,12 @@ export const MetaParamsContainer = ({
   params,
   modelMaker,
   onChange,
+  rerenderCallback,
 }: {
   params: any;
   modelMaker: OuterPaperModelMaker;
   onChange: MetaParameterChangeCallback;
+  rerenderCallback: () => void;
 }) => {
   console.log(getDebugLayers());
 
@@ -25,9 +27,20 @@ export const MetaParamsContainer = ({
   const innerParameterDivRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const metaParamBuilder = new MetaParameterBuilder(params, onChange);
+    const metaParamBuilder = new MetaParameterBuilder(
+      params,
+      onChange,
+      rerenderCallback
+    );
     setMetaParamBuilder(metaParamBuilder);
-  }, [params, onChange]);
+  }, [params, onChange, rerenderCallback]);
+
+  const randomize = useCallback(() => {
+    if (!metaParamBuilder) {
+      return;
+    }
+    metaParamBuilder.randomize();
+  }, [metaParamBuilder]);
 
   useEffect(() => {
     if (
@@ -80,7 +93,7 @@ export const MetaParamsContainer = ({
           </small>
         </div>
 
-        {/* <button @click="randomize">Randomize</button> */}
+        <button onClick={randomize}>Randomize</button>
 
         <div
           id="innerParameterDiv"

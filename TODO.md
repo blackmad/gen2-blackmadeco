@@ -1,19 +1,22 @@
-- get outer/inner picker working
-- fix images
+- fix map design
+--> figure out what it needs for yuva's map
+--> get it to default to unrounded? or much less rounded?
 
-- fix inner top height rendering
-- get exporting working again
+- fix inner top height rendering (only on straight cuff?)
 
 - bring back kaleido
+-> why kaleido unhappy middle
 
 - get param saving working
 
-- fix map design
+- make colTileBoundary be a number
 
 - bring back breakThePlane
 
 - zero eslint errors
 - zero eslint warnings
+
+- try to implement something (map?) as potrace (reuse blobs?)
 
 - implement posture collar
 - implement cuffs

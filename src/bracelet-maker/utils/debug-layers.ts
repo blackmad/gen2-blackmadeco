@@ -26,14 +26,6 @@ export function addToDebugLayer(
     path = item;
   }
   debugLayers[layerName].addChild(path);
-  console.log(
-    "added to debug layer ",
-    layerName,
-    " with ",
-    path,
-    " from ",
-    item
-  );
   path.style = debugLayers[layerName].style;
 }
 
