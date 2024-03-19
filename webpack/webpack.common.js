@@ -22,6 +22,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.(svg|png)$/,
+        type: "asset/resource",
+      },
       // bundle and load afm files verbatim
       { test: /\.afm$/, type: "asset/source" },
       // Loader for ts, tsx, js and jsx files

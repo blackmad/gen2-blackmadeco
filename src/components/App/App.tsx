@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import * as paper from "paper";
 import { FC, useCallback, useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
@@ -164,13 +165,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   );
 };
 
-const HomePage: FC = () => {
-  const [innerDesign, _setInnerDesign] = useState<string>(
-    AllInnerDesigns[0].name
-  );
-  const [outerDesign, _setOuterDesign] = useState<string>(
-    AllOuterDesigns[0].name
-  );
+const App: FC = () => {
+  const { outerDesign, innerDesign } = useLoaderData() as any;
 
   const innerDesignClass = AllInnerDesigns.find((d) => d.name == innerDesign);
   const outerDesignClass = AllOuterDesigns.find((d) => d.name == outerDesign);
@@ -190,4 +186,4 @@ const HomePage: FC = () => {
   );
 };
 
-export default HomePage;
+export default App;

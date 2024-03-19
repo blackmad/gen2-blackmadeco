@@ -1,24 +1,32 @@
-import { AllOuterDesigns } from "../bracelet-maker/designs/outer/all";
 import SelectDesignBlock from "./SelectDesignBlock";
 
-export default function SelectOuterDesign() {
-  const designs = AllOuterDesigns;
-
+export default function AbstractSelectDesignPage({
+  shapeName,
+  designs,
+  onClick,
+}: {
+  shapeName: string;
+  designs: Array<{ name: string }>;
+  onClick: (name: string) => void;
+}) {
   return (
     <div>
       <div className="container p-xs-3 p-sm-3 p-md-4 p-lg-5">
         <div className="row">
-          <h2>Pick an outer shape</h2>
+          <h2>Pick an {shapeName} shape</h2>
         </div>
         <div className="row">
           {designs.map((design) => {
             return (
               <SelectDesignBlock
-                designName={design.name.replace("Outer", "")}
+                designName={design.name
+                  .replace("Outer", "")
+                  .replace("Inner", "")}
                 designClassName={design.name}
                 key={design.name}
-                onClick={function (): void {
-                  throw new Error("Function not implemented.");
+                onClick={() => {
+                  console.log("clicking");
+                  onClick(design.name);
                 }}
               />
             );

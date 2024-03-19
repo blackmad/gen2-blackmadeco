@@ -12,7 +12,11 @@ export default function SelectDesignBlock({
   const imgSrc = `demo-output/${designClassName}.png`;
 
   return (
-    <button className="design-container col-sm-12 col-md-4" onClick={onClick}>
+    <div
+      role="button"
+      className="design-container col-sm-12 col-md-4"
+      onClick={onClick}
+    >
       <div className="panel panel-default border m-1 p-2">
         <div className="panel-body text-center d-flex align-items-center">
           <div className="align-center">
@@ -29,6 +33,6 @@ export default function SelectDesignBlock({
           </button>
         </div>
       </div>
-    </button>
+    </div>
   );
 }
