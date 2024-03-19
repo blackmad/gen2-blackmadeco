@@ -2,6 +2,7 @@
 
 import {
   GeocodeMetaParameter,
+  MetaParameter,
   OnOffMetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
@@ -20,7 +21,6 @@ import {
   lineStringCoordinatesToPaperLine,
   multiLneStringCoordinatesToPaperLines,
 } from "./map-utils";
-const randomColor = require("randomcolor");
 
 export class InnerDesignMap extends FastAbstractInnerDesign {
   needSubtraction = false;
@@ -29,6 +29,16 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
   defaultKaleido = false;
   canRound = true;
   allowOutline = true;
+
+  get metaParameters() {
+    // TODO: fix the can't call parent
+    const metaParams: MetaParameter<any>[] = super.metaParameters;
+    const shouldSmooth = metaParams.find((p) => p.name === "shouldSmooth");
+    if (shouldSmooth) {
+      shouldSmooth.value = false;
+    }
+    return metaParams;
+  }
 
   extractPointPathsFromFeatures(
     paper: paper.PaperScope,
@@ -70,11 +80,33 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
     console.log({ classDict });
     console.log({ subClassDict });
 
-    return features.filter((f) => {
+    const allowedClasses = [
+      "minor",
+      // "path",
+      "primary",
+      "secondary",
+      // "service",
+      // "tertiary",
+    ];
+
+    const disallowedSubClasses = [
+      "crossing",
+      "cycleway",
+      "path",
+      "pedestrian",
+      "platform",
+      "rail",
+      "sidewalk",
+      "steps",
+      "subway",
+    ];
+
+    const filteredFeatures = features.filter((f) => {
       return (
         f["geometry"]["type"] !== "Polygon" &&
         f["geometry"]["type"] !== "MultiPolygon" &&
-        f["properties"]["class"] != "service"
+        allowedClasses.includes(f["properties"]["class"]) &&
+        !disallowedSubClasses.includes(f["properties"]["subclass"])
       );
       // return true;
 
@@ -83,6 +115,19 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       // these are cool but break parks
       // (f.properties.kind == "path" && f.properties.kind_detail == "footway")
     });
+
+    const classDict2 = new DefaultDict(0);
+    const subClassDict2 = new DefaultDict(0);
+
+    filteredFeatures.forEach((f) => {
+      classDict2[f["properties"]["class"]]++;
+      subClassDict2[f["properties"]["subclass"]]++;
+    });
+
+    console.log({ classDict2 });
+    console.log({ subClassDict2 });
+
+    return filteredFeatures;
   }
 
   async makeDesign(paper: paper.PaperScope, params: any) {

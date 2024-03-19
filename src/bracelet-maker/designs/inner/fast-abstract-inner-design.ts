@@ -49,7 +49,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
   ): Promise<InnerDesignModel>;
   abstract get designMetaParameters(): MetaParameter<any>[];
 
-  get metaParameters() {
+  public get metaParameters() {
     let metaParams: MetaParameter<any>[] = [
       new OnOffMetaParameter({
         title: "Debug",
