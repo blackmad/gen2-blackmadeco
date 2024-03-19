@@ -56,13 +56,6 @@ export class InnerDesignHexes extends FastAbstractInnerDesign {
       }
     }
 
-    // const minX = _.min(_.map(paths, (p) => p.bounds.x));
-    // const maxX = _.max(_.map(paths, (p) => p.bounds.x));
-    // const usedX = maxX - minX;
-    // const whitespace = boundaryModel.bounds.width - usedX;
-    // console.log(minX, maxX, usedX, whitespace);
-    // paths.forEach(p => new paper.Point(p.translate(whitespace/4, 0)))
-
     return Promise.resolve({ paths: paths });
   }
 

@@ -97,7 +97,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       }
     ).join("&");
 
-    window.location.hash = hashParams;
+    // window.location.hash = hashParams;
 
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);

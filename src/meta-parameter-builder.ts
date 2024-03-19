@@ -79,7 +79,6 @@ class RenderedGeocodeMetaParameter extends RenderedMetaParameter {
 
     this.lngInputEl.value = lat;
     this.latInputEl.value = lng;
-    console.log(value);
 
     const { metaParameter } = this;
     onParamChange({ metaParameter, value });
@@ -314,7 +313,6 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
     this.options.forEach((option) => {
       option.selected = option.value === value;
     });
-    console.log("random select to", value);
     onParamChange({ metaParameter: this.metaParameter, value });
   }
 
@@ -456,7 +454,6 @@ export class MetaParameterBuilder {
   }
 
   rerender(_params: any) {
-    console.log(this.renderedMetaParameters);
     const params = {};
     _.forEach(_params, (v, k) => {
       params[k.split(".")[1]] = v;
@@ -464,14 +461,9 @@ export class MetaParameterBuilder {
 
     this.renderedMetaParameters.forEach(
       (renderedMetaParameter: RenderedMetaParameter) => {
-        console.log(renderedMetaParameter.metaParameter.name, {
-          renderedMetaParameter,
-        });
         const metaParameter = renderedMetaParameter.metaParameter;
         if (metaParameter.parentParam) {
-          console.log("has parent param", metaParameter.parentParam);
           const parentValue = params[metaParameter.parentParam.name];
-          console.log({ parentValue });
           if (parentValue) {
             renderedMetaParameter.show();
           } else {

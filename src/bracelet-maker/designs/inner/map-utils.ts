@@ -78,7 +78,6 @@ export function getTileCoords(params: MapExtent): TileCoords[] {
 export async function fetchVectorTile(tileCoords: TileCoords): VectorTile {
   const { z, x, y } = tileCoords;
   const url = `https://tiles.stadiamaps.com/data/openmaptiles/${z}/${y}/${x}.pbf?api_key=ba2603de-0143-4fcd-b2cd-184aa40fe987`;
-  console.log({ url });
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
   const pbf = new Pbf(new Uint8Array(arrayBuffer));
@@ -88,16 +87,13 @@ export async function fetchVectorTile(tileCoords: TileCoords): VectorTile {
 
 export async function fetchGeoJsonTiles(extent: MapExtent) {
   const coords = getTileCoords(extent);
-  // console.log(paths);
 
   const fetchers = coords.map(async (coord) => {
     const { x, y, z } = coord;
     const tile = await fetchVectorTile(coord);
-    console.log({ tile });
     const features = [];
 
     const layer = tile.layers["transportation"];
-    console.log({ layer });
 
     if (!layer) {
       return [];

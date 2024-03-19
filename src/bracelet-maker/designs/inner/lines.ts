@@ -72,7 +72,6 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
             startOfCellX + (colOffset - (point.x - colOffset * col)),
             point.y
           );
-          // console.log(point.x, point.y, np.x, np.y);
           return np;
         };
 
@@ -81,7 +80,6 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
             point.x,
             startOfCellY + (rowOffset - (point.y - rowOffset * row))
           );
-          // console.log(point.x, point.y, np.x, np.y)
           return np;
         };
 

@@ -67,7 +67,7 @@ export async function demoDesign(
   const outerArea = outerRect.area;
   const innerArea = path.area;
 
-  console.log({ outerArea, innerArea }, innerArea / outerArea);
+  // console.log({ outerArea, innerArea }, innerArea / outerArea);
 
   let svg;
   if (innerArea / outerArea > minimumAreaRatio) {
