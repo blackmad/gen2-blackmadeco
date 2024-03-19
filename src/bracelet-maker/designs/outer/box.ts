@@ -47,13 +47,8 @@ export class BoxOuter extends OuterPaperModelMaker {
   public controlInfo = "It's a box";
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
-    const {
-      height,
-      topWidth,
-      bottomWidth,
-      debug = false,
-      smoothingFactor,
-    } = options[this.constructor.name];
+    const { height, topWidth, bottomWidth, smoothingFactor } =
+      options[this.constructor.name];
 
     let outerModel: paper.Path = new paper.Path();
 
@@ -81,20 +76,26 @@ export class BoxOuter extends OuterPaperModelMaker {
       radius: smoothingFactor,
     });
 
+    const originalOuterModel = outerModel.clone();
+
+    console.log({ options });
+
     const innerOptions = options[this.subModel.constructor.name] || {};
     innerOptions.boundaryModel = outerModel;
     innerOptions.safeCone = outerModel.clone().scale(5, 5);
     innerOptions.outerModel = outerModel;
 
+    // TODO awful awful awful fix
+    this.subModel.scaleWidthForSafeArea = true;
+
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
-    if (innerDesign.outline) {
-      // @ts-ignore
-      outerModel = outerModel.unite(innerDesign.outline);
-    }
+    const finalOuterModel = innerDesign.outline
+      ? outerModel.unite(innerDesign.outline)
+      : originalOuterModel;
 
     return new CompletedModel({
-      outer: outerModel,
+      outer: finalOuterModel,
       holes: [],
       design: innerDesign.paths,
     });

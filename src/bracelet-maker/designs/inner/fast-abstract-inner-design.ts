@@ -11,7 +11,11 @@ import {
 import { InnerCompletedModel, PaperModelMaker } from "../../model-maker";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { makeConcaveOutline } from "../../utils/outline";
-import { simplifyPath, unkinkPath } from "../../utils/paperjs-utils";
+import {
+  bufferPath,
+  simplifyPath,
+  unkinkPath,
+} from "../../utils/paperjs-utils";
 import { removeBadSegments } from "../../utils/remove-bad-segments";
 import { roundCorners } from "../../utils/round-corners";
 import {
@@ -40,6 +44,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
   public canRound: boolean = false;
   public canKaleido: boolean = false;
   public defaultKaleido: boolean = false;
+  public scaleHeightForSafeArea = true;
+  public scaleWidthForSafeArea = false;
 
   public controlInfo = "";
 
@@ -354,6 +360,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       seed: string | number | undefined;
       safeCone: paper.PathItem;
       outerModel: paper.PathItem;
+      breakThePlane: boolean;
+      extendOutward: number;
+      safeBorderWidth: number;
     } & KaleidoscopeMakerParams
   ): Promise<InnerCompletedModel> => {
     // const self = this;
@@ -366,25 +375,32 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const originalBoundaryModel = params.boundaryModel.clone();
 
-    // TODO(blackmad): bring back
-    // if (params.breakThePlane) {
-    //   params.boundaryModel = bufferPath(
-    //     paper,
-    //     params.extendOutward,
-    //     params.boundaryModel
-    //   );
-    //   params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
-    //     insert: false,
-    //   });
-    // } else {
-    //   const originalHeight = params.boundaryModel.bounds.height;
-    //   const heightScale = params.safeBorderWidth / originalHeight;
-    //   params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
-    // }
+    if (params.breakThePlane) {
+      params.boundaryModel = bufferPath(
+        paper,
+        params.extendOutward,
+        params.boundaryModel
+      );
+      params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
+        insert: false,
+      });
+    } else {
+      const originalHeight = params.boundaryModel.bounds.height;
+      const heightScale = this.scaleHeightForSafeArea
+        ? params.safeBorderWidth / originalHeight
+        : 0;
+
+      const originalWidth = params.boundaryModel.bounds.width;
+      const widthScale = this.scaleWidthForSafeArea
+        ? params.safeBorderWidth / originalWidth
+        : 0;
+      // params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
+      params.boundaryModel.scale(1 - widthScale, 1 - heightScale);
+    }
 
     let kaleidoscopeMaker: KaleidoscopeMaker | null = null;
     let kaleidoscopeSavedBoundaryModel: paper.PathItem | null = null;
-    // TODO(blackmad): bring back
+
     if (this.canKaleido && params.segments > 1) {
       kaleidoscopeMaker = new KaleidoscopeMaker(paper, params);
       kaleidoscopeSavedBoundaryModel = params.boundaryModel.clone();
@@ -447,6 +463,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     );
     paths = maybeOutline.paths;
     const outline = maybeOutline.outline;
+    console.log({ outline });
 
     return new InnerCompletedModel({
       paths,

@@ -40,7 +40,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
     paper: paper.PaperScope,
     params: any
   ): Promise<paper.Point[][]> {
-    const { boundaryModel, outerModel, numLines } = params;
+    const { outerModel, numLines } = params;
 
     const numRows = 1;
     const numCols = 1;
@@ -52,7 +52,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
       numRows,
       numCols,
     });
-    const lines = [];
+    const lines: paper.Point[][] = [];
 
     const colOffset = outerModel.bounds.width / numCols;
     const rowOffset = outerModel.bounds.height / numRows;
@@ -62,7 +62,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
         const startOfCellY = colOffset * col;
         const startOfCellX = rowOffset * row;
 
-        const mirrorX = (point) => {
+        const mirrorX = (point: paper.Point) => {
           // say cell size = 50
           // we have x = 110
           // we would want x to move to 140
@@ -75,7 +75,7 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
           return np;
         };
 
-        const mirrorY = (point) => {
+        const mirrorY = (point: paper.Point) => {
           const np = new paper.Point(
             point.x,
             startOfCellY + (rowOffset - (point.y - rowOffset * row))
@@ -83,14 +83,14 @@ export class InnerDesignLines extends AbstractExpandInnerDesign {
           return np;
         };
 
-        const offsetPoint = (point) => {
+        const offsetPoint = (point: paper.Point) => {
           return new paper.Point(
             point.x + colOffset * col,
             point.y + rowOffset * row
           );
         };
 
-        const transformPoint = (point) => {
+        const transformPoint = (point: paper.Point) => {
           let newPoint = point;
           if (row % 2 === 0) {
             newPoint = mirrorX(newPoint);

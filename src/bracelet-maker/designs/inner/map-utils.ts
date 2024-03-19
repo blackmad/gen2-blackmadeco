@@ -1,7 +1,7 @@
 import { VectorTile } from "@mapbox/vector-tile";
 import * as _ from "lodash";
 import Pbf from "pbf";
-const { fetch, Request, Response, Headers } = require("fetch-ponyfill")();
+const { fetch } = require("fetch-ponyfill")();
 
 export function lng2tile(lon: number, zoom: number) {
   return Math.floor(((lon + 180) / 360) * Math.pow(2, zoom));

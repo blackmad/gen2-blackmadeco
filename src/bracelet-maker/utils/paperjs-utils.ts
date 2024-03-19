@@ -84,7 +84,7 @@ export function getPointsFromPath(shape: paper.Path): paper.Point[] {
 export function bufferPath(
   paper: paper.PaperScope,
   buffer: number,
-  shape: paper.Path
+  shape: paper.PathItem
 ): paper.PathItem {
   return bufferPointstoPathItem(paper, buffer, getPointsFromPath(shape));
 }
