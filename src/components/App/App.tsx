@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 import * as paper from "paper";
-import { FC, useCallback, useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
@@ -74,11 +73,9 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   }, [modelMaker]);
 
-  const navigate = useNavigate();
-
   const changeDesign = useCallback(() => {
-    navigate("/");
-  }, [navigate]);
+    window.location.pathname = "/";
+  }, []);
 
   const rerender = useCallback(() => {
     if (paper != null && paper.project != null) {
@@ -97,7 +94,14 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       }
     ).join("&");
 
-    // window.location.hash = hashParams;
+    window.addEventListener("hashchange", (e) => {
+      console.log({ e });
+      e.stopPropagation();
+      e.preventDefault();
+    });
+
+    // window.location.replace("#" + hashParams);
+    history.replaceState(undefined, "", "#" + hashParams);
 
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);
@@ -182,9 +186,13 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   );
 };
 
-const App: FC = () => {
-  const { outerDesign, innerDesign } = useLoaderData() as any;
-
+const App = ({
+  innerDesign,
+  outerDesign,
+}: {
+  innerDesign: string;
+  outerDesign: string;
+}) => {
   const innerDesignClass = AllInnerDesigns.find((d) => d.name == innerDesign);
   const outerDesignClass = AllOuterDesigns.find((d) => d.name == outerDesign);
 

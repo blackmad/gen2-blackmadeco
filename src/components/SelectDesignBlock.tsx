@@ -9,7 +9,7 @@ export default function SelectDesignBlock({
   designName: string;
   extraButtonClassNames?: string;
 }) {
-  const imgSrc = `demo-output/${designClassName}.png`;
+  const imgSrc = `/demo-output/${designClassName}.png`;
 
   return (
     <div
