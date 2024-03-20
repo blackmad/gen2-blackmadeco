@@ -13,6 +13,7 @@ import {
   makeSVGData,
   svgStringHydrator,
 } from "../../bracelet-maker/utils/svg-utils";
+import { isNonNullable } from "../../bracelet-maker/utils/type-utils";
 import { MetaParameterChange } from "../../meta-parameter-builder";
 import DebugLayers from "./DebugLayers";
 import DownloadButtons from "./DownloadButtons";
@@ -68,6 +69,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       const modelParams = {};
       modelParams[modelMaker.constructor.name] = initialOuterParams;
       modelParams[modelMaker.subModel.constructor.name] = initialInnerParams;
+      console.log("setting model params", modelParams);
 
       setModelParams(modelParams);
     }
@@ -85,14 +87,23 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       });
     }
 
-    const hashParams = _.flatMap(
+    console.log("model params now at hashParams", { modelParams });
+
+    const hashParams = _.map(
       modelParams,
-      (k: Record<string, any>, outerName: string) => {
-        return _.map(k, (paramValue, paramName) => {
-          return encodeURIComponent(`${outerName}.${paramName}=${paramValue}`);
-        });
+      (paramValue: any, paramName: string) => {
+        console.log({ paramName });
+        if (!paramName.includes(".")) {
+          return;
+        }
+        console.log({ paramValue, paramName });
+        return encodeURIComponent(`${paramName}=${paramValue}`);
       }
-    ).join("&");
+    )
+      .filter(isNonNullable)
+      .join("&");
+
+    console.log({ hashParams });
 
     window.addEventListener("hashchange", (e) => {
       console.log({ e });
@@ -108,6 +119,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {
+      console.log({ value: change.value });
       const parts = change.metaParameter.name.split(".");
       modelParams[parts[0]][parts[1]] = change.value;
     },

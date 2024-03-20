@@ -51,16 +51,37 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       smooth,
       simplificationTolerance,
       url,
+      contrastThresholdMax,
+      blackOnWhite,
     } = params;
 
-    const buffer = await ImageDownloader.fetch(url);
+    if (url === "") {
+      return { paths: [] };
+    }
+
+    async function getBuffer() {
+      try {
+        return await ImageDownloader.fetch(url);
+      } catch {
+        return;
+      }
+    }
+
+    const buffer = await getBuffer();
+    if (!buffer) {
+      return { paths: [] };
+    }
 
     console.log({ turnPolicy });
 
     const image = await Jimp.read(buffer);
 
     // Convert the image to black and white
-    image.threshold({ max: 200, replace: 200, autoGreyscale: true });
+    image.threshold({
+      max: contrastThresholdMax,
+      replace: 255,
+      autoGreyscale: false,
+    });
 
     // Get the buffer of the modified image
     const newBuffer = await image.getBufferAsync("image/png");
@@ -73,7 +94,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     const tracedSvgString = await traceFromBufferToSvgString({
       buffer: newBuffer,
       options: {
-        blackOnWhite: false,
+        blackOnWhite,
         threshold,
         turnPolicy,
         turdSize,
@@ -211,6 +232,11 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         value: false,
         name: "smooth",
       }),
+      new OnOffMetaParameter({
+        title: "blackOnWhite",
+        value: false,
+        name: "blackOnWhite",
+      }),
       new RangeMetaParameter({
         title: "Simplification Tolerance",
         min: 0,
@@ -218,6 +244,15 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         value: 0.0,
         step: 1,
         name: "simplificationTolerance",
+      }),
+
+      new RangeMetaParameter({
+        title: "Contrast Max",
+        min: 0,
+        max: 256,
+        value: 100,
+        step: 1,
+        name: "contrastThresholdMax",
       }),
     ];
   }
