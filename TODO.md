@@ -1,10 +1,5 @@
-- get param saving working
-
-
-- fix inner top height rendering (only on straight cuff?)
-
 - bring back kaleido
--> why kaleido unhappy middle
+-> why kaleido unhappy middle in map someimte
 
 - fix map design
 --> figure out what it needs for yuva's map
@@ -13,6 +8,8 @@
 - make colTileBoundary be a number
 
 - bring back breakThePlane
+
+- redo mondrian grid to be 
 
 - zero eslint errors
 - zero eslint warnings

@@ -162,6 +162,8 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     innerOptions.safeCone = safeCone;
     innerOptions.outerModel = outerModel;
 
+    console.log({ outerModel });
+
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
     const allHolesAccumulated: Array<

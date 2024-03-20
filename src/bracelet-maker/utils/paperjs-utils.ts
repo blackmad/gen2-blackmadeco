@@ -7,6 +7,7 @@ import GeoJSON from "geojson";
 import GeoJSONReader from "jsts/org/locationtech/jts/io/GeoJSONReader";
 import Polygonizer from "jsts/org/locationtech/jts/operation/polygonize/Polygonizer";
 import * as _ from "lodash";
+import paper from "paper";
 import simplify from "simplify-path";
 
 export function randomPointInPolygon(
@@ -398,3 +399,19 @@ export function unkinkPath(
 // export function simplifyPath2(paper: paper.PaperScope, path: paper.Path, tolerance: number = 0.001): paper.Path {
 //   return new paper.Path(simplifyPathToPoints2(path, tolerance).map(p => new paper.Point(p)));
 // }
+
+export function makeIncrementalPath(
+  start: paper.PointLike,
+  deltas: paper.PointLike[]
+) {
+  const path = new paper.Path();
+  let currentPoint = new paper.Point(start);
+  path.add(start);
+  console.log(deltas);
+  deltas.forEach((delta) => {
+    currentPoint = currentPoint.add(delta);
+    console.log(delta, currentPoint);
+    path.add(currentPoint);
+  });
+  return path;
+}
