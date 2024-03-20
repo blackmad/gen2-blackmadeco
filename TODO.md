@@ -3,11 +3,13 @@
 --> get it to default to unrounded? or much less rounded?
 --> why kaleido unhappy middle in map someimte
 
+- make a more geometric-intersecting shape design like https://www.pinterest.com/pin/658440408009961386/
+
 - make colTileBoundary be a number
 
 - bring back breakThePlane
 
-- redo mondrian grid to be 
+- redo mondrian grid to be on an actual grid
 
 - zero eslint errors
 - zero eslint warnings

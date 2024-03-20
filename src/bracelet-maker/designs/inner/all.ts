@@ -4,6 +4,7 @@ import { InnerDesignEmpty } from "./empty";
 import { InnerDesignGrid } from "./grid";
 import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignHexes } from "./hexes";
+import { InnerDesignImageTrace } from "./image-trace";
 import { InnerDesignLattice } from "./lattice";
 import { InnerDesignLines } from "./lines";
 import { InnerDesignMap } from "./map";
@@ -18,6 +19,7 @@ import { InnerDesignVera } from "./vera";
 import { InnerDesignVoronoi } from "./voronoi";
 
 export const AllInnerDesigns = [
+  InnerDesignImageTrace,
   InnerDesignVoronoi,
   InnerDesignMaze1,
   InnerDesignTessagon,
