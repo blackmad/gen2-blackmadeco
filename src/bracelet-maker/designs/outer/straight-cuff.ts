@@ -152,10 +152,10 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     });
 
     const safeAreaPath: paper.Path = new paper.Path();
-    safeAreaPath.add(new paper.Point(gutterWidth, 0));
-    safeAreaPath.add(new paper.Point(gutterWidth + widthDiff, height));
-    safeAreaPath.add(new paper.Point(minWidth - gutterWidth, height));
-    safeAreaPath.add(new paper.Point(maxWidth - gutterWidth, 0));
+    safeAreaPath.add(new paper.Point(gutterWidth / 2, 0));
+    safeAreaPath.add(new paper.Point(gutterWidth / 2 + widthDiff, height));
+    safeAreaPath.add(new paper.Point(minWidth - gutterWidth / 2, height));
+    safeAreaPath.add(new paper.Point(maxWidth - gutterWidth / 2, 0));
     roundCorners(paper, safeAreaPath, "0.2");
 
     // const safeCone = safeAreaPath.clone().scale(0.97, 10);
@@ -190,8 +190,6 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     safeCone.closePath();
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.height = cuffOuter.bounds.height;
-    innerOptions.width = cuffOuter.bounds.width;
     innerOptions.boundaryModel = safeAreaPath;
     innerOptions.safeCone = safeCone;
     innerOptions.outerModel = cuffOuter;

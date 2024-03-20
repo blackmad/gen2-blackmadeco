@@ -156,8 +156,6 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     );
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.height = height;
-    innerOptions.width = totalLength;
     innerOptions.boundaryModel = safeArea;
     innerOptions.safeCone = safeCone;
     innerOptions.outerModel = outerModel;

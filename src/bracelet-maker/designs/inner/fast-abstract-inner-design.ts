@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import ExtendPaperJs from "paperjs-offset";
+import ExtendPaperJs, { PaperOffset } from "paperjs-offset";
 import seedrandom from "seedrandom";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 
@@ -385,17 +385,16 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         insert: false,
       });
     } else {
-      const originalHeight = params.boundaryModel.bounds.height;
-      const heightScale = this.scaleHeightForSafeArea
-        ? params.safeBorderWidth / originalHeight
-        : 0;
-
-      const originalWidth = params.boundaryModel.bounds.width;
-      const widthScale = this.scaleWidthForSafeArea
-        ? params.safeBorderWidth / originalWidth
-        : 0;
-      // params.boundaryModel.scale(new paper.Point(1, 1 - heightScale));
-      params.boundaryModel.scale(1 - widthScale, 1 - heightScale);
+      params.boundaryModel = PaperOffset.offset(
+        params.boundaryModel.clone(),
+        -params.safeBorderWidth,
+        {
+          jointType: "jtMiter",
+          endType: "etClosedPolygon",
+          miterLimit: 2.0,
+          roundPrecision: 0.25,
+        }
+      );
     }
 
     let kaleidoscopeMaker: KaleidoscopeMaker | null = null;
