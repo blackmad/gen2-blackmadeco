@@ -6,7 +6,12 @@ import JimpImport from "jimp/es";
 
 const Jimp = configure({ plugins: [threshold] }, JimpImport);
 
-import { RangeMetaParameter, SelectMetaParameter } from "../../meta-parameter";
+import {
+  OnOffMetaParameter,
+  RangeMetaParameter,
+  SelectMetaParameter,
+  StringMetaParameter,
+} from "../../meta-parameter";
 import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
 import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
@@ -36,10 +41,17 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
   canKaleido = true;
 
   async makeDesign(paper: paper.PaperScope, params: any) {
-    const { boundaryModel, threshold, turnPolicy, turdSize } = params;
-
-    const url =
-      "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg";
+    const {
+      boundaryModel,
+      threshold,
+      turnPolicy,
+      turdSize,
+      objectFit,
+      scale,
+      smooth,
+      simplificationTolerance,
+      url,
+    } = params;
 
     const buffer = await ImageDownloader.fetch(url);
 
@@ -48,7 +60,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     const image = await Jimp.read(buffer);
 
     // Convert the image to black and white
-    image.threshold({ max: 200, replace: 200, autoGreyscale: false });
+    image.threshold({ max: 200, replace: 200, autoGreyscale: true });
 
     // Get the buffer of the modified image
     const newBuffer = await image.getBufferAsync("image/png");
@@ -105,19 +117,33 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     item.translate(
       new paper.Point(-item.bounds.width / 2, -item.bounds.height / 2)
     );
-    const scale = boundaryModel.bounds.width / item.bounds.width;
-    item.scale(scale, boundaryModel.bounds.center);
+
+    const scaleW = (boundaryModel.bounds.width / item.bounds.width) * scale;
+    const scaleH = (boundaryModel.bounds.height / item.bounds.height) * scale;
+    if (objectFit === "contain") {
+      item.scale(
+        scaleW > scaleH ? scaleH : scaleW,
+        boundaryModel.bounds.center
+      );
+    } else if (objectFit === "cover") {
+      item.scale(
+        scaleW > scaleH ? scaleW : scaleH,
+        boundaryModel.bounds.center
+      );
+    } else if (objectFit === "fill") {
+      item.scale(scaleW, scaleH, boundaryModel.bounds.center);
+    }
 
     paths.forEach((path) => {
       path.closePath();
 
-      // if (smooth) {
-      //   path.smooth({ type: "continuous" });
-      // }
+      if (smooth) {
+        path.smooth({ type: "continuous" });
+      }
 
-      // if (simplificationTolerance > 0) {
-      //   path.simplify(simplificationTolerance / 50000);
-      // }
+      if (simplificationTolerance > 0) {
+        path.simplify(simplificationTolerance / 50000);
+      }
     });
 
     console.log({ paths });
@@ -127,6 +153,21 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
   get designMetaParameters() {
     return [
+      new StringMetaParameter({
+        title: "URL to image",
+        value:
+          "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
+        defaults: [
+          "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
+        ],
+        name: "url",
+      }),
+      new SelectMetaParameter({
+        title: "Object Fit",
+        value: "fit",
+        options: ["contain", "cover", "fill"],
+        name: "objectFit",
+      }),
       new RangeMetaParameter({
         title: "Border Size (in)",
         min: 0.02,
@@ -156,6 +197,27 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         options: ["minority", "majority", "black", "white", "left", "right"],
         value: "minority",
         name: "turnPolicy",
+      }),
+      new RangeMetaParameter({
+        title: "scale",
+        min: 0,
+        max: 100,
+        value: 1,
+        step: 0.1,
+        name: "scale",
+      }),
+      new OnOffMetaParameter({
+        title: "Smooth blobs",
+        value: false,
+        name: "smooth",
+      }),
+      new RangeMetaParameter({
+        title: "Simplification Tolerance",
+        min: 0,
+        max: 1000,
+        value: 0.0,
+        step: 1,
+        name: "simplificationTolerance",
       }),
     ];
   }

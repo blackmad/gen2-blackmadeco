@@ -1,3 +1,11 @@
+TRACE
+- add customizable urls
+- why is contain broken at first
+- why are some paths unable to heal?
+
+- regenerate images
+- fix path bug
+
 - fix map design
 --> figure out what it needs for yuva's map
 --> get it to default to unrounded? or much less rounded?

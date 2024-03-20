@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter } from "react-router-dom";
 
 import App from "./components/App/App";
 import SelectInnerDesignPage from "./components/SelectInnerDesignPage";
@@ -12,34 +11,6 @@ import SelectOuterDesignPage from "./components/SelectOuterDesignPage";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-
-const router = createBrowserRouter([
-  {
-    path: "/design",
-    element: <App />,
-  },
-  {
-    path: "/:outerDesign",
-    element: <SelectInnerDesignPage />,
-    loader: ({ params }) => {
-      return { outerDesign: params.outerDesign };
-    },
-  },
-  {
-    path: "/",
-    element: <SelectOuterDesignPage />,
-  },
-  {
-    path: "/:outerDesign/:innerDesign/",
-    element: <App />,
-    loader: ({ params }) => {
-      return {
-        outerDesign: params.outerDesign,
-        innerDesign: params.innerDesign,
-      };
-    },
-  },
-]);
 
 function HardcodedRouter() {
   const [outerDesign, setOuterDesign] = useState("");
@@ -70,7 +41,13 @@ function HardcodedRouter() {
     if (!hasInitted) {
       return;
     }
-    console.log("pushing state", [outerDesign, innerDesign].join("/"));
+    const newPath = [outerDesign, innerDesign].join("/");
+
+    if ("/" + newPath === window.location.pathname) {
+      return;
+    }
+
+    console.log("pushing state  ", newPath, "from ", window.location.pathname);
     window.history.pushState(
       {},
       "",

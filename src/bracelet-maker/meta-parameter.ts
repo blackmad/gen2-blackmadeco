@@ -9,6 +9,7 @@ export enum MetaParameterType {
   Select,
   OnOff,
   Geocode,
+  String,
 }
 
 export interface MetaParameterBaseParams<T> {
@@ -112,6 +113,25 @@ export class SelectMetaParameter extends MetaParameter<string> {
 
   getRandomValue() {
     return _.sample(this.options);
+  }
+}
+
+export interface StringMetaParameterParams
+  extends MetaParameterBaseParams<string> {
+  defaults: string[];
+}
+
+export class StringMetaParameter extends MetaParameter<string> {
+  public defaults: string[];
+  public type = MetaParameterType.String;
+
+  constructor(params: StringMetaParameterParams) {
+    super(params);
+    this.defaults = params.defaults;
+  }
+
+  getRandomValue() {
+    return _.sample(this.defaults);
   }
 }
 

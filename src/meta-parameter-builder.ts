@@ -17,6 +17,7 @@ import {
   OnOffMetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
+  StringMetaParameter,
 } from "./bracelet-maker/meta-parameter";
 import { HasMetaParameters } from "./bracelet-maker/model-maker";
 
@@ -216,6 +217,64 @@ class RenderedOnOffMetaParameter extends RenderedMetaParameter {
   }
 }
 
+class RenderedStringMetaParameter extends RenderedMetaParameter {
+  checkBox = null;
+
+  public constructor(
+    public metaParameter: StringMetaParameter,
+    private initialParams,
+    public onParamChange
+  ) {
+    super();
+  }
+
+  public randomize(onParamChange: Function) {
+    this.checkBox.value = _.sample(this.metaParameter.defaults);
+    onParamChange({
+      metaParameter: this.metaParameter,
+      value: this.checkBox.value,
+    });
+  }
+
+  public render() {
+    const metaParameter = this.metaParameter;
+    let selectedValue = this.initialParams[metaParameter.name];
+    if (this.initialParams[metaParameter.name] == null) {
+      selectedValue = metaParameter.value;
+    }
+
+    const { parentDiv, containingDiv } = makeMetaParameterContainer(
+      metaParameter.title
+    );
+    const selectInput = document.createElement("input");
+    selectInput.name = metaParameter.name + "-input";
+
+    const switchDiv = $(`<div class="col-7 leftInputContainer">
+    <input type="input" autocomplete="off">
+</div>`);
+
+    // const switchDiv = $(`<div><input type="checkbox"></input></div>`);
+    containingDiv.append(switchDiv[0]);
+
+    this.checkBox = $(switchDiv).find("input")[0] as HTMLInputElement;
+    this.checkBox.value = selectedValue;
+
+    this.initialParams[metaParameter.name] = selectedValue;
+
+    $(switchDiv)
+      .find("input")
+      .on(
+        "blur",
+        function (event) {
+          const selectedValue = (event.target as HTMLInputElement).value;
+          this.onParamChange({ metaParameter, value: selectedValue });
+        }.bind(this)
+      );
+
+    return parentDiv;
+  }
+}
+
 class RenderedRangeMetaParameter extends RenderedMetaParameter {
   public constructor(
     public metaParameter: RangeMetaParameter,
@@ -404,6 +463,12 @@ export class MetaParameterBuilder {
       case MetaParameterType.Geocode:
         return new RenderedGeocodeMetaParameter(
           metaParam as GeocodeMetaParameter,
+          this.initialParams,
+          this.onParamChange
+        );
+      case MetaParameterType.String:
+        return new RenderedStringMetaParameter(
+          metaParam as StringMetaParameter,
           this.initialParams,
           this.onParamChange
         );
