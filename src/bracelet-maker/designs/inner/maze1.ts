@@ -79,8 +79,8 @@ export class InnerDesignMaze1 extends FastAbstractInnerDesign {
       const simplifiedPath = new paper.Path(simplifiedPathPoints);
 
       simplifiedPath.scale(
-        boundaryModel.bounds.width / mazeMaker.finalCols,
-        boundaryModel.bounds.height / mazeMaker.finalRows,
+        (boundaryModel.bounds.width + borderSize) / mazeMaker.finalCols,
+        (boundaryModel.bounds.height + borderSize) / mazeMaker.finalRows,
         new paper.Point(0, 0)
       );
       simplifiedPath.translate(boundaryModel.bounds.topLeft);

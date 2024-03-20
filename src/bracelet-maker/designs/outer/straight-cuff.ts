@@ -190,7 +190,6 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     safeCone.closePath();
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.boundaryModel = safeAreaPath;
     innerOptions.safeCone = safeCone;
     innerOptions.outerModel = cuffOuter;
 

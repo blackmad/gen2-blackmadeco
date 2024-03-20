@@ -135,7 +135,6 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     });
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.boundaryModel = outerModel.clone(); // safeArea.clone();
 
     // TODO: wtf is safecone
     innerOptions.safeCone = outerModel.clone();

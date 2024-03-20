@@ -81,7 +81,6 @@ export class BoxOuter extends OuterPaperModelMaker {
     console.log({ options });
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.boundaryModel = outerModel;
     innerOptions.safeCone = outerModel.clone().scale(5, 5);
     innerOptions.outerModel = outerModel;
 

@@ -311,12 +311,16 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const shouldMakeOutline = params.breakThePlane;
 
-    // if (this.allowOutline && shouldMakeOutline) {
-    //   const outline = (paper.Path.prototype as any).offset.call(params.boundaryModel, params.outlineSize, {
-    //     cap: "miter"
-    //   });
-    //   return {outline, paths};
-    // }
+    if (this.allowOutline && shouldMakeOutline) {
+      const outline = (paper.Path.prototype as any).offset.call(
+        params.outerModel,
+        params.outlineSize,
+        {
+          cap: "miter",
+        }
+      );
+      return { outline, paths };
+    }
 
     if (this.allowOutline && shouldMakeOutline) {
       addToDebugLayer(paper, "safeCone", params.safeCone);
@@ -369,24 +373,24 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     this.initRNGs(params);
 
-    addToDebugLayer(paper, "boundaryModel", params.boundaryModel.clone());
+    // addToDebugLayer(paper, "boundaryModel", params.boundaryModel.clone());
 
     addToDebugLayer(paper, "safeCone", params.safeCone.clone());
 
-    const originalBoundaryModel = params.boundaryModel.clone();
+    const originalBoundaryModel = params.outerModel.clone();
 
     if (params.breakThePlane) {
       params.boundaryModel = bufferPath(
         paper,
         params.extendOutward,
-        params.boundaryModel
+        params.outerModel
       );
       params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
         insert: false,
       });
     } else {
       params.boundaryModel = PaperOffset.offset(
-        params.boundaryModel.clone(),
+        params.outerModel.clone(),
         -params.safeBorderWidth,
         {
           jointType: "jtMiter",
@@ -398,22 +402,17 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     }
 
     let kaleidoscopeMaker: KaleidoscopeMaker | null = null;
-    let kaleidoscopeSavedBoundaryModel: paper.PathItem | null = null;
+    const savedBoundaryModel = params.boundaryModel.clone();
 
     if (this.canKaleido && params.segments > 1) {
       kaleidoscopeMaker = new KaleidoscopeMaker(paper, params);
-      kaleidoscopeSavedBoundaryModel = params.boundaryModel.clone();
-      params.boundaryModel = kaleidoscopeMaker.getBoundarySegment();
-      params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
+      params.outerModel = kaleidoscopeMaker.getBoundarySegment();
+      params.outerModel = params.outerModel.intersect(params.safeCone, {
         insert: false,
       });
     }
 
-    addToDebugLayer(
-      paper,
-      "modified boundaryModel",
-      params.boundaryModel.clone()
-    );
+    addToDebugLayer(paper, "modified boundaryModel", params.boundaryModel);
 
     const design = await this.makeDesign(paper, params);
 
@@ -431,8 +430,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       }
     });
 
-    if (kaleidoscopeMaker && kaleidoscopeSavedBoundaryModel) {
-      params.boundaryModel = kaleidoscopeSavedBoundaryModel;
+    if (kaleidoscopeMaker) {
+      params.boundaryModel = savedBoundaryModel;
       console.log("putting back boundary for kaleido / reflecting paths");
       paths = kaleidoscopeMaker.reflectPaths(paths);
       console.log("done reflecting paths");
@@ -442,10 +441,10 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     paths = this.maybeSmooth(paper, params, paths);
 
     const shouldMakeOutline =
-      params.boundaryModel.bounds.height > params.outerModel.bounds.height;
+      params.outerModel.bounds.height > params.outerModel.bounds.height;
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
       console.log("clamping to boundary");
-      paths = this.clampPathsToBoundary(paths, params.boundaryModel);
+      paths = this.clampPathsToBoundary(paths, savedBoundaryModel);
     }
 
     if (this.requiresSafeConeClamp) {

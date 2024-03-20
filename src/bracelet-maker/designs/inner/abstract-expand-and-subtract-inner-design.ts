@@ -42,7 +42,6 @@ export abstract class AbstractExpandInnerDesign extends FastAbstractInnerDesign 
     params
   ): Promise<{ paths: paper.PathItem[] }> {
     const lines = await this.makePaths(paper, params);
-    // lines.push(paperRectToPoints(params.boundaryModel.bounds));
     return { paths: polygonize(paper, lines, -params.lineWidth / 2) };
   }
 }
