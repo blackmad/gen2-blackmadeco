@@ -5,6 +5,19 @@ import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import { makeIncrementalPath } from "../../utils/paperjs-utils";
 
+// TOOD
+// one buckle, left side
+// one buckle, right side
+
+// mulitple buckle, left side
+// mulitple buckle, right side
+
+// post style closure
+
+// corset style closure
+
+// different cuvrve / deeper neck
+
 type ModelParameters = Record<string, number | string>;
 
 function makeCollarCurve({

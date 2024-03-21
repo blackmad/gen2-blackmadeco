@@ -420,3 +420,14 @@ export function makeIncrementalPath(
   });
   return path;
 }
+
+export function getBounds(paths: paper.Path[]): paper.Rectangle {
+  if (paths.length === 0) {
+    return new paper.Rectangle([0, 0], [0, 0]);
+  }
+  let bounds = paths[0].bounds;
+  paths.slice(1).forEach((path) => {
+    bounds = bounds.unite(path.bounds);
+  });
+  return bounds;
+}

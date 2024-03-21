@@ -1,12 +1,10 @@
-import * as _ from "lodash";
-
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import {
-  BeltHoleRadius,
-  makeEvenlySpacedBolts,
-  RivetRadius,
-} from "../design-utils";
+  makeBuckleStrapForBuckleSide,
+  makeBuckleStrapForStrapSide,
+} from "./buckle-helpers";
 
 type ModelParameters = Record<string, number | string>;
 
@@ -44,98 +42,40 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
   ): Promise<CompletedModel> {
     const { height, neckSize } = options[this.constructor.name];
 
-    // quarter inch, two bolts
-    // quarter inch, two bolts
-    // quarter inch, inch long slot
-    // quarter inch, two bolts,
-    // quarter inch, two bolts
-    // start safe area
-    // go for length - belt area - 3 inches
-    // 3 inches of holes every 0.5 inches
+    const safeAreaPadding = 0.5;
+    const safeAreaLength = neckSize;
 
-    const numHoles = 6;
-    const holeDistance = 0.5;
-    const endPadding = 0.5;
-    const holesAreaLength =
-      numHoles * holeDistance + endPadding - BeltHoleRadius * 2;
+    // Buckle holes
+    const allHoles: paper.Path[][] = [];
+    const { holes: buckleHoles, holeBounds: buckleHoleBounds } =
+      makeBuckleStrapForBuckleSide({
+        paper,
+        height,
+      });
+    allHoles.push(buckleHoles);
 
-    const distanceToFirstBolts = 0.5;
-    const distanceBetweenBolts = 0.378;
-    const slotHeight = 0.125;
-    const slotPadding = 0.5;
-    const slotLength = 0.75;
+    // belt holes
+    const distanceToHoles =
+      buckleHoleBounds.width + safeAreaPadding * 2 + safeAreaLength;
+    const { holes, holeBounds } = makeBuckleStrapForStrapSide({
+      paper,
+      height,
+      offsetX: distanceToHoles,
+    });
+    allHoles.push(holes);
 
-    const collarPadding = 4;
-    const totalLength = neckSize + collarPadding;
-
-    const models: {
-      firstBolts?: paper.Path.Circle[];
-      secondBolts?: paper.Path.Circle[];
-      thirdBolts?: paper.Path.Circle[];
-      fourthBolts?: paper.Path.Circle[];
-      slot?: paper.Path.Rectangle;
-      holes?: paper.Path.Circle[];
-    } = {};
+    const holeStrapLength = holeBounds.width;
+    const totalLength = distanceToHoles + holeStrapLength;
 
     let outerModel: paper.PathItem = new paper.Path.Rectangle(
       new paper.Rectangle(0, 0, totalLength, height),
       { height: height / 2, width: height / 2 }
     );
+    addToDebugLayer(paper, "outerModel", outerModel.clone());
 
-    let curPos = 0;
-    function makeTwoHolesAt(distance: number) {
-      return makeEvenlySpacedBolts(paper, 2, [distance, 0], [distance, height]);
-    }
-
-    function makeTwoHolesAtCurPos() {
-      return makeTwoHolesAt(curPos);
-    }
-
-    // belt area
-    curPos += distanceToFirstBolts;
-    models.firstBolts = makeTwoHolesAtCurPos();
-    curPos += distanceBetweenBolts;
-    models.secondBolts = makeTwoHolesAtCurPos();
-    curPos += slotPadding + slotHeight;
-
-    const slotRectangle = new paper.Rectangle(
-      new paper.Point(curPos, height / 2 - slotHeight),
-      new paper.Point(curPos + slotLength, height / 2 + slotHeight)
-    );
-    models.slot = new paper.Path.Rectangle(slotRectangle, {
-      width: slotHeight,
-      height: slotHeight,
-    });
-
-    curPos += slotLength + slotPadding;
-    models.thirdBolts = makeTwoHolesAtCurPos();
-    curPos += distanceBetweenBolts;
-    models.fourthBolts = makeTwoHolesAtCurPos();
-    curPos += RivetRadius * 2;
-    const beltAreaLength = curPos;
-
-    // belt holes
-
-    const holes = [];
-    for (let h = 0; h < numHoles; h++) {
-      holes.push(
-        new paper.Path.Circle(
-          new paper.Point(
-            totalLength - endPadding - holeDistance * h,
-            height / 2
-          ),
-          BeltHoleRadius
-        )
-      );
-    }
-    models.holes = holes;
-
-    const safeAreaPadding = 0.5;
-    const safeAreaLength =
-      totalLength - beltAreaLength - holesAreaLength - safeAreaPadding * 2;
     const safeArea = new paper.Path.Rectangle(
       new paper.Rectangle(
-        beltAreaLength + safeAreaPadding,
+        buckleHoleBounds.width + safeAreaPadding,
         0,
         safeAreaLength,
         height
@@ -148,7 +88,7 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
 
     const safeCone = new paper.Path.Rectangle(
       new paper.Rectangle(
-        beltAreaLength + safeAreaPadding,
+        buckleHoleBounds.width + safeAreaPadding,
         -height * 2,
         safeAreaLength,
         height * 4
@@ -156,7 +96,6 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
     );
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.boundaryModel = safeArea;
     innerOptions.safeCone = safeCone;
     innerOptions.outerModel = outerModel;
 
@@ -164,23 +103,13 @@ export class StraightCollarOuter extends OuterPaperModelMaker {
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
-    const allHolesAccumulated: Array<
-      paper.Path.Circle[] | paper.Path.Rectangle
-    > = [];
-    _.forEach(models, (v, _k) => {
-      if (v) {
-        allHolesAccumulated.push(v);
-      }
-    });
-    const allHoles = _.flatten(allHolesAccumulated);
-
     if (innerDesign.outline) {
       outerModel = outerModel.unite(innerDesign.outline);
     }
 
     return new CompletedModel({
       outer: outerModel,
-      holes: allHoles,
+      holes: allHoles.flat(),
       design: innerDesign.paths,
     });
   }

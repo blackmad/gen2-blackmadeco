@@ -1,6 +1,8 @@
 import { VectorTile } from "@mapbox/vector-tile";
 import * as _ from "lodash";
 import Pbf from "pbf";
+
+import { addDebugInfo } from "../../utils/debug-utils";
 const { fetch } = require("fetch-ponyfill")();
 
 export function lng2tile(lon: number, zoom: number) {
@@ -78,6 +80,11 @@ export function getTileCoords(params: MapExtent): TileCoords[] {
 export async function fetchVectorTile(tileCoords: TileCoords): VectorTile {
   const { z, x, y } = tileCoords;
   const url = `https://tiles.stadiamaps.com/data/openmaptiles/${z}/${y}/${x}.pbf?api_key=ba2603de-0143-4fcd-b2cd-184aa40fe987`;
+  const rasterUrl = `https://tile.openstreetmap.org/${z}/${y}/${x}.png`;
+
+  addDebugInfo(`<img src="${rasterUrl}" />`);
+  console.log(`fetching ${url}`);
+  console.log(`can see it at ${rasterUrl}`);
   const response = await fetch(url);
   const arrayBuffer = await response.arrayBuffer();
   const pbf = new Pbf(new Uint8Array(arrayBuffer));
