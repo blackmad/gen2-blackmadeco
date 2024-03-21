@@ -1,7 +1,11 @@
+- fix safeCone on straight cuff
+
 - fix map design
 --> figure out what it needs for yuva's map
 --> get it to default to unrounded? or much less rounded?
 --> why kaleido unhappy middle in map someimte
+
+- voronoi still not going to the bottom1!!!!!
 
 TRACE
 - why are some paths unable to heal?

@@ -1,0 +1,70 @@
+// p.segments.forEach((segment, segmentIndex) => {
+//   const point1 = segment.previous.point.subtract(segment.point);
+//   const point2 = segment.next.point.subtract(segment.point);
+//   const angle = point1.getDirectedAngle(point2);
+//   console.log(`angle: ${angle} from ${point1} to ${point2}`);
+//   if (
+//     Math.abs(angle) % 90 === 0 &&
+//     Math.abs(angle) % 180 != 0 &&
+//     !segment.isSmooth()
+//   ) {
+//     // Take this point and move it by the distance to the hypotenuse at 45 degrees
+//     const shortestSide = Math.min(
+//       ...[
+//         segment.previous.point.getDistance(segment.point),
+//         segment.next.point.getDistance(segment.point),
+//       ]
+//     );
+//     console.log({ shortestSide });
+//     const r = Math.sqrt(shortestSide ** 2 / 2);
+//     console.log({ r });
+
+//     // find coordinate on the circle
+//     let x = r * Math.cos((angle + 45) * (Math.PI / 180));
+//     let y = r * Math.sin((angle + 45) * (Math.PI / 180));
+
+//     if (point1.x < point2.x) {
+//       y *= -1;
+//     }
+
+//     if (point1.y < point2.y) {
+//       x *= -1;
+//     }
+
+//     console.log({ x, y });
+
+//     const originalSegmentPoint = segment.point.clone();
+//     segment.transform(new paper.Matrix().translate([x, y]));
+
+//     addToDebugLayer(paper, "newPoint", segment.point);
+
+//     const newPoint = originalSegmentPoint.add(new paper.Point(2 * x, 0));
+//     insertLater.push({
+//       segment,
+//       point: newPoint,
+//       offset: 0,
+//     });
+//     addToDebugLayer(paper, "newPoint2", newPoint);
+
+//     const newPoint2 = originalSegmentPoint.add(new paper.Point(3 * x, 0));
+//     insertLater.push({
+//       segment,
+//       point: newPoint2,
+//       offset: x < 0 ? 0 : -1,
+//     });
+//     addToDebugLayer(paper, "newPoint", newPoint2);
+//     p.insert(segmentIndex + 1, newPoint);
+//   }
+// });
+// insertLater.forEach((insert) => {
+//   const index = p.segments.indexOf(insert.segment);
+//   console.log({ index });
+//   p.insert(index + insert.offset, insert.point);
+// });
+
+// p.segments.forEach((segment, segmentIndex) => {
+//   if (!segment.isSmooth() && !segment.hasHandles()) {
+//     console.log(`smoothing segment ${segmentIndex} - ${segment}`);
+//     // segment.smooth();
+//   }
+// });

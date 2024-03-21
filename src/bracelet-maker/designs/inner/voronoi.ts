@@ -68,8 +68,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       )
     );
 
-    console.log({ colOffset, rowOffset });
-
     addToDebugLayer(paper, "sanity", new paper.Point(1, 1));
     addToDebugLayer(
       paper,
@@ -212,7 +210,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       const voronoiPath = new paper.Path(points);
 
       const top = voronoiPath.bounds.top;
-      console.log({ top }, boundaryModel.bounds.top);
       const isOnYEdge =
         almostEqual(voronoiPath.bounds.top, boundaryModel.bounds.top) ||
         almostEqual(voronoiPath.bounds.bottom, boundaryModel.bounds.bottom);
@@ -223,8 +220,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         -params.borderSize,
         points
       );
-
-      console.log(bufferedShape.area);
 
       if (!isOnYEdge || !removeEdgePolygons) {
         polys.push(bufferedShape);

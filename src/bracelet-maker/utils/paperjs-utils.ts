@@ -247,8 +247,6 @@ export function polygonize(
   );
   const geoms: Array<Geometry> = geojsonLineStrings.map((l) => reader.read(l));
 
-  console.log({ geoms });
-
   let cleaned: Geometry = null;
   geoms.forEach(function (geom, i, _array) {
     if (i === 0) {
@@ -390,8 +388,6 @@ export function unkinkPath(
       });
     });
 
-  console.log(unkinkedPolygons);
-
   return unkinkedPolygons[0];
 }
 
@@ -412,10 +408,8 @@ export function makeIncrementalPath(
   const path = new paper.Path();
   let currentPoint = new paper.Point(start);
   path.add(start);
-  console.log(deltas);
   deltas.forEach((delta) => {
     currentPoint = currentPoint.add(delta);
-    console.log(delta, currentPoint);
     path.add(currentPoint);
   });
   return path;
@@ -430,4 +424,35 @@ export function getBounds(paths: paper.Path[]): paper.Rectangle {
     bounds = bounds.unite(path.bounds);
   });
   return bounds;
+}
+
+export function translateAll(paths: paper.Path[], delta: paper.PointLike) {
+  paths.forEach((path) => {
+    path.translate(delta);
+  });
+}
+
+export function makeRightRoundedRect(rect: paper.Rectangle) {
+  const radius = rect.height / 2;
+  const path = new paper.Path();
+  path.moveTo(rect.topLeft);
+  path.moveTo(rect.topRight.add([-radius, 0]));
+  path.arcTo(rect.bottomRight.add([-radius, 0]));
+  path.lineTo(rect.bottomLeft);
+  path.lineTo(rect.topLeft);
+  path.closePath();
+
+  return path;
+}
+
+export function makeLeftRoundedRect(rect: paper.Rectangle) {
+  const radius = rect.height / 2;
+  const path = new paper.Path();
+  path.moveTo(rect.topRight);
+  path.lineTo(rect.bottomRight);
+  path.lineTo(rect.bottomLeft.add([+radius, 0]));
+  path.arcTo(rect.topLeft.add([+radius, 0]));
+  path.lineTo(rect.topRight);
+  path.closePath();
+  return path;
 }

@@ -1,5 +1,9 @@
 import { addToDebugLayer } from "../../utils/debug-layers";
-import { getBounds } from "../../utils/paperjs-utils";
+import {
+  getBounds,
+  makeLeftRoundedRect,
+  makeRightRoundedRect,
+} from "../../utils/paperjs-utils";
 import {
   BeltHoleRadius,
   makeEvenlySpacedBolts,
@@ -28,7 +32,6 @@ export function getBuckleHolesForStrapSide({
       BeltHoleRadius
     );
     holes.push(hole);
-    console.log({ hole });
     addToDebugLayer(paper, "beltHoles", hole);
   }
 
@@ -53,10 +56,10 @@ export function makeBuckleStrapForStrapSide(
 
 export function makeBuckleStrapForBuckleSide(
   params: BuckleHoleStrapParams & {
-    offsetX?: number;
+    translate?: paper.PointLike;
   }
 ) {
-  const { paper, height, offsetX = 0 } = params;
+  const { paper, height, translate = [0, 0] } = params;
 
   // quarter inch, two bolts
   // quarter inch, two bolts
@@ -110,10 +113,41 @@ export function makeBuckleStrapForBuckleSide(
   curPos += RivetRadius * 2;
 
   const holes = allHoles.flat();
-  holes.forEach((h) => h.translate([offsetX, 0]));
+  holes.forEach((h) => h.translate(translate));
 
   const holeBounds = getBounds(holes).expand(EndPadding, 0);
   addToDebugLayer(params.paper, "holeBounds", holeBounds);
 
   return { holes, holeBounds };
+}
+
+export function makeLeftBuckle(params: BuckleHoleStrapParams) {
+  const { paper, height } = params;
+  const { holes: buckleHoles, holeBounds: buckleHoleBounds } =
+    makeBuckleStrapForBuckleSide({
+      paper,
+      height: height,
+    });
+
+  const buckle = makeLeftRoundedRect(
+    new paper.Rectangle(0, 0, buckleHoleBounds.width, height)
+  );
+
+  return { buckle, holes: buckleHoles };
+}
+
+export function makeRightBuckle(params: BuckleHoleStrapParams) {
+  const { paper, height } = params;
+  const { holes: buckleHoles, holeBounds: buckleHoleBounds } =
+    makeBuckleStrapForStrapSide({
+      paper,
+      height: height,
+      offsetX: EndPadding,
+    });
+
+  const buckle = makeRightRoundedRect(
+    new paper.Rectangle(0, 0, buckleHoleBounds.width + EndPadding, height)
+  );
+
+  return { buckle, holes: buckleHoles };
 }
