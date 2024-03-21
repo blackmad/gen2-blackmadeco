@@ -435,10 +435,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const shouldMakeOutline =
       safeBoundaryModel.bounds.height > params.outerModel.bounds.height;
-    console.log({ shouldMakeOutline });
 
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
-      console.log("clamping to boundary");
+      console.log("clamping to boundary and cone");
 
       paths = this.clampPathsToBoundary(paths, params.safeCone);
       paths = this.clampPathsToBoundary(paths, safeBoundaryModel);
@@ -456,7 +455,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     );
     paths = maybeOutline.paths;
     const outline = maybeOutline.outline;
-    console.log({ outline });
     if (outline) {
       addToDebugLayer(paper, "finalOutline", outline);
     }

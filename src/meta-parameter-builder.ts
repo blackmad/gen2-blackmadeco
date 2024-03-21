@@ -360,6 +360,8 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
   public render() {
     const selectedValue = this.initialValue ?? this.metaParameter.value;
 
+    console.log({ selectedValue });
+
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       this.metaParameter.title
     );

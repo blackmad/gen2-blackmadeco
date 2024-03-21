@@ -30,11 +30,7 @@
 ![public/demo-output/InnerDesignMap.png](public/demo-output/InnerDesignMap.png)
 ## InnerDesignSunflower
 ![public/demo-output/InnerDesignSunflower.png](public/demo-output/InnerDesignSunflower.png)
-## InnerDesignPerlinBlobs
-![public/demo-output/InnerDesignPerlinBlobs.png](public/demo-output/InnerDesignPerlinBlobs.png)
 ## InnerDesignLattice
 ![public/demo-output/InnerDesignLattice.png](public/demo-output/InnerDesignLattice.png)
-## InnerDesignCirclesXVera
-![public/demo-output/InnerDesignCirclesXVera.png](public/demo-output/InnerDesignCirclesXVera.png)
 ## InnerDesignCirclePacking
 ![public/demo-output/InnerDesignCirclePacking.png](public/demo-output/InnerDesignCirclePacking.png)

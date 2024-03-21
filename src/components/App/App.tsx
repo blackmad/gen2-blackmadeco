@@ -91,7 +91,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
         .split("&")
         .filter((param) => param.length > 0)
         .forEach((param) => {
-          console.log("param", param);
           const [key, value] = param.split("=");
           const [model, name] = decodeURIComponent(key).split(".");
           params[model][name] = getParsedValue(
@@ -99,14 +98,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
             name,
             decodeURIComponent(value)
           );
-          console.log(
-            `setting ${model}.${name} to ${decodeURIComponent(value)} from hash`
-          );
         });
-
-      console.log("initialParams", { params });
-
-      console.log("setting model params", params);
 
       setModelParams(params);
     }

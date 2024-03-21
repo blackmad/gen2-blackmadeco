@@ -6,6 +6,8 @@ import JimpImport from "jimp/es";
 
 const Jimp = configure({ plugins: [threshold] }, JimpImport);
 
+import { CompoundPath } from "paper/dist/paper-core";
+
 import {
   OnOffMetaParameter,
   RangeMetaParameter,
@@ -71,8 +73,6 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       return { paths: [] };
     }
 
-    console.log({ turnPolicy });
-
     const image = await Jimp.read(buffer);
 
     // Convert the image to black and white
@@ -84,7 +84,6 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     // Get the buffer of the modified image
     const newBuffer = await image.getBufferAsync("image/png");
-    console.log({ newBuffer });
 
     if (typeof window !== "undefined") {
       const imgEl = document.createElement("img");
@@ -101,8 +100,6 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         turdSize,
       },
     });
-
-    console.log({ tracedSvgString });
 
     const item = paper.project.importSVG(tracedSvgString, {
       expandShapes: true,
@@ -162,12 +159,19 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     paths.forEach((path) => {
       path.closePath();
 
-      if (smooth) {
-        path.smooth({ type: "continuous" });
+      console.log(path.hasChildren());
+      if (path instanceof CompoundPath) {
+        console.log("this one is a path!");
       }
 
       if (simplificationTolerance > 0) {
-        path.simplify(simplificationTolerance / 50000);
+        path.flatten(simplificationTolerance / 500);
+      }
+
+      // path.simplify(0.00005);
+
+      if (smooth) {
+        path.smooth({ type: "continuous" });
       }
     });
 
@@ -189,7 +193,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       }),
       new SelectMetaParameter({
         title: "Object Fit",
-        value: "fit",
+        value: "cover",
         options: ["contain", "cover", "fill"],
         name: "objectFit",
       }),
@@ -250,7 +254,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         title: "Simplification Tolerance",
         min: 0,
         max: 1000,
-        value: 0.0,
+        value: 10,
         step: 1,
         name: "simplificationTolerance",
       }),
