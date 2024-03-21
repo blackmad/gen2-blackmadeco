@@ -252,7 +252,6 @@ class RenderedStringMetaParameter extends RenderedMetaParameter {
         "blur",
         function (event) {
           const selectedValue = (event.target as HTMLInputElement).value;
-          console.log({ selectedValue });
           this.onParamChange({ metaParameter, value: selectedValue });
         }.bind(this)
       );
@@ -490,16 +489,6 @@ export class MetaParameterBuilder {
         } else {
           divToAppendTo = originalDivToAppendTo;
         }
-
-        console.log(
-          modelMaker.constructor.name,
-          this.initialParams,
-          metaParam.name,
-          {
-            initialValue:
-              this.initialParams[modelMaker.constructor.name][metaParam.name],
-          }
-        );
 
         const renderedMetaParameter = this.buildMetaParameterWidget(
           metaParam,

@@ -108,7 +108,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           title: "Smoothing Factor",
           min: 0.01,
           max: 1.0,
-          value: 0.8,
+          value: 0.4,
           step: 0.01,
           name: "smoothingFactor",
         })
@@ -129,10 +129,10 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           title: "Extend outward (in)",
           min: 0.1,
           max: 2.0,
-          value: 0.25,
+          value: 0.5,
           step: 0.01,
           name: "extendOutward",
-          parentParam: breakThePlane,
+          // parentParam: breakThePlane,
           group: "Break the plane!!!!",
         })
       );
@@ -144,7 +144,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           value: 0.4,
           step: 0.01,
           name: "concavity",
-          parentParam: breakThePlane,
+          // parentParam: breakThePlane,
           group: "Break the plane!!!!",
         })
       );
@@ -156,7 +156,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           value: 0.25,
           step: 0.01,
           name: "lengthThreshold",
-          parentParam: breakThePlane,
+          // parentParam: breakThePlane,
           group: "Break the plane!!!!",
         })
       );
@@ -168,7 +168,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           value: 0.15,
           step: 0.01,
           name: "outlineSize",
-          parentParam: breakThePlane,
+          group: "Break the plane!!!!",
+          // parentParam: breakThePlane,
         })
       );
       // metaParams.push(
@@ -306,16 +307,16 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const shouldMakeOutline = params.breakThePlane;
 
-    if (this.allowOutline && shouldMakeOutline) {
-      const outline = PaperOffset.offset(
-        params.outerModel,
-        params.outlineSize,
-        {
-          cap: "miter",
-        }
-      );
-      return { outline, paths };
-    }
+    // if (this.allowOutline && shouldMakeOutline) {
+    //   const outline = PaperOffset.offset(
+    //     params.outerModel,
+    //     params.outlineSize,
+    //     {
+    //       cap: "miter",
+    //     }
+    //   );
+    //   return { outline, paths };
+    // }
 
     if (this.allowOutline && shouldMakeOutline) {
       addToDebugLayer(paper, "safeCone", params.safeCone);
@@ -437,7 +438,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
       console.log("clamping to boundary");
 
-      paths = this.clampPathsToBoundary(paths, savedBoundaryModel);
+      // paths = this.clampPathsToBoundary(paths, savedBoundaryModel);
       paths = this.clampPathsToBoundary(paths, params.safeCone);
     } else {
       console.log("clamping to cone");
@@ -454,6 +455,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     paths = maybeOutline.paths;
     const outline = maybeOutline.outline;
     console.log({ outline });
+    if (outline) {
+      addToDebugLayer(paper, "finalOutline", outline);
+    }
 
     return new InnerCompletedModel({
       paths,

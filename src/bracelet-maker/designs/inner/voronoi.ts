@@ -1,4 +1,3 @@
-import almostEqual from "almost-equal";
 import { Delaunay } from "d3-delaunay";
 import ExtendPaperJs from "paperjs-offset";
 
@@ -10,6 +9,10 @@ import {
   randomPointInPolygon,
 } from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+
+function almostEqual(a: number, b: number, epsilon = 0.0001) {
+  return Math.abs(a - b) < epsilon;
+}
 
 function dedupePointsArray(points: number[][]): number[][] {
   const pointsDict = {};
@@ -206,23 +209,13 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     for (const cellPolygon of cellPolygonIterator) {
       const points = cellPolygon.map((p) => new paper.Point(p[0], p[1]));
 
-      let isOnEdge = false;
-      for (let i = 0; i < cellPolygon.length - 1; i++) {
-        const onYBorder =
-          cellPolygon[i][1] === cellPolygon[i + 1][1] &&
-          (almostEqual(
-            cellPolygon[i][1],
-            boundaryModel.bounds.bottom + params.borderSize
-          ) ||
-            almostEqual(
-              cellPolygon[i][1],
-              boundaryModel.bounds.top - params.borderSize
-            ));
+      const voronoiPath = new paper.Path(points);
 
-        if (onYBorder) {
-          isOnEdge = true;
-        }
-      }
+      const top = voronoiPath.bounds.top;
+      console.log({ top }, boundaryModel.bounds.top);
+      const isOnYEdge =
+        almostEqual(voronoiPath.bounds.top, boundaryModel.bounds.top) ||
+        almostEqual(voronoiPath.bounds.bottom, boundaryModel.bounds.bottom);
 
       points.pop();
       const bufferedShape = bufferPointstoPathItem(
@@ -231,10 +224,12 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         points
       );
 
-      if (!isOnEdge || !removeEdgePolygons) {
+      console.log(bufferedShape.area);
+
+      if (!isOnYEdge || !removeEdgePolygons) {
         polys.push(bufferedShape);
         // polys.push(new paper.Path(points));
-        addToDebugLayer(paper, "voronoiShape", new paper.Path(points));
+        addToDebugLayer(paper, "voronoiShape", voronoiPath);
         addToDebugLayer(paper, "bufferedVoronoiShape", bufferedShape.clone());
       }
     }
