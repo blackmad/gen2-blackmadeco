@@ -204,12 +204,14 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
         />
       </div>
       <div>
-        <MetaParamsContainer
-          modelMaker={modelMaker}
-          params={modelParams}
-          onChange={changeCallback}
-          rerenderCallback={rerender}
-        />
+        {modelParams && (
+          <MetaParamsContainer
+            modelMaker={modelMaker}
+            params={modelParams}
+            onChange={changeCallback}
+            rerenderCallback={rerender}
+          />
+        )}
         <DebugLayers onChange={rerender} />
 
         <div className="row justify-content-center">

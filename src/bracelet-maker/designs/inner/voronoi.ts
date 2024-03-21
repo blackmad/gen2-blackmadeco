@@ -54,6 +54,19 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       new paper.Size(colOffset, rowOffset)
     );
 
+    addToDebugLayer(
+      paper,
+      "partialRect",
+      new paper.Path.Rectangle(
+        new paper.Rectangle(
+          boundaryModel.bounds.topLeft,
+          new paper.Size(colOffset, rowOffset)
+        )
+      )
+    );
+
+    console.log({ colOffset, rowOffset });
+
     addToDebugLayer(paper, "sanity", new paper.Point(1, 1));
     addToDebugLayer(
       paper,
@@ -179,12 +192,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     if (params.voronoi) {
       const voronoi = delaunay.voronoi([
-        boundaryModel.bounds.x - params.borderSize,
-        boundaryModel.bounds.y - params.borderSize,
-        boundaryModel.bounds.x + boundaryModel.bounds.width + params.borderSize,
-        boundaryModel.bounds.y +
-          boundaryModel.bounds.height +
-          params.borderSize,
+        boundaryModel.bounds.x,
+        boundaryModel.bounds.y,
+        boundaryModel.bounds.x + boundaryModel.bounds.width,
+        boundaryModel.bounds.y + boundaryModel.bounds.height,
       ]);
       cellPolygonIterator = voronoi.cellPolygons();
     } else {
@@ -222,6 +233,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
       if (!isOnEdge || !removeEdgePolygons) {
         polys.push(bufferedShape);
+        // polys.push(new paper.Path(points));
         addToDebugLayer(paper, "voronoiShape", new paper.Path(points));
         addToDebugLayer(paper, "bufferedVoronoiShape", bufferedShape.clone());
       }

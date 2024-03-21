@@ -67,7 +67,7 @@ class RenderedGeocodeMetaParameter extends RenderedMetaParameter {
 
   public constructor(
     public metaParameter: GeocodeMetaParameter,
-    private initialParams,
+    private initialValue,
     public onParamChange
   ) {
     super();
@@ -103,10 +103,8 @@ class RenderedGeocodeMetaParameter extends RenderedMetaParameter {
     this.lngInputEl = $(
       '<input type="text" size="7" autocomplete="off">'
     )[0] as HTMLInputElement;
-    this.latInputEl.value =
-      this.initialParams[metaParameter.name].split(",")[0];
-    this.lngInputEl.value =
-      this.initialParams[metaParameter.name].split(",")[1];
+    this.latInputEl.value = this.initialValue.split(",")[0];
+    this.lngInputEl.value = this.initialValue.split(",")[1];
 
     const switchDiv = $(`<div class="col-7 leftInputContainer"></div>`);
     switchDiv.append(this.lngInputEl);
@@ -157,7 +155,7 @@ class RenderedOnOffMetaParameter extends RenderedMetaParameter {
 
   public constructor(
     public metaParameter: OnOffMetaParameter,
-    private initialParams,
+    private initialValue,
     public onParamChange
   ) {
     super();
@@ -173,7 +171,7 @@ class RenderedOnOffMetaParameter extends RenderedMetaParameter {
 
   public render() {
     const metaParameter = this.metaParameter;
-    const selectedValue = this.initialParams[metaParameter.name] == "true";
+    const selectedValue = this.initialValue;
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       metaParameter.title
@@ -214,7 +212,7 @@ class RenderedStringMetaParameter extends RenderedMetaParameter {
 
   public constructor(
     public metaParameter: StringMetaParameter,
-    private initialParams,
+    private initialValue,
     public onParamChange
   ) {
     super();
@@ -230,10 +228,7 @@ class RenderedStringMetaParameter extends RenderedMetaParameter {
 
   public render() {
     const metaParameter = this.metaParameter;
-    let selectedValue = this.initialParams[metaParameter.name];
-    if (this.initialParams[metaParameter.name] == null) {
-      selectedValue = metaParameter.value;
-    }
+    const selectedValue = this.initialValue ?? metaParameter.value;
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       metaParameter.title
@@ -269,7 +264,7 @@ class RenderedStringMetaParameter extends RenderedMetaParameter {
 class RenderedRangeMetaParameter extends RenderedMetaParameter {
   public constructor(
     public metaParameter: RangeMetaParameter,
-    private initialParams,
+    private initialValue,
     public onParamChange
   ) {
     super();
@@ -287,8 +282,7 @@ class RenderedRangeMetaParameter extends RenderedMetaParameter {
 
   public render() {
     const metaParameter = this.metaParameter;
-    const value =
-      Number(this.initialParams[metaParameter.name]) || metaParameter.value;
+    const value = this.initialValue ?? metaParameter.value;
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       metaParameter.title
@@ -350,7 +344,7 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
 
   public constructor(
     public metaParameter: SelectMetaParameter,
-    private initialParams,
+    private initialValue,
     public onParamChange
   ) {
     super();
@@ -365,8 +359,7 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
   }
 
   public render() {
-    const selectedValue =
-      this.initialParams[this.metaParameter.name] || this.metaParameter.value;
+    const selectedValue = this.initialValue ?? this.metaParameter.value;
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       this.metaParameter.title
@@ -412,53 +405,52 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
 }
 
 export class MetaParameterBuilder {
-  params: any = {};
   renderedMetaParameters = [];
 
   constructor(
     public initialParams: any,
     public _onParamChange: MetaParameterChangeCallback,
     public _rerenderCallback: () => void
-  ) {
-    this.params = { ...initialParams };
-  }
+  ) {}
 
   onParamChange = ({ metaParameter, value }) => {
-    // this.params[metaParameter.name] = value;
     this._onParamChange({ metaParameter, value });
     this._rerenderCallback();
   };
 
-  public buildMetaParameterWidget(metaParam: MetaParameter<any>) {
+  public buildMetaParameterWidget(
+    metaParam: MetaParameter<any>,
+    initialValue: any
+  ) {
     switch (metaParam.type) {
       case MetaParameterType.Range:
         return new RenderedRangeMetaParameter(
           metaParam as RangeMetaParameter,
-          this.initialParams,
+          initialValue,
           this.onParamChange
         );
       case MetaParameterType.Select:
         return new RenderedSelectMetaParameter(
           metaParam as SelectMetaParameter,
-          this.initialParams,
+          initialValue,
           this.onParamChange
         );
       case MetaParameterType.OnOff:
         return new RenderedOnOffMetaParameter(
           metaParam as OnOffMetaParameter,
-          this.initialParams,
+          initialValue,
           this.onParamChange
         );
       case MetaParameterType.Geocode:
         return new RenderedGeocodeMetaParameter(
           metaParam as GeocodeMetaParameter,
-          this.initialParams,
+          initialValue,
           this.onParamChange
         );
       case MetaParameterType.String:
         return new RenderedStringMetaParameter(
           metaParam as StringMetaParameter,
-          this.initialParams,
+          initialValue,
           this.onParamChange
         );
       default:
@@ -499,7 +491,20 @@ export class MetaParameterBuilder {
           divToAppendTo = originalDivToAppendTo;
         }
 
-        const renderedMetaParameter = this.buildMetaParameterWidget(metaParam);
+        console.log(
+          modelMaker.constructor.name,
+          this.initialParams,
+          metaParam.name,
+          {
+            initialValue:
+              this.initialParams[modelMaker.constructor.name][metaParam.name],
+          }
+        );
+
+        const renderedMetaParameter = this.buildMetaParameterWidget(
+          metaParam,
+          this.initialParams[modelMaker.constructor.name][metaParameter.name]
+        );
         this.renderedMetaParameters.push(renderedMetaParameter);
         divToAppendTo.append(renderedMetaParameter.el());
       });

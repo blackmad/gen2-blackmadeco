@@ -1,5 +1,7 @@
 import * as _ from "lodash";
 
+import { addToDebugLayer } from "../utils/debug-layers";
+
 export const MillimeterToInches = 0.0393701;
 export const RivetRadius = 2.5 * MillimeterToInches;
 export const BeltHoleRadius = 3 * MillimeterToInches;
@@ -22,6 +24,8 @@ export function makeEvenlySpacedBolts(
       circles.push(circle);
     }
   });
+
+  addToDebugLayer(paper, "bolts", new paper.Path.Line(p1, p2));
 
   return circles;
 }

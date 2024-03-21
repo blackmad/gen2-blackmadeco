@@ -142,6 +142,9 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     const scaleW = (boundaryModel.bounds.width / item.bounds.width) * scale;
     const scaleH = (boundaryModel.bounds.height / item.bounds.height) * scale;
+
+    console.log(`scaling to ${scaleW}, ${scaleH}`);
+
     if (objectFit === "contain") {
       item.scale(
         scaleW > scaleH ? scaleH : scaleW,
