@@ -2,6 +2,5 @@
 
 set +x
 
-npx tsc -p tsconfig-node.json
-rm public/demo-output/*
-node -r esm generate-examples-node.js
+#rm public/demo-output/*
+npx tsx generate-examples-node.js

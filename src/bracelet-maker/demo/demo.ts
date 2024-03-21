@@ -67,13 +67,16 @@ export async function demoDesign(
   const outerArea = outerRect.area;
   const innerArea = path.area;
 
-  // console.log({ outerArea, innerArea }, innerArea / outerArea);
+  console.log({ outerArea, innerArea }, innerArea / outerArea);
+  console.log({ path });
 
   let svg;
-  if (innerArea / outerArea > minimumAreaRatio) {
-    paper.project.activeLayer.addChild(path);
-    svg = makeSVGData(paper, paper.project, false, elHydrator);
-  }
+  // if (innerArea / outerArea > minimumAreaRatio) {
+  paper.project.activeLayer.addChild(path);
+  svg = makeSVGData(paper, paper.project, false, elHydrator);
+  // } else {
+  //   console.log("not making data?");
+  // }
 
   return {
     svg,

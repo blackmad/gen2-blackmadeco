@@ -45,11 +45,12 @@ async function generateDesigns(header, designs) {
       new innerDesign(new InnerDesignEmpty()),
       elHydrator
     );
+    console.log("svg?", { svg });
     const svgPath = outputDir + innerDesign.name + ".svg";
     fs.writeFileSync(svgPath, svg);
 
     const outputPath = outputDir + innerDesign.name + ".png";
-    child_process.execSync(`svg2png -w 300 -o ${outputPath} ${svgPath}`);
+    child_process.execSync(`svg2png -w 300 ${svgPath} ${outputPath}`);
     fs.writeSync(readmeFd, `## ${innerDesign.name}\n`);
     fs.writeSync(readmeFd, `![${outputPath}](${outputPath})\n`);
   });
@@ -59,5 +60,7 @@ async function generateAll() {
   await generateDesigns("Outer Designs", AllOuterDesigns);
   await generateDesigns("Inner Designs", AllInnerDesigns);
 }
+
+// check if svg2png cli tool is installed by checking path and stuff
 
 generateAll();

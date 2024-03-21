@@ -87,9 +87,11 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     const newBuffer = await image.getBufferAsync("image/png");
     console.log({ newBuffer });
 
-    const imgEl = document.createElement("img");
-    imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
-    document.body.appendChild(imgEl);
+    if (typeof window !== "undefined") {
+      const imgEl = document.createElement("img");
+      imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
+      document.body.appendChild(imgEl);
+    }
 
     const tracedSvgString = await traceFromBufferToSvgString({
       buffer: newBuffer,
@@ -236,6 +238,11 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         title: "blackOnWhite",
         value: false,
         name: "blackOnWhite",
+      }),
+      new OnOffMetaParameter({
+        title: "repeat",
+        value: false,
+        name: "repeat",
       }),
       new RangeMetaParameter({
         title: "Simplification Tolerance",

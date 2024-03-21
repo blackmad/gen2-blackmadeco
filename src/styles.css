@@ -128,3 +128,7 @@ button.downloadButton:last-child {
 .outer-design.design-container .panel-body {
   min-height: 100px;
 }
+
+.select-design-block-img {
+  max-height: 100px;
+}

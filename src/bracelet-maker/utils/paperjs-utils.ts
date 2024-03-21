@@ -1,6 +1,7 @@
 const Shape = require("@doodle3d/clipper-js");
 import * as turfHelpers from "@turf/helpers";
 import { Geometry } from "@turf/helpers";
+import turfUnion from "@turf/union";
 // import * as simplifyJS from 'simplify-js';
 import turfUnkinkPolygon from "@turf/unkink-polygon";
 import GeoJSON from "geojson";
@@ -246,12 +247,14 @@ export function polygonize(
   );
   const geoms: Array<Geometry> = geojsonLineStrings.map((l) => reader.read(l));
 
+  console.log({ geoms });
+
   let cleaned: Geometry = null;
   geoms.forEach(function (geom, i, _array) {
     if (i === 0) {
       cleaned = geom;
     } else {
-      cleaned = cleaned.union(geom);
+      cleaned = turfUnion(cleaned, geom);
     }
   });
 

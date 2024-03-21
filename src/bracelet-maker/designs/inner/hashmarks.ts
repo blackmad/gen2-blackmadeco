@@ -20,8 +20,8 @@ export class InnerDesignHashmarks extends FastAbstractInnerDesign {
     const height = outerModel.bounds.height;
     const width = outerModel.bounds.width;
 
-    let lastNoise1 = this.simplex.noise2D(100, 10) * initialNoiseRange1;
-    let lastNoise2 = this.simplex.noise2D(100.5, 10.5) * initialNoiseRange2;
+    let lastNoise1 = this.simplex(100, 10) * initialNoiseRange1;
+    let lastNoise2 = this.simplex(100.5, 10.5) * initialNoiseRange2;
     const paths = [];
     let pos = -width;
     let i = 0;
@@ -44,10 +44,9 @@ export class InnerDesignHashmarks extends FastAbstractInnerDesign {
 
     while (pos <= width) {
       const newNoise1 =
-        (this.simplex.noise2D(i / 200, i / 300) + noiseOffset1) *
-        noiseInfluence;
+        (this.simplex(i / 200, i / 300) + noiseOffset1) * noiseInfluence;
       const newNoise2 =
-        (this.simplex.noise2D(i / 20, i / 30) + noiseOffset2) * noiseInfluence;
+        (this.simplex(i / 20, i / 30) + noiseOffset2) * noiseInfluence;
       i += 1;
 
       const leftLine = new paper.Path([

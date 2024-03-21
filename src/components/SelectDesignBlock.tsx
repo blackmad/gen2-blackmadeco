@@ -14,18 +14,20 @@ export default function SelectDesignBlock({
   return (
     <div
       role="button"
-      className="design-container col-sm-12 col-md-4"
+      className="design-container col-sm-12 col-md-4 p-1"
       onClick={onClick}
     >
-      <div className="panel panel-default border m-1 p-2">
-        <div className="panel-body text-center d-flex align-items-center">
-          <div className="align-center">
-            <img src={imgSrc} alt={`${designClassName}`} />
-          </div>
+      <div className="d-flex flex-column h-100 panel panel-default border m-1 p-2">
+        <div className="panel-body text-center d-flex align-items-center justify-content-center flex-grow-1">
+          <img
+            className="select-design-block-img"
+            src={imgSrc}
+            alt={`${designClassName}`}
+          />
         </div>
         <div className="panel-footer text-center">
           <button
-            className={`btn-primary btn-sm m-1 ${extraButtonClassNames}`}
+            className={`btn btn-primary btn-sm mt-3 mb-1 ${extraButtonClassNames}`}
             value={designClassName}
             onClick={onClick}
           >

@@ -1,17 +1,12 @@
 import { InnerDesignCirclePacking } from "./circle-packing";
 import { InnerDesignCirclesXVera } from "./circles-x-vera";
-import { InnerDesignEmpty } from "./empty";
-import { InnerDesignGrid } from "./grid";
 import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignHexes } from "./hexes";
 import { InnerDesignImageTrace } from "./image-trace";
 import { InnerDesignLattice } from "./lattice";
-import { InnerDesignLines } from "./lines";
 import { InnerDesignMap } from "./map";
 import { InnerDesignMaze1 } from "./maze1";
-import { InnerDesignMondrian } from "./mondrian";
 import { InnerDesignPerlinBlobs } from "./perlin-blobs";
-import { InnerDesignPerlinDots } from "./perlin-dots";
 import { InnerDesignSnowflake } from "./snowflake";
 import { InnerDesignSunflower } from "./sunflower";
 import { InnerDesignTessagon } from "./tessagon";
@@ -29,17 +24,17 @@ export const AllInnerDesigns = [
   InnerDesignSnowflake,
   InnerDesignMap,
   InnerDesignSunflower,
-  InnerDesignGrid,
+  // InnerDesignGrid,
   InnerDesignPerlinBlobs,
   InnerDesignLattice,
   InnerDesignCirclesXVera,
   InnerDesignCirclePacking,
-  InnerDesignLines, // - KINDA BROKEN
-  InnerDesignMondrian,
-  InnerDesignPerlinDots,
+  // InnerDesignLines, // - KINDA BROKEN
+  // InnerDesignMondrian,
+  // InnerDesignPerlinDots,
   // InnerDesignTactile, - UNFINISHED
   // InnerDesignExplode, - BROKEN
-  InnerDesignEmpty,
+  // InnerDesignEmpty,
 ];
 
 export const InnerDesignsToAnimate = [

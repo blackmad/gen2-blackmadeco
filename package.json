@@ -24,6 +24,7 @@
     "@turf/bbox": "^6.5.0",
     "@turf/boolean-point-in-polygon": "^6.5.0",
     "@turf/helpers": "^6.5.0",
+    "@turf/union": "^6.5.0",
     "@turf/unkink-polygon": "^6.5.0",
     "@types/blob-stream": "^0.1.33",
     "@types/jquery": "^3.5.29",
