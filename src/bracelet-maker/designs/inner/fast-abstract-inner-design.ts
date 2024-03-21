@@ -358,7 +358,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
   public make = async (
     paper: paper.PaperScope,
-    params: {
+    _params: {
       segments: number;
       boundaryModel: paper.PathItem;
       seed: string | number | undefined;
@@ -369,7 +369,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       safeBorderWidth: number;
     } & KaleidoscopeMakerParams
   ): Promise<InnerCompletedModel> => {
-    // const self = this;
+    // NOTE: we are copying this so we don't modify the global object
+    // TOOD: break up how params works
+    const params = { ..._params };
 
     this.initRNGs(params);
 

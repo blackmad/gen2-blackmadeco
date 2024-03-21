@@ -47,11 +47,13 @@ function HardcodedRouter() {
       return;
     }
 
-    console.log("pushing state  ", newPath, "from ", window.location.pathname);
+    console.log("pushing state  ", newPath, "frdom ", window.location.pathname);
     window.history.pushState(
       {},
       "",
-      [outerDesign, innerDesign].join("/").replace(window.location.pathname, "")
+      [outerDesign, innerDesign]
+        .join("/")
+        .replace(window.location.pathname.substring(1), "")
     );
   }, [innerDesign, outerDesign, hasInitted]);
 

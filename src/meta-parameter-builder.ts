@@ -87,10 +87,6 @@ class RenderedGeocodeMetaParameter extends RenderedMetaParameter {
 
   public render() {
     const metaParameter = this.metaParameter;
-    if (this.initialParams[metaParameter.name] == null) {
-      this.initialParams[metaParameter.name] = metaParameter.value;
-    }
-
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       metaParameter.title
     );
@@ -177,10 +173,7 @@ class RenderedOnOffMetaParameter extends RenderedMetaParameter {
 
   public render() {
     const metaParameter = this.metaParameter;
-    let selectedValue = this.initialParams[metaParameter.name] == "true";
-    if (this.initialParams[metaParameter.name] == null) {
-      selectedValue = metaParameter.value;
-    }
+    const selectedValue = this.initialParams[metaParameter.name] == "true";
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       metaParameter.title
@@ -198,7 +191,6 @@ class RenderedOnOffMetaParameter extends RenderedMetaParameter {
     this.checkBox = $(switchDiv).find("input")[0] as HTMLInputElement;
     this.checkBox.checked = selectedValue;
 
-    this.initialParams[metaParameter.name] = selectedValue;
     const id = metaParameter.name;
     $(switchDiv).find("input").attr("id", id);
     $(switchDiv).find("label").attr("for", id);
@@ -259,14 +251,13 @@ class RenderedStringMetaParameter extends RenderedMetaParameter {
     this.checkBox = $(switchDiv).find("input")[0] as HTMLInputElement;
     this.checkBox.value = selectedValue;
 
-    this.initialParams[metaParameter.name] = selectedValue;
-
     $(switchDiv)
       .find("input")
       .on(
         "blur",
         function (event) {
           const selectedValue = (event.target as HTMLInputElement).value;
+          console.log({ selectedValue });
           this.onParamChange({ metaParameter, value: selectedValue });
         }.bind(this)
       );
@@ -329,8 +320,6 @@ class RenderedRangeMetaParameter extends RenderedMetaParameter {
     containingDiv.append(rangeInput);
     containingDiv.append(inputWrapDiv);
     inputWrapDiv.append(textInput);
-
-    this.initialParams[metaParameter.name] = Number(value);
 
     rangeInput.addEventListener(
       "change",

@@ -54,24 +54,61 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   useEffect(() => {
     if (modelMaker) {
-      const initialOuterParams: Record<string, number | string> = {};
+      const params = {
+        [modelMaker.constructor.name]: {},
+        [modelMaker.subModel.constructor.name]: {},
+      };
 
       modelMaker.outerMetaParameters.forEach((metaParam) => {
-        initialOuterParams[metaParam.name] = metaParam.value;
+        params[modelMaker.constructor.name][metaParam.name] = metaParam.value;
       });
-
-      const initialInnerParams: Record<string, number | string> = {};
 
       modelMaker.subModel.metaParameters.forEach((metaParam) => {
-        initialInnerParams[metaParam.name] = metaParam.value;
+        params[modelMaker.subModel.constructor.name][metaParam.name] =
+          metaParam.value;
       });
 
-      const modelParams = {};
-      modelParams[modelMaker.constructor.name] = initialOuterParams;
-      modelParams[modelMaker.subModel.constructor.name] = initialInnerParams;
-      console.log("setting model params", modelParams);
+      function getParsedValue(model: string, name: string, value: string) {
+        if (model === modelMaker.constructor.name) {
+          const metaParam = modelMaker.outerMetaParameters.find(
+            (mp) => mp.name === name
+          );
+          if (metaParam) {
+            return metaParam.valueFromString(value);
+          }
+        } else {
+          const metaParam = modelMaker.subModel.metaParameters.find(
+            (mp) => mp.name === name
+          );
+          if (metaParam) {
+            return metaParam.valueFromString(value);
+          }
+        }
+      }
 
-      setModelParams(modelParams);
+      window.location.hash
+        .substring(1)
+        .split("&")
+        .filter((param) => param.length > 0)
+        .forEach((param) => {
+          console.log("param", param);
+          const [key, value] = param.split("=");
+          const [model, name] = decodeURIComponent(key).split(".");
+          params[model][name] = getParsedValue(
+            model,
+            name,
+            decodeURIComponent(value)
+          );
+          console.log(
+            `setting ${model}.${name} to ${decodeURIComponent(value)} from hash`
+          );
+        });
+
+      console.log("initialParams", { params });
+
+      console.log("setting model params", params);
+
+      setModelParams(params);
     }
   }, [modelMaker]);
 
@@ -87,31 +124,22 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       });
     }
 
-    console.log("model params now at hashParams", { modelParams });
-
-    const hashParams = _.map(
+    // // This is totally stupid and broken
+    const hashParams = _.flatMap(
       modelParams,
-      (paramValue: any, paramName: string) => {
-        console.log({ paramName });
-        if (!paramName.includes(".")) {
-          return;
-        }
-        console.log({ paramValue, paramName });
-        return encodeURIComponent(`${paramName}=${paramValue}`);
+      (paramDict: Record<string, any>, modelName: string) => {
+        return _.map(paramDict, (paramValue: any, paramName: string) => {
+          return (
+            encodeURIComponent(`${modelName}.${paramName}`) +
+            "=" +
+            encodeURIComponent(`${paramValue}`)
+          );
+        });
       }
     )
       .filter(isNonNullable)
       .join("&");
 
-    console.log({ hashParams });
-
-    window.addEventListener("hashchange", (e) => {
-      console.log({ e });
-      e.stopPropagation();
-      e.preventDefault();
-    });
-
-    // window.location.replace("#" + hashParams);
     history.replaceState(undefined, "", "#" + hashParams);
 
     modelMaker.make(paper, modelParams).then(setCurrentModel);
@@ -119,7 +147,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {
-      console.log({ value: change.value });
       const parts = change.metaParameter.name.split(".");
       modelParams[parts[0]][parts[1]] = change.value;
     },
