@@ -13,7 +13,6 @@ import { ShapeMaker } from "./utils/shape-maker";
 
 export class InnerDesignVera extends FastAbstractInnerDesign {
   allowOutline = true;
-  requiresSafeConeClamp = false;
   needSubtraction = true;
 
   makeDesign(paper: paper.PaperScope, params) {

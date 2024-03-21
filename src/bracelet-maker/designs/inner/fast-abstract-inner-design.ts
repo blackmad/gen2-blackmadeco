@@ -38,7 +38,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
   public needSubtraction: boolean = true;
   public allowOutline: boolean = false;
   public smoothOutline: boolean = true;
-  public requiresSafeConeClamp: boolean = true;
   public forceContainmentDefault: boolean = true;
   public needSeed: boolean = true;
   public canRound: boolean = false;
@@ -238,13 +237,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     });
 
     // Expand it to our outline border
-    outline = (paper.Path.prototype as any).offset.call(
-      outline,
-      -params.outlineSize,
-      {
-        cap: "miter",
-      }
-    );
+    outline = PaperOffset.offset(outline, -params.outlineSize, {
+      cap: "miter",
+    });
     addToDebugLayer(paper, "expandedOutline", outline.clone());
 
     // If we ended up with an outline that's a compound path,
@@ -312,7 +307,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     const shouldMakeOutline = params.breakThePlane;
 
     if (this.allowOutline && shouldMakeOutline) {
-      const outline = (paper.Path.prototype as any).offset.call(
+      const outline = PaperOffset.offset(
         params.outerModel,
         params.outlineSize,
         {
@@ -329,12 +324,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         console.log("but using outline paths");
         // if an inner design has been nice to us by making its own outline, just use that
         let outlinePaths = design.outlinePaths;
-        if (this.requiresSafeConeClamp) {
-          outlinePaths = this.clampPathsToBoundary(
-            outlinePaths,
-            params.safeCone
-          );
-        }
+        outlinePaths = this.clampPathsToBoundary(outlinePaths, params.safeCone);
         outline = new paper.CompoundPath(outlinePaths);
       } else {
         ExtendPaperJs(paper);
@@ -447,9 +437,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
       console.log("clamping to boundary");
       paths = this.clampPathsToBoundary(paths, savedBoundaryModel);
-    }
-
-    if (this.requiresSafeConeClamp) {
+      paths = this.clampPathsToBoundary(paths, params.safeCone);
+    } else {
       console.log("clamping to cone");
       paths = this.clampPathsToBoundary(paths, params.safeCone);
     }

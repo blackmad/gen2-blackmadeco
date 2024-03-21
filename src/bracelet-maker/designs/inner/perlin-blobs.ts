@@ -1,4 +1,4 @@
-import Jimp from "jimp";
+import Jimp from "jimp/es";
 import * as potrace from "potrace";
 
 import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";

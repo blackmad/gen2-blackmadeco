@@ -36,7 +36,6 @@ export const ImageDownloader = new ImageDownloaderImpl();
 
 export class InnerDesignImageTrace extends FastAbstractInnerDesign {
   allowOutline = false;
-  requiresSafeConeClamp = false;
   needSubtraction = true;
   canKaleido = true;
 

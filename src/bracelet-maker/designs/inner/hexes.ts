@@ -4,7 +4,6 @@ import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 export class InnerDesignHexes extends FastAbstractInnerDesign {
   allowOutline = true;
   needSubtraction = false;
-  requiresSafeConeClamp = false;
   needSeed = false;
   canRound = false;
 

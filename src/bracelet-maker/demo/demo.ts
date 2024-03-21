@@ -13,7 +13,7 @@ export async function demoDesign(
   designClass: PaperModelMaker | OuterPaperModelMaker,
   elHydrator: (svgData: string) => any,
   shouldRandomize: boolean,
-  bounds: paper.Rectangle = new paper.Rectangle(0, 0, 3, 3),
+  bounds: paper.Rectangle = new paper.Rectangle(0, 0, 3, 1.5),
   initialParams: any = {},
   minimumAreaRatio: number = 0.0,
   numMetaParametersToChange: number = 1000

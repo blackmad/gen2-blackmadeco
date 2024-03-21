@@ -1,12 +1,10 @@
 import { InnerDesignCirclePacking } from "./circle-packing";
-import { InnerDesignCirclesXVera } from "./circles-x-vera";
 import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignHexes } from "./hexes";
 import { InnerDesignImageTrace } from "./image-trace";
 import { InnerDesignLattice } from "./lattice";
 import { InnerDesignMap } from "./map";
 import { InnerDesignMaze1 } from "./maze1";
-import { InnerDesignPerlinBlobs } from "./perlin-blobs";
 import { InnerDesignSnowflake } from "./snowflake";
 import { InnerDesignSunflower } from "./sunflower";
 import { InnerDesignTessagon } from "./tessagon";
@@ -25,9 +23,9 @@ export const AllInnerDesigns = [
   InnerDesignMap,
   InnerDesignSunflower,
   // InnerDesignGrid,
-  InnerDesignPerlinBlobs,
+  // InnerDesignPerlinBlobs,
   InnerDesignLattice,
-  InnerDesignCirclesXVera,
+  // InnerDesignCirclesXVera,
   InnerDesignCirclePacking,
   // InnerDesignLines, // - KINDA BROKEN
   // InnerDesignMondrian,
