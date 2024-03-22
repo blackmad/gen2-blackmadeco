@@ -195,7 +195,10 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
           paper={paper}
         />
       </div>
-      <div>
+      <div className="container px-xs-3 px-sm-3 px-md-4 px-lg-5">
+        <div className="previewAreaPadding"></div>
+        <DebugLayers onChange={rerender} />
+
         {modelParams && (
           <MetaParamsContainer
             modelMaker={modelMaker}
@@ -204,7 +207,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
             rerenderCallback={rerender}
           />
         )}
-        <DebugLayers onChange={rerender} />
 
         <div className="row justify-content-center">
           <button

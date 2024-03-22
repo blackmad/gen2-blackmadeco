@@ -22,18 +22,25 @@ export default function DebugLayers({ onChange }: { onChange: () => void }) {
   return (
     <div id="parameterSection" className="m-3">
       <h1 className="title">Debug Layers</h1>
-      {debugLayerNames.map((name) => {
-        return (
-          <label key={name} style={{ color: cssColor(name) }}>
-            <input
-              type="checkbox"
+      <div className="d-flex flex-row flex-wrap">
+        {debugLayerNames.map((name) => {
+          return (
+            <label
               key={name}
-              onClick={() => toggleVisibility(name)}
-            />
-            {name}
-          </label>
-        );
-      })}
+              style={{ color: cssColor(name) }}
+              className="pr-4"
+            >
+              <input
+                type="checkbox"
+                key={name}
+                onClick={() => toggleVisibility(name)}
+                className="mr-1"
+              />
+              {name}
+            </label>
+          );
+        })}
+      </div>
     </div>
   );
 }

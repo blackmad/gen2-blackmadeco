@@ -47,7 +47,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     const numPoints = numTotalPoints; // (rows * cols);
 
     const colOffset = boundaryModel.bounds.width / cols;
-    const rowOffset = boundaryModel.bounds.height / rows;
+    const rowOffset = boundaryModel.bounds.height + 1 / rows;
 
     addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
@@ -173,10 +173,13 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
+    const expandedBoundaryModel = new paper.Path.Rectangle(
+      boundaryModel.bounds.expand(borderSize)
+    );
 
     const seedPoints = this.makeRandomPoints({
       paper,
-      boundaryModel,
+      boundaryModel: expandedBoundaryModel,
       rows,
       cols,
       numTotalPoints: numPoints,
@@ -193,10 +196,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     if (params.voronoi) {
       const voronoi = delaunay.voronoi([
-        boundaryModel.bounds.x,
-        boundaryModel.bounds.y,
-        boundaryModel.bounds.x + boundaryModel.bounds.width,
-        boundaryModel.bounds.y + boundaryModel.bounds.height,
+        expandedBoundaryModel.bounds.x,
+        expandedBoundaryModel.bounds.y,
+        expandedBoundaryModel.bounds.x + expandedBoundaryModel.bounds.width,
+        expandedBoundaryModel.bounds.y + expandedBoundaryModel.bounds.height,
       ]);
       cellPolygonIterator = voronoi.cellPolygons();
     } else {

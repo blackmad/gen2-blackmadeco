@@ -68,3 +68,20 @@
 //     // segment.smooth();
 //   }
 // });
+
+// const startOfCollarTop = new Point(0, 0);
+// const fullBuckleRectangle = new Rectangle(startOfCollarTop, new Point(totalLength, minHeight));
+// const fullBuckleRectanglePath = new Path.Rectangle(fullBuckleRectangle);
+
+// start and end
+// const initialCurveHeight = initialRise + minHeight
+
+// const startOfLeftCurveTop = new paper.Point(initialBuckleLength, -initialRise)
+// const leftStart = new Path.Line(startOfLeftCurveTop, new paper.Point(initialBuckleLength,  minimumPostureSize));
+// const endOfRightCurveTop = new paper.Point(initialBuckleLength + widthOfCollarPortion, -initialRise)
+// const rightEnd = new Path.Line(endOfRightCurveTop, new paper.Point(initialBuckleLength + widthOfCollarPortion,  minimumPostureSize));
+
+// const middleTop = new paper.Point(initialBuckleLength + widthOfCollarPortion/2, dropBelowBuckles)
+// const middleLine = new Path.Line(middleTop, new paper.Point(initialBuckleLength + widthOfCollarPortion/2,  dropBelowBuckles + maxHeight));
+
+// const topCurveLeft = new Curve(startOfLeftCurveTop, startOfLeftCurveTop, middleTop, middleTop)

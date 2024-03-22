@@ -14,6 +14,7 @@ import {
   SelectMetaParameter,
   StringMetaParameter,
 } from "../../meta-parameter";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
 import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
@@ -131,7 +132,6 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     // item.removeChildren(0, 1);
 
-    const paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
     item.remove();
     item.translate(
       new paper.Point(-item.bounds.width / 2, -item.bounds.height / 2)
@@ -142,7 +142,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     console.log(`scaling to ${scaleW}, ${scaleH}`);
 
-    if (objectFit === "contain") {
+    if (objectFit === "contain" || objectFit === "contain-fill") {
       item.scale(
         scaleW > scaleH ? scaleH : scaleW,
         boundaryModel.bounds.center
@@ -155,6 +155,8 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     } else if (objectFit === "fill") {
       item.scale(scaleW, scaleH, boundaryModel.bounds.center);
     }
+
+    const paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
 
     paths.forEach((path) => {
       path.closePath();
@@ -177,6 +179,40 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     console.log({ paths });
 
+    if (objectFit === "contain-fill") {
+      const xRepeats = Math.ceil(
+        boundaryModel.bounds.width / item.bounds.width
+      );
+      const xOffset =
+        (boundaryModel.bounds.width - xRepeats * item.bounds.width) / 2;
+
+      const yRepeats = Math.ceil(
+        boundaryModel.bounds.height / item.bounds.height
+      );
+      const yOffset =
+        (boundaryModel.bounds.height - yRepeats * item.bounds.height) / 2;
+
+      item.translate([-item.bounds.x, -item.bounds.y]);
+
+      const newPaths = [];
+      for (let x = 0; x < xRepeats; x++) {
+        for (let y = 0; y < yRepeats; y++) {
+          paths.forEach((path) => {
+            const newPath = path.clone();
+            newPath.translate(
+              new paper.Point(
+                x * item.bounds.width + xOffset,
+                y * item.bounds.height + yOffset
+              )
+            );
+            newPaths.push(newPath);
+            addToDebugLayer(paper, "imageTrace", newPath);
+          });
+        }
+      }
+      return { paths: newPaths };
+    }
+
     return { paths };
   }
 
@@ -194,7 +230,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       new SelectMetaParameter({
         title: "Object Fit",
         value: "cover",
-        options: ["contain", "cover", "fill"],
+        options: ["contain", "cover", "fill", "contain-fill"],
         name: "objectFit",
       }),
       new RangeMetaParameter({

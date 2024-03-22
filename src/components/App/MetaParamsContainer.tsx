@@ -63,8 +63,7 @@ export const MetaParamsContainer = ({
   }, [metaParamBuilder, modelMaker, params]);
 
   return (
-    <div className="container px-xs-3 px-sm-3 px-md-4 px-lg-5">
-      <div className="previewAreaPadding"></div>
+    <>
       <div className="m-3">
         <h1 className="title">Sizing</h1>
         <small>
@@ -98,6 +97,6 @@ export const MetaParamsContainer = ({
           className="row design-params-row"
         ></div>
       </div>
-    </div>
+    </>
   );
 };

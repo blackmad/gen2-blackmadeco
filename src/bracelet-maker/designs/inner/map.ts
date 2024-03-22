@@ -102,6 +102,7 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
     ];
 
     const filteredFeatures = features.filter((f) => {
+      return true;
       return (
         f["geometry"]["type"] !== "Polygon" &&
         f["geometry"]["type"] !== "MultiPolygon" &&
