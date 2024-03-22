@@ -116,7 +116,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       );
     }
 
-    if (this.allowOutline) {
+    if (this.allowOutline && false) {
       const breakThePlane = new OnOffMetaParameter({
         title: "Break the plane!!!!",
         name: "breakThePlane",

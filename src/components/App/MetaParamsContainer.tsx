@@ -48,7 +48,6 @@ export const MetaParamsContainer = ({
     ) {
       return;
     }
-
     metaParamBuilder.buildMetaParametersForModel(
       modelMaker,
       outerParameterDivRef.current

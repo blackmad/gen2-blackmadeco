@@ -498,6 +498,11 @@ export class MetaParameterBuilder {
           divToAppendTo = originalDivToAppendTo;
         }
 
+        console.log(
+          modelMaker.constructor.name,
+          metaParameter.name,
+          this.initialParams[modelMaker.constructor.name][metaParameter.name]
+        );
         const renderedMetaParameter = this.buildMetaParameterWidget(
           metaParam,
           this.initialParams[modelMaker.constructor.name][metaParameter.name]

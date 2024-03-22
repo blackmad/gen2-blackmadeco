@@ -24,9 +24,11 @@ function HardcodedRouter() {
   });
 
   const reparseUrl = () => {
-    const parts = window.location.pathname.split("/").filter((p) => p);
-
-    console.log({ parts });
+    const parts = window.location.hash
+      .substring(1)
+      .split("?")[0]
+      .split("/")
+      .filter((p) => p);
 
     setOuterDesign(parts[0]);
     setInnerDesign(parts[1]);
@@ -42,18 +44,12 @@ function HardcodedRouter() {
       return;
     }
     const newPath = [outerDesign, innerDesign].join("/");
+    const search = window.location.hash.split("?")[1];
 
-    if ("/" + newPath === window.location.pathname) {
-      return;
-    }
-
-    console.log("pushing state  ", newPath, "frdom ", window.location.pathname);
     window.history.pushState(
       {},
       "",
-      [outerDesign, innerDesign]
-        .join("/")
-        .replace(window.location.pathname.substring(1), "")
+      "#" + newPath + (search ? "?" + search : "")
     );
   }, [innerDesign, outerDesign, hasInitted]);
 

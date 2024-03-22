@@ -88,7 +88,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
       window.location.hash
         .substring(1)
-        .split("&")
+        .split("?")[1]
+        ?.split("&")
         .filter((param) => param.length > 0)
         .forEach((param) => {
           const [key, value] = param.split("=");
@@ -117,6 +118,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
 
     // // This is totally stupid and broken
+    const path = window.location.hash.split("?")[0];
     const hashParams = _.flatMap(
       modelParams,
       (paramDict: Record<string, any>, modelName: string) => {
@@ -132,7 +134,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       .filter(isNonNullable)
       .join("&");
 
-    history.replaceState(undefined, "", "#" + hashParams);
+    // history.replaceState(undefined, "", "#" + path + "?" + hashParams);
+    window.location.hash = path + "?" + hashParams;
 
     modelMaker.make(paper, modelParams).then(setCurrentModel);
   }, [modelMaker, modelParams]);

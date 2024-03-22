@@ -134,13 +134,13 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
 
     const minWidth = wristCircumference + gutterWidth;
     const maxWidth = forearmCircumference + gutterWidth;
-    const widthDiff = maxWidth - minWidth;
+    const widthDiff = (maxWidth - minWidth) / 2;
 
     let cuffOuter: paper.Path = new paper.Path();
     cuffOuter.strokeColor = new paper.Color("black");
     cuffOuter.add(new paper.Point(0, 0));
     cuffOuter.add(new paper.Point(widthDiff, height));
-    cuffOuter.add(new paper.Point(minWidth, height));
+    cuffOuter.add(new paper.Point(minWidth + widthDiff, height));
     cuffOuter.add(new paper.Point(maxWidth, 0));
     roundCorners(paper, cuffOuter, "0.2");
     const holes = this.makeHoles({

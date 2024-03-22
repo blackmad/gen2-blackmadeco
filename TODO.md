@@ -1,7 +1,5 @@
 - add a way to flip holes to engraves
 
-- fix safeCone on straight cuff
-
 POSTURE
 - fix the offset of the repeat
 
@@ -17,7 +15,6 @@ TRACE
 - add a repeat option
 - document some of these
 - remove unneeded inner holes
-
 
 - bring back break the plane
 
