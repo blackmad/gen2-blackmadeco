@@ -1072,6 +1072,11 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@danmarshall/jscad-typings@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@danmarshall/jscad-typings/-/jscad-typings-1.0.0.tgz#87dfb9c49a21cbbdfd54feb20e57544374809102"
+  integrity sha512-MGGIGDItK2UQSsz7yTrXErQXDAFXR3UPxyQ7WZ5RHOwnv60CBXjmkJlXYMYPkSvo+7fUuQL2/ODcvECtc/fi9g==
+
 "@discoveryjs/json-ext@0.5.7", "@discoveryjs/json-ext@^0.5.0":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
@@ -2516,6 +2521,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/bezier-js@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/bezier-js/-/bezier-js-0.0.6.tgz#0d976d68163c4955332ef798a21a0b3d6381d12b"
+  integrity sha512-kXsAlt8e8N6zt9R6LcMYWB1HkBw3q2g+M9BdI/UE+s4agIONuIscQaRCoInH22+Jas3rw8yLUehL2InaZjyNSA==
+
 "@types/blob-stream@^0.1.33":
   version "0.1.33"
   resolved "https://registry.yarnpkg.com/@types/blob-stream/-/blob-stream-0.1.33.tgz#2107fc2e9ec11a70161dec982e62858e8937b4d3"
@@ -2737,10 +2747,20 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.9.1.tgz#0611b37db4246c937feef529ddcc018cf8e35708"
   integrity sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==
 
+"@types/node@^7.0.5":
+  version "7.10.14"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.10.14.tgz#06fa7319b8131b969a8da4a14c487e6f28abacf7"
+  integrity sha512-29GS75BE8asnTno3yB6ubOJOO0FboExEqNJy4bpz0GSmW/8wPTNL4h9h63c6s1uTrOopCmJYe/4yJLh5r92ZUA==
+
 "@types/openlayers@*":
   version "4.6.23"
   resolved "https://registry.yarnpkg.com/@types/openlayers/-/openlayers-4.6.23.tgz#583fba48d304ecdcc06fad311b8b511fdb83bdee"
   integrity sha512-7jCPIa4D4LV03Rttae1AEqvkIN0+nc6Snz4IgA/IjsJD5O3ONxpscqIOdp1qAGuAsikR/ZC9vrPF9np8JRc6ig==
+
+"@types/opentype.js@^0.7.0":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@types/opentype.js/-/opentype.js-0.7.2.tgz#ced5b117a5736578c6b9d835e35b0204c6ef2e8f"
+  integrity sha512-Riz6WyBUBEFs7YqSsJya3SbDHJZ6BmMkY7bzNoue6rtwj+RNilLc+mgOX/eJ0Y0asq16FSU6DatBeOg8ZMy2UQ==
 
 "@types/paper@^0.12.3":
   version "0.12.3"
@@ -2753,6 +2773,13 @@
   version "0.13.4"
   resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.13.4.tgz#e75ca9d296b4078178794bccd7f7b58ef805682a"
   integrity sha512-ixGNDHYJCCKuamY305wbfYSphZ2WPe8FPkjn8oF4fHV+PgPV4V+hecPh2VOS2h4RNtpSB3zQcR4sCpNvvrEb1A==
+  dependencies:
+    "@types/node" "*"
+
+"@types/pdfkit@^0.7.34":
+  version "0.7.36"
+  resolved "https://registry.yarnpkg.com/@types/pdfkit/-/pdfkit-0.7.36.tgz#d7241454e2ae94ee0bed684e712fbfdc2b3e0e6f"
+  integrity sha512-9eRA6MuW+n78yU3HhoIrDxjyAX2++B5MpLDYqHOnaRTquCw+5sYXT+QN8E1eSaxvNUwlRfU3tOm4UzTeGWmBqg==
   dependencies:
     "@types/node" "*"
 
@@ -3761,6 +3788,11 @@ batch@0.6.1:
   resolved "https://registry.yarnpkg.com/batch/-/batch-0.6.1.tgz#dc34314f4e679318093fc760272525f94bf25c16"
   integrity sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==
 
+bezier-js@^2.1.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/bezier-js/-/bezier-js-2.6.1.tgz#ed9c6ebfcb3214794ff213cf90ee8aac644ecf7f"
+  integrity sha512-jelZM33eNzcZ9snJ/5HqJLw3IzXvA8RFcBjkdOB8SDYyOvW8Y2tTosojAiBTnD1MhbHoWUYNbxUXxBl61TxbRg==
+
 big.js@^5.2.2:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
@@ -4075,6 +4107,11 @@ clone-deep@^4.0.1:
     is-plain-object "^2.0.4"
     kind-of "^6.0.2"
     shallow-clone "^3.0.0"
+
+clone@^1.0.2:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
+  integrity sha512-JQHZ2QMW6l3aH/j6xCqQThY/9OH4D/9ls34cgkUBiEeocRTU04tHfKPBsUK1PqZCUQM7GiA0IIXJSuXHI64Kbg==
 
 clone@^2.1.2:
   version "2.1.2"
@@ -5830,6 +5867,11 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6, graceful-fs@^4.2.9:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.11.tgz#4183e4e8bf08bb6e05bbb2f7d2e0c8f712ca40e3"
   integrity sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==
 
+graham_scan@^1.0.4:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/graham_scan/-/graham_scan-1.0.5.tgz#0c7f6864aaf9034e80f29c40529aefaa7e2c2416"
+  integrity sha512-471KIBS1jOrAHpEStAbOjYI5U7MGBSyqy+wIEnvRYaFDNmpUUhbDZWLRsCSh/OnlY0dCg0NaDyN/2XLoypgIfA==
+
 graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
@@ -7108,6 +7150,11 @@ jsts@^2.11.0:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
+kdbush@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/kdbush/-/kdbush-2.0.1.tgz#90c6128e3001ac68c550d7c9e2f222c0269666f1"
+  integrity sha512-9KqSdmWCkBIisFIGclT0FRagKhI7IVbMyUjsxCFG0Ly1Dg6whlxJ7b9lrq8ifk3X/fGeJzok1R75LQfZTfA5zQ==
+
 keyv@^4.5.3:
   version "4.5.4"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-4.5.4.tgz#a879a99e29452f942439f2a405e3af8b31d4de93"
@@ -7350,6 +7397,21 @@ makeerror@1.0.12:
   integrity sha512-JmqCvUhmt43madlpFzG4BQzG2Z3m6tvQDNKdClZnO3VbIudJYmxsT0FNJMeiB2+JTSlTQTSbU8QdesVmwJcmLg==
   dependencies:
     tmpl "1.0.5"
+
+makerjs@^0.18.1:
+  version "0.18.1"
+  resolved "https://registry.yarnpkg.com/makerjs/-/makerjs-0.18.1.tgz#ccc10a9d7b3e92ba9794568e52358653621e693b"
+  integrity sha512-yw1tEeOVGgoj34K+uLRKsAbeVeBu1m2TGdm673BxrFc+auj71GJlQhS/5byGYaUmzyw+kyR/OQI4zyuM+v5Dxg==
+  dependencies:
+    "@danmarshall/jscad-typings" "^1.0.0"
+    "@types/bezier-js" "^0.0.6"
+    "@types/node" "^7.0.5"
+    "@types/opentype.js" "^0.7.0"
+    "@types/pdfkit" "^0.7.34"
+    bezier-js "^2.1.0"
+    clone "^1.0.2"
+    graham_scan "^1.0.4"
+    kdbush "^2.0.1"
 
 media-typer@0.3.0:
   version "0.3.0"

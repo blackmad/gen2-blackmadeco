@@ -54,6 +54,7 @@
     "jquery": "^3.7.1",
     "jsts": "^2.11.0",
     "lodash": "^4.17.21",
+    "makerjs": "^0.18.1",
     "paper": "^0.12.17",
     "paper-jsdom": "^0.12.17",
     "paperjs-offset": "^1.0.8",

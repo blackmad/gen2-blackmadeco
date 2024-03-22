@@ -280,7 +280,7 @@ export function flattenArrayOfPathItems(
 ): paper.Path[] {
   const ret: paper.Path[] = [];
   paths.forEach((path) => {
-    if (path instanceof paper.CompoundPath) {
+    if (path instanceof paper.CompoundPath || path instanceof paper.Group) {
       flattenArrayOfPathItems(paper, path.children).forEach((c) => {
         ret.push(c);
       });
