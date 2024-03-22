@@ -466,7 +466,6 @@ export function clampPathsToBoundary(
 ) {
   return paths.map((m) => {
     const newP = m.intersect(boundary, { insert: false });
-    console.log({ newP });
     addToDebugLayer(paper, debugLayerName, newP.clone());
     return newP;
   });

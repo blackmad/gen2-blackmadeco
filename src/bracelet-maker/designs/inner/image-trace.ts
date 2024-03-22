@@ -55,6 +55,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       url,
       contrastThresholdMax,
       blackOnWhite,
+      repeatPadding,
     } = params;
 
     if (url === "") {
@@ -156,6 +157,13 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       item.scale(scaleW, scaleH, boundaryModel.bounds.center);
     }
 
+    item.children.forEach((child) => {
+      if (child instanceof paper.Shape) {
+        console.log("child is a shape!!!");
+        child.remove();
+      }
+    });
+
     const paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
 
     paths.forEach((path) => {
@@ -180,11 +188,17 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     console.log({ paths });
 
     if (objectFit === "contain-fill") {
+      item.translate([-item.bounds.x, -item.bounds.y]);
+
+      const effectiveItemWidth = repeatPadding + item.bounds.width;
       const xRepeats = Math.ceil(
-        boundaryModel.bounds.width / item.bounds.width
+        boundaryModel.bounds.width / effectiveItemWidth
       );
       const xOffset =
-        (boundaryModel.bounds.width - xRepeats * item.bounds.width) / 2;
+        (boundaryModel.bounds.width +
+          effectiveItemWidth / 2 -
+          xRepeats * effectiveItemWidth) /
+        2;
 
       const yRepeats = Math.ceil(
         boundaryModel.bounds.height / item.bounds.height
@@ -192,21 +206,23 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       const yOffset =
         (boundaryModel.bounds.height - yRepeats * item.bounds.height) / 2;
 
-      item.translate([-item.bounds.x, -item.bounds.y]);
+      console.log({ xRepeats, yRepeats, xOffset, yOffset });
 
       const newPaths = [];
-      for (let x = 0; x < xRepeats; x++) {
+      for (let x = 0; x < xRepeats + 1; x++) {
         for (let y = 0; y < yRepeats; y++) {
           paths.forEach((path) => {
             const newPath = path.clone();
             newPath.translate(
               new paper.Point(
-                x * item.bounds.width + xOffset,
+                x * effectiveItemWidth + xOffset,
                 y * item.bounds.height + yOffset
               )
             );
             newPaths.push(newPath);
             addToDebugLayer(paper, "imageTrace", newPath);
+            addToDebugLayer(paper, "imageTrace", newPath.bounds);
+            console.log(newPath.bounds);
           });
         }
       }
@@ -302,6 +318,14 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         value: 100,
         step: 1,
         name: "contrastThresholdMax",
+      }),
+      new RangeMetaParameter({
+        title: "Repeat Padding",
+        min: 0,
+        max: 10,
+        value: 0.1,
+        step: 0.01,
+        name: "repeatPadding",
       }),
     ];
   }
