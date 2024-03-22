@@ -508,3 +508,19 @@ export function healHoles(params: {
   });
   return ret;
 }
+
+export function getEvenlySpacePointsAlongPath({
+  path,
+  numPoints,
+}: {
+  path: paper.Path;
+  numPoints: number;
+}): paper.Point[] {
+  const points = [];
+  const length = path.length;
+  for (let i = 0; i < numPoints; i++) {
+    const point = path.getPointAt(length * (i / numPoints));
+    points.push(point);
+  }
+  return points;
+}

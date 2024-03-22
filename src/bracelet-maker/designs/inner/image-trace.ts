@@ -7,6 +7,7 @@ import JimpImport from "jimp/es";
 const Jimp = configure({ plugins: [threshold] }, JimpImport);
 
 import { CompoundPath } from "paper/dist/paper-core";
+import { PaperOffset } from "paperjs-offset";
 
 import {
   OnOffMetaParameter,
@@ -15,7 +16,11 @@ import {
   StringMetaParameter,
 } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
-import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
+import {
+  bufferPointstoPathItem,
+  flattenArrayOfPathItems,
+  getEvenlySpacePointsAlongPath,
+} from "../../utils/paperjs-utils";
 import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
@@ -56,6 +61,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       contrastThresholdMax,
       blackOnWhite,
       repeatPadding,
+      shrinkBy,
     } = params;
 
     if (url === "") {
@@ -87,11 +93,11 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     // Get the buffer of the modified image
     const newBuffer = await image.getBufferAsync("image/png");
 
-    if (typeof window !== "undefined") {
-      const imgEl = document.createElement("img");
-      imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
-      document.body.appendChild(imgEl);
-    }
+    // if (typeof window !== "undefined") {
+    //   const imgEl = document.createElement("img");
+    //   imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
+    //   document.body.appendChild(imgEl);
+    // }
 
     const tracedSvgString = await traceFromBufferToSvgString({
       buffer: newBuffer,
@@ -164,7 +170,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       }
     });
 
-    const paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
+    let paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
 
     paths.forEach((path) => {
       path.closePath();
@@ -184,6 +190,39 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         path.smooth({ type: "continuous" });
       }
     });
+
+    if (shrinkBy > 0) {
+      paths = paths.map((path) => {
+        path.closePath();
+        path.flatten(0.001);
+        path.closePath();
+
+        const offsetPath = PaperOffset.offset(path, -shrinkBy);
+        console.log(offsetPath.bounds.area);
+        if (offsetPath.bounds.area === 0) {
+          // Get approx outline points
+          const points = getEvenlySpacePointsAlongPath({
+            path: path,
+            numPoints: 100,
+          });
+
+          const newOffsetPath = bufferPointstoPathItem(
+            paper,
+            -shrinkBy,
+            points
+          );
+          console.log(newOffsetPath.bounds.area / path.bounds.area);
+          if (newOffsetPath.bounds.area / path.bounds.area < 0.2) {
+            // path.flatten(0.1);
+            console.log({ path });
+            console.log(path.exportSVG());
+            return path;
+          }
+          return newOffsetPath;
+        }
+        return offsetPath;
+      });
+    }
 
     console.log({ paths });
 
@@ -326,6 +365,14 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         value: 0.1,
         step: 0.01,
         name: "repeatPadding",
+      }),
+      new RangeMetaParameter({
+        title: "Shrink holes by",
+        min: 0,
+        max: 10,
+        value: 0,
+        step: 0.01,
+        name: "shrinkBy",
       }),
     ];
   }
