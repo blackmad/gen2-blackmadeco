@@ -1,58 +1,38 @@
-import m from "makerjs";
+import { AbstractExpandInnerDesign } from "./abstract-expand-and-subtract-inner-design";
 
-import { addToDebugLayer } from "../../utils/debug-layers";
-import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
-import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
+function getEvenlySpacePointsAlongPath({
+  path,
+  numPoints,
+}: {
+  path: paper.Path;
+  numPoints: number;
+}): paper.Point[] {
+  const points = [];
+  const length = path.length;
+  for (let i = 0; i < numPoints; i++) {
+    const point = path.getPointAt(length * (i / numPoints));
+    points.push(point);
+  }
+  return points;
+}
 
-export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
-  allowOutline = false;
-  requiresSafeConeClamp = false;
-  needSubtraction = true;
-  canKaleido = true;
+export class InnerDesignSacredGeometry extends AbstractExpandInnerDesign {
+  async makePaths(paper: paper.PaperScope, params: any) {
+    const boundaryModel: paper.Path = params.boundaryModel;
 
-  async makeDesign(paper: paper.PaperScope, params: any) {
-    const { boundaryModel } = params;
-
-    function trussWireframe(w, h) {
-      this.models = {
-        frame: new m.models.ConnectTheDots(true, [
-          [w, h],
-          [0, h],
-          [0, 0],
-          [w, 0],
-        ]),
-      };
-
-      const angled = this.models.frame.paths.ShapeLine1;
-
-      const bracepoints = [
-        [0, 0],
-        m.point.middle(angled, 1 / 3),
-        [w / 2, 0],
-        m.point.middle(angled, 2 / 3),
-      ];
-
-      this.models.brace = new m.models.ConnectTheDots(false, bracepoints);
-    }
-
-    const truss = new trussWireframe(
-      boundaryModel.bounds.width,
-      boundaryModel.bounds.height
-    );
-    const expansion = m.model.expandPaths(truss, 0.1, 1);
-
-    const svg = m.exporter.toSVG(expansion);
-
-    const item = new paper.Item();
-    const importedItem = item.importSVG(svg);
-    console.log({ importedItem });
-    const paths = flattenArrayOfPathItems(paper, [importedItem]);
-    paths.forEach((p) => {
-      addToDebugLayer(paper, "sacredGeometry", p);
+    const points = getEvenlySpacePointsAlongPath({
+      path: boundaryModel,
+      numPoints: 10,
     });
-    console.log({ svg });
-    console.log({ expansion });
-    return { paths: [] };
+
+    const paths: paper.Point[][] = [];
+    points.forEach((p1, i) => {
+      points.slice(i + 1).forEach((p2, j) => {
+        paths.push([p1, p2]);
+      });
+    });
+
+    return paths;
   }
 
   get designMetaParameters() {

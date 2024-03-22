@@ -470,3 +470,41 @@ export function clampPathsToBoundary(
     return newP;
   });
 }
+
+export function hasHoles(path: paper.CompoundPath) {
+  return path.children.length > 1;
+}
+
+export function healHoles(params: {
+  paper: paper.PaperScope;
+  paths: paper.Item[];
+  healY?: number;
+  healX?: number;
+}): paper.Path[] {
+  const { paper, paths, healY, healX } = params;
+  const ret: paper.Path[] = [];
+  paths.forEach((path) => {
+    if (path instanceof paper.CompoundPath) {
+      // see if this has any holes
+      if (!hasHoles) {
+        return;
+      }
+
+      if (healX) {
+        // make a rectangle the height of the group and width of healX
+        const healRect = new paper.Path.Rectangle(
+          path.bounds.topRight,
+          new paper.Size(healX, path.bounds.height)
+        );
+        // now center it
+        healRect.position = path.bounds.center;
+        addToDebugLayer(paper, "healRect", healRect);
+      }
+    } else if (path instanceof paper.Group) {
+      healHoles({ ...params, paths: path.children });
+    } else if (path instanceof paper.Path) {
+      ret.push(path);
+    }
+  });
+  return ret;
+}

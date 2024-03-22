@@ -1,7 +1,8 @@
 - add a way to flip holes to engraves
 
-POSTURE
-- fix the offset of the repeat
+FONT
+- make an option to auto-cut holes-in-holes like Q in rocker
+
 
 - fix map design
 --> figure out what it needs for yuva's map
@@ -11,10 +12,11 @@ POSTURE
 - voronoi still not going to the bottom1!!!!!
 
 TRACE
-- why are some paths unable to heal?
-- add a repeat option
+- fix the offset of the repeat for centering
 - document some of these
 - remove unneeded inner holes
+
+- fix back/forward in 
 
 - bring back break the plane
 

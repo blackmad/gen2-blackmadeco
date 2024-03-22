@@ -8,7 +8,7 @@ import {
   StringMetaParameter,
 } from "../../meta-parameter";
 import { BundledFonts, loadFont } from "../../utils/font-utils";
-import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
+import { flattenArrayOfPathItems, healHoles } from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignText extends FastAbstractInnerDesign {
@@ -31,7 +31,7 @@ export class InnerDesignText extends FastAbstractInnerDesign {
     const textChunks = _.chunk(textArray, Math.ceil(textArray.length / lines));
     const textLines = textChunks.map((line) => line.join(" "));
 
-    let paths = [];
+    let paths: paper.Item[] = [];
 
     const maxLineHeight = Math.max(
       ...textLines.map((line, i) => {
@@ -70,6 +70,9 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       );
 
       accumulatedYOffset += maxLineHeight;
+
+      healHoles({ paper, paths, healX: 0.1 });
+      // debugger;
       paths = [...paths, ...flattenArrayOfPathItems(paper, [importedItem])];
     });
 
