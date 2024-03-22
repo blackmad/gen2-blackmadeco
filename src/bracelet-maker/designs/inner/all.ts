@@ -8,6 +8,7 @@ import { InnerDesignSacredGeometry } from "./sacred-geometry";
 import { InnerDesignSnowflake } from "./snowflake";
 import { InnerDesignSunflower } from "./sunflower";
 import { InnerDesignTessagon } from "./tessagon";
+import { InnerDesignText } from "./text";
 import { InnerDesignVera } from "./vera";
 import { InnerDesignVoronoi } from "./voronoi";
 
@@ -23,6 +24,7 @@ export const AllInnerDesigns = [
   InnerDesignMap,
   InnerDesignSunflower,
   InnerDesignSacredGeometry,
+  InnerDesignText,
   // InnerDesignGrid,
   // InnerDesignPerlinBlobs,
   // InnerDesignLattice,

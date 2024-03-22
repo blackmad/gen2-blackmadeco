@@ -100,7 +100,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         title: "Buckle Height",
         min: 1,
         max: 5,
-        value: 2,
+        value: 1,
         step: 0.25,
         name: "buckleHeight",
       }),
@@ -255,7 +255,6 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     return new CompletedModel({
       outer: finalOuter,
       holes,
-      // holes: allHoles,
       design: innerDesign.paths,
       // design: [],
     });

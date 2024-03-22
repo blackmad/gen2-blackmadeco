@@ -1,7 +1,9 @@
+- add a way to flip holes to engraves
+
 - fix safeCone on straight cuff
 
 POSTURE
-- fix the offset of the 
+- fix the offset of the repeat
 
 - fix map design
 --> figure out what it needs for yuva's map

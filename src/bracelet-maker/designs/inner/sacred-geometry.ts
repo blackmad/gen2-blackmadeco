@@ -16,9 +16,10 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     function trussWireframe(w, h) {
       this.models = {
         frame: new m.models.ConnectTheDots(true, [
+          [w, h],
           [0, h],
-          [w, 0],
           [0, 0],
+          [w, 0],
         ]),
       };
 

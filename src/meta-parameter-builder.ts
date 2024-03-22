@@ -374,8 +374,14 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
 
     this.metaParameter.options.forEach((optionValue) => {
       const option = document.createElement("option");
-      option.value = optionValue;
-      option.text = optionValue;
+      if (_.isString(optionValue)) {
+        option.value = optionValue;
+        option.text = optionValue;
+      } else {
+        option.value = optionValue.title;
+        option.text = optionValue.value;
+      }
+
       if (optionValue == selectedValue) {
         option.setAttribute("selected", "selected");
       }
