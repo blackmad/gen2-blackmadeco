@@ -13,6 +13,7 @@ import { addToDebugLayer } from "../../utils/debug-layers";
 import { makeConcaveOutline } from "../../utils/outline";
 import {
   bufferPath,
+  clampPathsToBoundary,
   simplifyPath,
   unkinkPath,
 } from "../../utils/paperjs-utils";
@@ -212,15 +213,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     return paths;
   }
 
-  private clampPathsToBoundary(
-    paths: paper.PathItem[],
-    boundary: paper.PathItem
-  ) {
-    return paths.map((m) => {
-      return m.intersect(boundary, { insert: false });
-    });
-  }
-
   private makeOutline(
     paper: paper.PaperScope,
     params: any,
@@ -325,7 +317,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         console.log("but using outline paths");
         // if an inner design has been nice to us by making its own outline, just use that
         let outlinePaths = design.outlinePaths;
-        outlinePaths = this.clampPathsToBoundary(outlinePaths, params.safeCone);
+        outlinePaths = clampPathsToBoundary(outlinePaths, params.safeCone);
         outline = new paper.CompoundPath(outlinePaths);
       } else {
         ExtendPaperJs(paper);
@@ -384,7 +376,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     } else {
       params.boundaryModel = PaperOffset.offset(
         params.outerModel,
-        // makeSyntheticBoundaryModel(paper, params.outerModel),
         -params.safeBorderWidth,
         {
           jointType: "jtMiter",
@@ -441,11 +432,11 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
       console.log("clamping to boundary and cone");
 
-      paths = this.clampPathsToBoundary(paths, params.safeCone);
-      paths = this.clampPathsToBoundary(paths, safeBoundaryModel);
+      paths = clampPathsToBoundary(paths, params.safeCone);
+      paths = clampPathsToBoundary(paths, safeBoundaryModel);
     } else {
       console.log("clamping to cone");
-      paths = this.clampPathsToBoundary(paths, params.safeCone);
+      paths = clampPathsToBoundary(paths, params.safeCone);
     }
 
     const maybeOutline = this.maybeMakeOutline(
@@ -470,39 +461,4 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
   randomElement<T>(items: T[]): T {
     return items[Math.floor(this.rng() * items.length)];
   }
-}
-
-function makeSyntheticBoundaryModel(paper: paper.PaperScope, path: paper.Path) {
-  // First let's find where the middle is
-  // Create a line to intersect the middle
-  const middleLine = new paper.Path.Line(
-    path.bounds.topCenter,
-    path.bounds.bottomCenter.add([0, 1])
-  );
-  const middleIntersections = path.getIntersections(middleLine);
-
-  const middleDistance = middleIntersections[0].point.getDistance(
-    middleIntersections[1].point
-  );
-
-  console.log(middleDistance);
-
-  const distanceAbove = path.bounds.height - middleDistance;
-  const newTotalHeight = distanceAbove * 2 + middleDistance;
-
-  console.log("middleDistance", { middleDistance });
-
-  addToDebugLayer(paper, "middleLine", middleLine);
-  // addToDebugLayer(paper, "middleLine", clampedMiddleLine);
-
-  const syntheticBoundaryModel = new paper.Path.Rectangle(
-    new paper.Rectangle(
-      path.bounds.topLeft,
-      new paper.Size(path.bounds.width, newTotalHeight)
-    )
-  );
-
-  addToDebugLayer(paper, "syntheticBoundaryModel", syntheticBoundaryModel);
-
-  return syntheticBoundaryModel;
 }

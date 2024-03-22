@@ -1,4 +1,5 @@
 import paper from "paper";
+import { PaperOffset } from "paperjs-offset";
 
 import {
   MetaParameter,
@@ -8,6 +9,7 @@ import {
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import {
+  clampPathsToBoundary,
   flattenArrayOfPathItems,
   makeIncrementalPath,
 } from "../../utils/paperjs-utils";
@@ -212,9 +214,24 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
 
     // TODO: wtf is safecone
     innerOptions.safeCone = outerModel.clone();
-    innerOptions.outerModel = outerModel;
+    innerOptions.outerModel = makeSyntheticBoundaryModel(paper, outerModel);
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
+    const newSafeBoundaryModel = PaperOffset.offset(
+      outerModel,
+      -innerOptions.safeBorderWidth,
+      {
+        jointType: "jtMiter",
+        endType: "etClosedPolygon",
+        miterLimit: 2.0,
+        roundPrecision: 0.25,
+      }
+    );
+    innerDesign.paths = clampPathsToBoundary(
+      innerDesign.paths,
+      newSafeBoundaryModel,
+      "tripleClamped"
+    );
 
     const { model: finalOuterModel, holes } = this.makeFinalCollarOutline({
       buckleHeight,
@@ -346,4 +363,39 @@ function tryToSmoothRightAngles({
     newOuterPaths.push(newP);
   });
   return newOuterPaths[0];
+}
+
+function makeSyntheticBoundaryModel(paper: paper.PaperScope, path: paper.Path) {
+  // First let's find where the middle is
+  // Create a line to intersect the middle
+  const middleLine = new paper.Path.Line(
+    path.bounds.topCenter,
+    path.bounds.bottomCenter.add([0, 1])
+  );
+  const middleIntersections = path.getIntersections(middleLine);
+
+  const middleDistance = middleIntersections[0].point.getDistance(
+    middleIntersections[1].point
+  );
+
+  console.log(middleDistance);
+
+  const distanceAbove = path.bounds.height - middleDistance;
+  const newTotalHeight = distanceAbove * 2 + middleDistance;
+
+  console.log("middleDistance", { middleDistance });
+
+  addToDebugLayer(paper, "middleLine", middleLine);
+  // addToDebugLayer(paper, "middleLine", clampedMiddleLine);
+
+  const syntheticBoundaryModel = new paper.Path.Rectangle(
+    new paper.Rectangle(
+      path.bounds.topLeft,
+      new paper.Size(path.bounds.width, newTotalHeight)
+    )
+  );
+
+  addToDebugLayer(paper, "syntheticBoundaryModel", syntheticBoundaryModel);
+
+  return syntheticBoundaryModel;
 }

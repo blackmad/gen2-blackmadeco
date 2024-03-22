@@ -11,6 +11,8 @@ import * as _ from "lodash";
 import paper from "paper";
 import simplify from "simplify-path";
 
+import { addToDebugLayer } from "./debug-layers";
+
 export function randomPointInPolygon(
   paper: paper.PaperScope,
   polygon: paper.PathItem,
@@ -455,4 +457,17 @@ export function makeLeftRoundedRect(rect: paper.Rectangle) {
   path.lineTo(rect.topRight);
   path.closePath();
   return path;
+}
+
+export function clampPathsToBoundary(
+  paths: paper.PathItem[],
+  boundary: paper.PathItem,
+  debugLayerName: string = "clampedPaths"
+) {
+  return paths.map((m) => {
+    const newP = m.intersect(boundary, { insert: false });
+    console.log({ newP });
+    addToDebugLayer(paper, debugLayerName, newP.clone());
+    return newP;
+  });
 }

@@ -1,5 +1,8 @@
 - fix safeCone on straight cuff
 
+POSTURE
+- fix the offset of the 
+
 - fix map design
 --> figure out what it needs for yuva's map
 --> get it to default to unrounded? or much less rounded?
