@@ -360,7 +360,7 @@ class RenderedSelectMetaParameter extends RenderedMetaParameter {
   public render() {
     const selectedValue = this.initialValue ?? this.metaParameter.value;
 
-    console.log({ selectedValue });
+    // console.log({ selectedValue });
 
     const { parentDiv, containingDiv } = makeMetaParameterContainer(
       this.metaParameter.title
@@ -498,11 +498,11 @@ export class MetaParameterBuilder {
           divToAppendTo = originalDivToAppendTo;
         }
 
-        console.log(
-          modelMaker.constructor.name,
-          metaParameter.name,
-          this.initialParams[modelMaker.constructor.name][metaParameter.name]
-        );
+        // console.log(
+        //   modelMaker.constructor.name,
+        //   metaParameter.name,
+        //   this.initialParams[modelMaker.constructor.name][metaParameter.name]
+        // );
         const renderedMetaParameter = this.buildMetaParameterWidget(
           metaParam,
           this.initialParams[modelMaker.constructor.name][metaParameter.name]

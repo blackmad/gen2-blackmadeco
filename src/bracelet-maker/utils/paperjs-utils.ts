@@ -475,33 +475,69 @@ export function hasHoles(path: paper.CompoundPath) {
   return path.children.length > 1;
 }
 
+// TODO: these should really find the paths of which they are holes of, and
+// make the healing boxes the size of those paths, so we can do horizontal healing too
 export function healHoles(params: {
   paper: paper.PaperScope;
   paths: paper.Item[];
-  healY?: number;
-  healX?: number;
+  horizontalHealingBarHeight?: number;
+  verticalHealingBarWidth?: number;
 }): paper.Path[] {
-  const { paper, paths, healY, healX } = params;
-  const ret: paper.Path[] = [];
+  const { paper, paths, horizontalHealingBarHeight, verticalHealingBarWidth } =
+    params;
+  let ret: paper.PathItem[] = [];
   paths.forEach((path) => {
     if (path instanceof paper.CompoundPath) {
-      // see if this has any holes
-      if (!hasHoles) {
-        return;
-      }
+      const healBoxes = [];
+      path.children.forEach((child) => {
+        // debugger;
+        console.log("compound path");
+        // see if this has any holes
+        if (child instanceof paper.Path && child.clockwise) {
+          console.log("without holes");
+          return;
+        }
 
-      if (healX) {
-        // make a rectangle the height of the group and width of healX
-        const healRect = new paper.Path.Rectangle(
-          path.bounds.topRight,
-          new paper.Size(healX, path.bounds.height)
-        );
-        // now center it
-        healRect.position = path.bounds.center;
-        addToDebugLayer(paper, "healRect", healRect);
+        console.log("with holes");
+
+        if (verticalHealingBarWidth) {
+          // make a rectangle the height of the group and width of healX
+          const healRect = new paper.Path.Rectangle(
+            child.bounds.center.subtract(
+              new paper.Point(verticalHealingBarWidth / 2, child.bounds.height)
+            ),
+            new paper.Size(verticalHealingBarWidth, child.bounds.height * 2)
+          );
+
+          healBoxes.push(healRect);
+          addToDebugLayer(paper, "healRect", healRect);
+        }
+
+        if (horizontalHealingBarHeight) {
+          // make a rectangle the width of the group and height of healY
+          const healRect = new paper.Path.Rectangle(
+            child.bounds.center.subtract(
+              new paper.Point(
+                child.bounds.width,
+                horizontalHealingBarHeight / 2
+              )
+            ),
+            new paper.Size(child.bounds.width * 2, horizontalHealingBarHeight)
+          );
+
+          healBoxes.push(healRect);
+          addToDebugLayer(paper, "healRect", healRect);
+        }
+      });
+      let fixedPath = path;
+      for (let i = 0; i < healBoxes.length; i++) {
+        fixedPath = fixedPath.subtract(healBoxes[i], {
+          insert: false,
+        });
       }
+      ret.push(fixedPath);
     } else if (path instanceof paper.Group) {
-      healHoles({ ...params, paths: path.children });
+      ret = [...ret, ...healHoles({ ...params, paths: path.children })];
     } else if (path instanceof paper.Path) {
       ret.push(path);
     }

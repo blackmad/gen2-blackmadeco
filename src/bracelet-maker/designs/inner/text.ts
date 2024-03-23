@@ -21,6 +21,8 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       text,
       yOffset,
       lines,
+      horizontalHealingBarHeight,
+      verticalHealingBarWidth,
     } = params;
 
     //load a font asynchronously
@@ -71,9 +73,15 @@ export class InnerDesignText extends FastAbstractInnerDesign {
 
       accumulatedYOffset += maxLineHeight;
 
-      healHoles({ paper, paths, healX: 0.1 });
+      console.log("healing holes");
+      const fixedPaths = healHoles({
+        paper,
+        paths: [importedItem],
+        horizontalHealingBarHeight,
+        verticalHealingBarWidth,
+      });
       // debugger;
-      paths = [...paths, ...flattenArrayOfPathItems(paper, [importedItem])];
+      paths = [...paths, ...flattenArrayOfPathItems(paper, fixedPaths)];
     });
 
     return Promise.resolve({ paths });
@@ -116,6 +124,22 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         step: 1,
         value: 1,
         name: "lines",
+      }),
+      // new RangeMetaParameter({
+      //   title: "Horizontal Healing Bar Height",
+      //   min: -100,
+      //   max: 100,
+      //   step: 0.1,
+      //   value: 0.1,
+      //   name: "horizontalHealingBarHeight",
+      // }),
+      new RangeMetaParameter({
+        title: "Veritical Healing Bar Width",
+        min: -100,
+        max: 100,
+        step: 0.05,
+        value: 0.05,
+        name: "verticalHealingBarWidth",
       }),
     ];
   }

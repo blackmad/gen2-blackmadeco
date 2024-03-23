@@ -49,7 +49,6 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
   async makeDesign(paper: paper.PaperScope, params: any) {
     const {
-      boundaryModel,
       threshold,
       turnPolicy,
       turdSize,
@@ -63,6 +62,8 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       repeatPadding,
       shrinkBy,
     } = params;
+
+    const boundaryModel: paper.Path = params.boundaryModel;
 
     if (url === "") {
       return { paths: [] };
@@ -165,7 +166,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     item.children.forEach((child) => {
       if (child instanceof paper.Shape) {
-        console.log("child is a shape!!!");
+        // console.log("child is a shape!!!");
         child.remove();
       }
     });
@@ -175,9 +176,9 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     paths.forEach((path) => {
       path.closePath();
 
-      console.log(path.hasChildren());
+      // console.log(path.hasChildren());
       if (path instanceof CompoundPath) {
-        console.log("this one is a path!");
+        // console.log("this one is a path!");
       }
 
       if (simplificationTolerance > 0) {
@@ -198,7 +199,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
         path.closePath();
 
         const offsetPath = PaperOffset.offset(path, -shrinkBy);
-        console.log(offsetPath.bounds.area);
+        // console.log(offsetPath.bounds.area);
         if (offsetPath.bounds.area === 0) {
           // Get approx outline points
           const points = getEvenlySpacePointsAlongPath({
@@ -211,11 +212,11 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
             -shrinkBy,
             points
           );
-          console.log(newOffsetPath.bounds.area / path.bounds.area);
+          // console.log(newOffsetPath.bounds.area / path.bounds.area);
           if (newOffsetPath.bounds.area / path.bounds.area < 0.2) {
             // path.flatten(0.1);
-            console.log({ path });
-            console.log(path.exportSVG());
+            // console.log({ path });
+            // console.log(path.exportSVG());
             return path;
           }
           return newOffsetPath;
@@ -224,7 +225,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       });
     }
 
-    console.log({ paths });
+    // console.log({ paths });
 
     if (objectFit === "contain-fill") {
       item.translate([-item.bounds.x, -item.bounds.y]);
@@ -254,14 +255,14 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
             const newPath = path.clone();
             newPath.translate(
               new paper.Point(
-                x * effectiveItemWidth + xOffset,
-                y * item.bounds.height + yOffset
+                boundaryModel.bounds.x + x * effectiveItemWidth + xOffset,
+                boundaryModel.bounds.y + y * item.bounds.height + yOffset
               )
             );
             newPaths.push(newPath);
             addToDebugLayer(paper, "imageTrace", newPath);
             addToDebugLayer(paper, "imageTrace", newPath.bounds);
-            console.log(newPath.bounds);
+            // console.log(newPath.bounds);
           });
         }
       }
