@@ -1,0 +1,123 @@
+const buckleHeight = 1
+
+const collarHeight = 2.5
+
+
+const initialRise = (collarHeight - buckleHeight)*0.25
+
+const flatRunOnBottom = 1
+
+const maxHeightRise = 1
+
+const dropBelowBuckles = 0.5
+
+const initialBuckleLength = 3 
+const widthOfCollarPortion = 12
+const farSideBuckleLength = 2
+
+project.currentStyle = {
+	strokeColor: '#ff0000',
+	fillColor: '#e9e9ff',
+	strokeWidth: 0.1,
+};
+
+// paper.Path.prototype.strokeColor = 'black';
+// paper.Path.prototype.fillColor = 'white';
+
+const totalLength = initialBuckleLength + widthOfCollarPortion + farSideBuckleLength
+
+paper.view.translate(new Point(100, 100))
+paper.view.scale(20, 20, new Point(0, 0))
+
+const startOfCollarTop = new Point(0, 0)
+// const fullBuckleRectangle = new Rectangle(startOfCollarTop, new Point(totalLength, buckleHeight));
+// const fullBuckleRectanglePath = new Path.Rectangle(fullBuckleRectangle);
+
+// start and end
+// const initialCurveHeight = initialRise + buckleHeight 
+
+// const startOfLeftCurveTop = new paper.Point(initialBuckleLength, -initialRise)
+// const leftStart = new Path.Line(startOfLeftCurveTop, new paper.Point(initialBuckleLength,  minimumPostureSize));
+// const endOfRightCurveTop = new paper.Point(initialBuckleLength + widthOfCollarPortion, -initialRise)
+// const rightEnd = new Path.Line(endOfRightCurveTop, new paper.Point(initialBuckleLength + widthOfCollarPortion,  minimumPostureSize));
+
+// const middleTop = new paper.Point(initialBuckleLength + widthOfCollarPortion/2, dropBelowBuckles)
+// const middleLine = new Path.Line(middleTop, new paper.Point(initialBuckleLength + widthOfCollarPortion/2,  dropBelowBuckles + collarHeight));
+
+// const topCurveLeft = new Curve(startOfLeftCurveTop, startOfLeftCurveTop, middleTop, middleTop)
+
+function makeSmoothedIncrementalPath(start, deltas) {
+    const path = new Path();
+    let currentPoint = new Point(start);
+    path.add(start);
+    console.log(deltas);
+    deltas.forEach(delta => {
+        currentPoint += delta
+        console.log(delta, currentPoint)
+        path.add(currentPoint)
+    })
+    return path
+}
+
+const topStart = [0, 0]
+const distanceToVeryTop = 2
+const top = makeSmoothedIncrementalPath(topStart, [
+    // move most of the way through the buckle before starting to rise
+        // [initialBuckleLength*0.75, 0],
+        // Go the rest of the way to the initial rise
+        // [initialBuckleLength*0.25, -initialRise],
+        // Go a bit higher before plunging down
+        [distanceToVeryTop, -initialRise],
+        // Now dive down to the middle
+        [widthOfCollarPortion/2 - distanceToVeryTop, initialRise*2 + dropBelowBuckles],
+        // mirror
+        [widthOfCollarPortion/2 - distanceToVeryTop, -initialRise*2 - dropBelowBuckles],
+        // mirror
+        [distanceToVeryTop, initialRise],
+        // mirror but with far buckle length
+        // [farSideBuckleLength*0.25, initialRise],
+        // [farSideBuckleLength*0.75, 0],
+])
+top.smooth({"type": "continuous"});
+
+const bottomStart = [0, buckleHeight]
+
+const bottom = makeSmoothedIncrementalPath(bottomStart, [
+    // move most of the way through the buckle before starting to rise
+        // [initialBuckleLength, 0],
+        [flatRunOnBottom, 0.1],
+        // Go the rest of the way to the initial rise
+        [widthOfCollarPortion/2 - flatRunOnBottom , collarHeight+dropBelowBuckles-buckleHeight],
+        [widthOfCollarPortion/2 - flatRunOnBottom, -collarHeight-dropBelowBuckles+buckleHeight],
+        [flatRunOnBottom, -0.1],
+        // [farSideBuckleLength, 0],
+])
+bottom.smooth({"type": "catmull-rom"});
+
+const topEnd = top.lastSegment.point
+const bottomEnd = bottom.lastSegment.point
+console.log({topEnd})
+
+const closedShape = new CompoundPath({
+    children: [top, bottom, new Path([topStart, bottomStart]), new Path([topEnd, bottomEnd])]
+})
+
+closedShape.closePath()
+
+// var segments = [startOfCollarTop, startOfLeftCurveTop, middleTop, endOfRightCurveTop];
+// var path = new Path(segments);
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
