@@ -1,5 +1,10 @@
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { displayDataUriImageToConsole } from "../../utils/debug-utils";
-import { getEvenlySpacePointsAlongPath } from "../../utils/paperjs-utils";
+import {
+  flattenArrayOfPathItems,
+  getEvenlySpacePointsAlongPath,
+} from "../../utils/paperjs-utils";
+import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
@@ -32,24 +37,59 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     // const totalSceneRaster = box.rasterize();
     // displayDataUriImageToConsole(totalSceneRaster.toDataURL());
 
-    const box = new paper.Path.Rectangle(
-      new paper.Rectangle(
-        0,
-        0,
-        boundaryModel.bounds.width,
-        boundaryModel.bounds.height
-      )
-    );
+    // const box = new paper.Path.Rectangle(
+    //   new paper.Rectangle(
+    //     0,
+    //     0,
+    //     boundaryModel.bounds.width,
+    //     boundaryModel.bounds.height
+    //   )
+    // );
+    const box = new paper.Group(lines);
+    console.log(box.bounds);
     box.strokeColor = "black";
     box.strokeWidth = 0.03;
     box.fillColor = "red";
 
-    const raster = box.rasterize();
-    displayDataUriImageToConsole(raster.toDataURL());
+    const raster = box.rasterize({
+      resolution: 10000,
+    });
+    const dataUri = raster.toDataURL();
+    displayDataUriImageToConsole(dataUri);
 
-    console.log(raster.toDataURL());
+    const base64data = dataUri.split(",")[1];
+    console.log(base64data);
+    const buffer = Buffer.from(base64data, "base64");
+    const tracedSvgString = await traceFromBufferToSvgString({
+      buffer,
+      options: { optCurve: false },
+    });
 
-    return { paths: [box] };
+    const item = paper.project.importSVG(tracedSvgString, {
+      expandShapes: true,
+    });
+    item.scale(
+      boundaryModel.bounds.width / item.bounds.width,
+      boundaryModel.bounds.height / item.bounds.height,
+      boundaryModel.bounds.topLeft
+    );
+
+    console.log({ item });
+
+    addToDebugLayer(paper, "item", item);
+
+    const paths = flattenArrayOfPathItems(paper, [item]);
+    // Find the biggest area path and remove it
+    const biggestPath = paths.reduce((acc, path) => {
+      return path.area < acc.area ? path : acc;
+    });
+    paths.forEach((path) => {
+      console.log(path.area);
+    });
+    console.log(biggestPath.area);
+    paths.splice(paths.indexOf(biggestPath), 1);
+
+    return { paths };
   }
 
   get designMetaParameters() {
