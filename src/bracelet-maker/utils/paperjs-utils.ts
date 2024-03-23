@@ -555,7 +555,7 @@ export function getEvenlySpacePointsAlongPath({
   const points = [];
   const length = path.length;
   for (let i = 0; i < numPoints; i++) {
-    const point = path.getPointAt(length * (i / numPoints));
+    const point = path.getPointAt(length * (i / (numPoints - 1)));
     points.push(point);
   }
   return points;

@@ -11,16 +11,31 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
   async makeDesign(paper: paper.PaperScope, params: any) {
     const boundaryModel: paper.Path = params.boundaryModel;
 
-    const points = getEvenlySpacePointsAlongPath({
-      path: boundaryModel,
-      numPoints: 10,
+    // const points = getEvenlySpacePointsAlongPath({
+    //   path: boundaryModel,
+    //   numPoints: 15,
+    // });
+
+    let points = [];
+    boundaryModel.segments.forEach((segment) => {
+      const line = new paper.Path.Line(segment.previous.point, segment.point);
+      line.scale(0.8);
+      points = points.concat(
+        getEvenlySpacePointsAlongPath({
+          path: line,
+          numPoints: 4,
+        })
+      );
+      addToDebugLayer(paper, "shurnkLine", line);
     });
 
     const lines: paper.Path.Line[] = [];
     points.forEach((p1, i) => {
+      addToDebugLayer(paper, "points", p1);
+
       points.slice(i + 1).forEach((p2, j) => {
         const line = new paper.Path.Line(p1, p2);
-        line.strokeWidth = 0.03;
+        line.strokeWidth = 0.001;
         line.strokeColor = "black";
         lines.push(line);
       });
@@ -83,10 +98,6 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     const biggestPath = paths.reduce((acc, path) => {
       return path.area < acc.area ? path : acc;
     });
-    paths.forEach((path) => {
-      console.log(path.area);
-    });
-    console.log(biggestPath.area);
     paths.splice(paths.indexOf(biggestPath), 1);
 
     return { paths };

@@ -1,24 +1,11 @@
 import m from "makerjs";
 
 import { addToDebugLayer } from "../../utils/debug-layers";
-import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
+import {
+  flattenArrayOfPathItems,
+  getEvenlySpacePointsAlongPath,
+} from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-
-function getEvenlySpacePointsAlongPath({
-  path,
-  numPoints,
-}: {
-  path: paper.Path;
-  numPoints: number;
-}): paper.Point[] {
-  const points = [];
-  const length = path.length;
-  for (let i = 0; i < numPoints; i++) {
-    const point = path.getPointAt(length * (i / numPoints));
-    points.push(point);
-  }
-  return points;
-}
 
 export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
   allowOutline = false;
@@ -43,8 +30,6 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
       // };
 
       // const pathObject = { myLine: line, myCircle: circle };
-
-      console.log(boundaryModel.bounds);
 
       const zeroedBoundaryModel = boundaryModel.clone();
       zeroedBoundaryModel.translate([
@@ -76,8 +61,6 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
         });
       });
 
-      console.log({ models });
-
       const model = { models, paths };
       return model;
     }
@@ -90,11 +73,9 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     truss = m.model.expandPaths(truss, 0.01);
 
     const svg = m.exporter.toSVG(truss);
-    console.log(svg);
 
     const item = new paper.Item();
     const importedItem = item.importSVG(svg);
-    console.log({ importedItem });
     const paths = flattenArrayOfPathItems(paper, [importedItem]);
     paths.forEach((p) => {
       addToDebugLayer(paper, "sacredGeometry", p);
