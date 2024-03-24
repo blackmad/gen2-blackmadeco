@@ -114,9 +114,9 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       expandShapes: true,
     });
 
-    addToDebugLayer(paper, "imageTrace", item);
-    removeSharpAngles({ path: item });
-    addToDebugLayer(paper, "postSharpRemoval", item);
+    addToDebugLayer(paper, "imageTrace", item.clone());
+    removeSharpAngles({ item });
+    addToDebugLayer(paper, "postSharpRemoval", item.clone());
 
     // console.log(item.children);
 
@@ -181,7 +181,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
       path.closePath();
 
       // console.log(path.hasChildren());
-      if (path instanceof CompoundPath) {
+      if (path instanceof paper.CompoundPath) {
         // console.log("this one is a path!");
       }
 

@@ -560,15 +560,24 @@ export function getEvenlySpacePointsAlongPath({
 export function removeSharpAngles({ item }: { item: paper.Item }) {
   const paths = flattenArrayOfPathItems(paper, [item]);
 
+  const segmentsToRemove: paper.Segment[] = [];
   paths.forEach((path) => {
     path.segments.forEach((segment, segmentIndex) => {
+      if (!segment.previous || !segment.next) {
+        return;
+      }
+      // console.log({ segment }, segment.point, segment.previous, segment.next);
       const point1 = segment.previous.point.subtract(segment.point);
       const point2 = segment.next.point.subtract(segment.point);
       const angle = point1.getDirectedAngle(point2);
 
-      if (Math.abs(angle) < 10) {
-        segment.remove();
+      console.log({ angle });
+      if (Math.abs(angle) < 90) {
+        segmentsToRemove.push(segment);
       }
     });
+  });
+  segmentsToRemove.forEach((segment) => {
+    segment.remove();
   });
 }
