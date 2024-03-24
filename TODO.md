@@ -8,7 +8,8 @@ SVG export
 - fix fill
 
 SACRED GEOMETRY
-- make it work at all in cuff mode
+- why do I need a manual xOffset / why is circle not filling?
+
 
 - add a way to flip holes to engraves
 

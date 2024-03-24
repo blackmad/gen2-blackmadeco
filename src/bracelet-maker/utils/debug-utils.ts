@@ -31,7 +31,7 @@ export function displayDataUriImageToConsole(dataUri: string) {
   const º = "%c";
   const consoleBackground = `
   background-image: url('${dataUri}');
-  padding: 100px;
+  padding: 400px;
   background-size: contain;
   `;
 
