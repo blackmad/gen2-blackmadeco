@@ -12,6 +12,8 @@ type SeedPointMakerArgs = {
   boundaryModel: paper.Path;
   paper: paper.PaperScope;
   numPoints: number;
+  seedPointLineShrink: number;
+  seedShapeSides: number;
 };
 
 function makeRectangularSeedPoints({
@@ -26,6 +28,40 @@ function makeRectangularSeedPoints({
     const newPoints = getEvenlySpacePointsAlongPath({
       path: line,
       numPoints: 3,
+    });
+    console.log(newPoints.length);
+    points = points.concat(newPoints);
+    addToDebugLayer(paper, "shurnkLine", line);
+  });
+
+  return points;
+}
+
+function makeHexagonalSeedPoints({
+  boundaryModel,
+  paper,
+  numPoints,
+  seedPointLineShrink,
+  seedShapeSides,
+}: SeedPointMakerArgs) {
+  let points: paper.Point[] = [];
+
+  const sides = seedShapeSides;
+
+  const hexagon = new paper.Path.RegularPolygon({
+    center: boundaryModel.bounds.center,
+    sides,
+    radius: boundaryModel.bounds.width / 2,
+  });
+
+  addToDebugLayer(paper, "hexagon", hexagon);
+
+  hexagon.segments.forEach((segment) => {
+    const line = new paper.Path.Line(segment.previous.point, segment.point);
+    line.scale(seedPointLineShrink);
+    const newPoints = getEvenlySpacePointsAlongPath({
+      path: line,
+      numPoints: numPoints,
     });
     console.log(newPoints.length);
     points = points.concat(newPoints);
@@ -63,34 +99,32 @@ function makeSeedPoints(params: SeedPointMakerArgs) {
 
 export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
   async makeDesign(paper: paper.PaperScope, params: any) {
-    const { numPoints, shearY, xOffset, yOffset, borderWidth } = params;
+    const {
+      numPoints,
+      shearY,
+      xOffset,
+      yOffset,
+      borderWidth,
+      seedPointLineShrink,
+      seedShapeSides,
+      minSpokeLength,
+    } = params;
     const boundaryModel: paper.Path = params.boundaryModel;
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
 
-    const points = makeSeedPoints({ paper, boundaryModel, numPoints });
+    const points = makeHexagonalSeedPoints({
+      paper,
+      boundaryModel,
+      numPoints,
+      seedPointLineShrink,
+      seedShapeSides,
+    });
     console.log(points.length);
 
-    const lines: paper.Path.Line[] = [];
-    points.forEach((p1, i) => {
-      addToDebugLayer(paper, "points", p1);
-      console.log(p1);
-
-      points.slice(i + 1).forEach((p2, j) => {
-        const angle = p1.getAngle(p2);
-        if (p1.getAngle(p2) < 10 || p2.getAngle(p1) < 10) {
-          return;
-        }
-        console.log(angle);
-        // if (angle > 80 || angle < 10) {
-        //   return;
-        // }
-
-        const line = new paper.Path.Line(p1, p2);
-        line.strokeWidth = 0.001;
-        line.strokeColor = "black";
-
-        lines.push(line);
-      });
+    const lines: paper.Path.Line[] = makeFullyConnectedLinesFromPoints({
+      points,
+      paper,
+      minSpokeLength,
     });
 
     const box = new paper.Group(lines);
@@ -115,13 +149,14 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     const item = paper.project.importSVG(tracedSvgString, {
       expandShapes: true,
     });
-    addToDebugLayer(paper, "itemBounds1", item.bounds);
 
     const scaleY = boundaryModel.bounds.height / item.bounds.height;
     const scaleX = boundaryModel.bounds.width / item.bounds.width;
 
     item.position = boundaryModel.bounds.center;
     item.scale(scaleX, scaleY * shearY, boundaryModel.bounds.center);
+    addToDebugLayer(paper, "itemBounds2", item.bounds.clone());
+
     item.translate(xOffset, yOffset);
 
     const paths = flattenArrayOfPathItems(paper, [item]);
@@ -131,16 +166,23 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
     });
     paths.splice(paths.indexOf(biggestPath), 1);
 
-    return { paths };
+    const maxHoleSize = Math.max(...paths.map((p) => Math.abs(p.area)));
+    const minHoleSize = maxHoleSize * params.minHoleSize;
+    console.log({ minHoleSize });
+    const filteredPaths = paths.filter(
+      (p) => Math.abs(p.area) > Math.abs(minHoleSize)
+    );
+
+    return { paths: filteredPaths };
   }
 
   get designMetaParameters() {
     return [
       new RangeMetaParameter({
         title: "Number of Points",
-        min: 3,
+        min: 2,
         max: 100,
-        value: 12,
+        value: 3,
         step: 1,
         name: "numPoints",
       }),
@@ -176,6 +218,73 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
         step: 0.01,
         name: "borderWidth",
       }),
+      new RangeMetaParameter({
+        title: "Seed Point Line Shrink",
+        min: 0.1,
+        max: 1,
+        value: 0.2,
+        step: 0.01,
+        name: "seedPointLineShrink",
+      }),
+      new RangeMetaParameter({
+        title: "Number of sides of the seed shape",
+        min: 3,
+        max: 100,
+        value: 8,
+        step: 1,
+        name: "seedShapeSides",
+      }),
+      new RangeMetaParameter({
+        title: "Min hole size (relative to largest)",
+        min: 0,
+        max: 1,
+        value: 0,
+        step: 0.01,
+        name: "minHoleSize",
+      }),
+      new RangeMetaParameter({
+        title: "Min spoke length (relative to largest)",
+        min: 0,
+        max: 1,
+        value: 0,
+        step: 0.01,
+        name: "minSpokeLength",
+      }),
     ];
   }
+}
+function makeFullyConnectedLinesFromPoints({
+  points,
+  paper,
+  minSpokeLength,
+}: {
+  points: paper.Point[];
+  paper: paper.PaperScope;
+  minSpokeLength: number;
+}) {
+  const lines: paper.Path.Line[] = [];
+  points.forEach((p1, i) => {
+    addToDebugLayer(paper, "points", p1);
+    console.log(p1);
+
+    points.slice(i + 1).forEach((p2, j) => {
+      const angle = p1.getAngle(p2);
+      if (p1.getAngle(p2) < 10 || p2.getAngle(p1) < 10) {
+        return;
+      }
+      // console.log(angle);
+      // if (angle > 80 || angle < 10) {
+      //   return;
+      // }
+      const line = new paper.Path.Line(p1, p2);
+      line.strokeWidth = 0.001;
+      line.strokeColor = "black";
+
+      lines.push(line);
+    });
+  });
+
+  const maxSpokeLength = Math.max(...lines.map((l) => Math.abs(l.length)));
+  const minSpokeLengthAbsolute = minSpokeLength * maxSpokeLength;
+  return lines.filter((l) => l.length > minSpokeLengthAbsolute);
 }
