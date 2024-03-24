@@ -116,7 +116,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       );
     }
 
-    if (this.allowOutline && false) {
+    if (this.allowOutline) {
       const breakThePlane = new OnOffMetaParameter({
         title: "Break the plane!!!!",
         name: "breakThePlane",
@@ -217,7 +217,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     paper: paper.PaperScope,
     params: any,
     paths: paper.PathItem[],
-    originalBoundaryModel: paper.PathItem
+    originalBoundaryModel: paper.PathItem,
+    safeCone: paper.PathItem
   ) {
     console.log("need to make outline");
     // Make the outline
@@ -226,7 +227,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       paths,
       concavity: params.concavity,
       lengthThreshold: params.lengthThreshold,
-      minimumOutline: originalBoundaryModel.bounds,
+      minimumOutlinePath: new paper.Path.Rectangle(
+        originalBoundaryModel.bounds
+      ).intersect(safeCone),
     });
 
     // Expand it to our outline border
@@ -292,7 +295,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     params: any,
     _paths: paper.PathItem[],
     design: InnerDesignModel,
-    originalBoundaryModel: paper.PathItem
+    originalBoundaryModel: paper.PathItem,
+    safeCone: paper.PathItem
   ) {
     let outline: paper.PathItem | null = null;
     const paths: paper.PathItem[] = _paths;
@@ -333,7 +337,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         //   containsOrIntersects({ needle: p, haystack: params.outerModel })
         // );
 
-        outline = this.makeOutline(paper, params, paths, originalBoundaryModel);
+        outline = this.makeOutline(
+          paper,
+          params,
+          paths,
+          originalBoundaryModel,
+          safeCone
+        );
       }
     }
     return { outline, paths };
@@ -453,7 +463,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       params,
       paths,
       design,
-      originalBoundaryModel
+      originalBoundaryModel,
+      params.safeCone
     );
     paths = maybeOutline.paths;
     const outline = maybeOutline.outline;

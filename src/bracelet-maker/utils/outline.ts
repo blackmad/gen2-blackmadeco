@@ -1,25 +1,30 @@
 import concaveman from "concaveman";
 
 import { addToDebugLayer } from "./debug-layers";
-import { simplifyPath, unkinkPath } from "./paperjs-utils";
+import {
+  flattenArrayOfPathItems,
+  simplifyPath,
+  unkinkPath,
+} from "./paperjs-utils";
 
 export function makeConcaveOutline({
   paper,
   paths,
   concavity,
   lengthThreshold,
-  minimumOutline,
+  minimumOutlinePath,
 }: {
   paper: paper.PaperScope;
   paths: paper.PathItem[];
   concavity: number;
   lengthThreshold: number;
-  minimumOutline: paper.Rectangle;
+  minimumOutlinePath: paper.PathItem;
 }): paper.Path {
   const allPoints = [];
+  paths.forEach((p) => addToDebugLayer(paper, "outlinePaths", p.clone()));
 
   function addPoint(point: paper.Point, force: boolean = false) {
-    if (point && (!point.isInside(minimumOutline) || force)) {
+    if (point && (!point.isInside(minimumOutlinePath.bounds) || force)) {
       allPoints.push([point.x, point.y]);
       addToDebugLayer(paper, "outlinePoints", point);
     }
@@ -32,13 +37,14 @@ export function makeConcaveOutline({
     }
   });
 
-  const minimumOutlinePath = new paper.Path.Rectangle(minimumOutline);
-  for (let offset = 0; offset < 1; offset += 0.025) {
-    addPoint(
-      minimumOutlinePath.getPointAt(minimumOutlinePath.length * offset),
-      true
-    );
-  }
+  const minimumOutlinePaths = flattenArrayOfPathItems(paper, [
+    minimumOutlinePath,
+  ]);
+  minimumOutlinePaths.forEach((path: paper.Path) => {
+    for (let offset = 0; offset < 1; offset += 0.025) {
+      addPoint(path.getPointAt(path.length * offset), true);
+    }
+  });
 
   const concaveHull = concaveman(allPoints, concavity, lengthThreshold);
   const concavePath = new paper.Path(
