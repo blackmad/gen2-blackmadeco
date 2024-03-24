@@ -16,38 +16,46 @@ export class NecklaceOuter extends OuterPaperModelMaker {
         min: 0.1,
         max: 20,
         value: 1.2,
-        step: 0.01,
+        step: 0.1,
         name: "outerHeightMultiplier",
       }),
       new RangeMetaParameter({
         title: "Outer Width",
         min: 0.1,
         max: 20,
-        value: 3,
-        step: 0.01,
+        value: 8.5,
+        step: 0.1,
         name: "outerWidth",
       }),
       new RangeMetaParameter({
         title: "Inner Height Multiplier",
         min: 0.1,
         max: 20,
-        value: 1,
-        step: 0.01,
+        value: 1.1,
+        step: 0.1,
         name: "innerHeightMultiplier",
       }),
       new RangeMetaParameter({
         title: "Inner Width",
         min: 0.1,
         max: 20,
-        value: 2,
-        step: 0.01,
+        value: 6.5,
+        step: 0.1,
         name: "innerWidth",
       }),
       new RangeMetaParameter({
-        title: "Cut Height Percentage",
-        min: 0.1,
+        title: "innerYOffset",
+        min: 0,
         max: 20,
-        value: 2,
+        value: 0.5,
+        step: 0.01,
+        name: "innerYOffset",
+      }),
+      new RangeMetaParameter({
+        title: "Cut Height Percentage",
+        min: 0,
+        max: 1,
+        value: 0.5,
         step: 0.01,
         name: "cutHeightPercentage",
       }),
@@ -66,25 +74,42 @@ export class NecklaceOuter extends OuterPaperModelMaker {
       innerWidth,
       outerHeightMultiplier,
       outerWidth,
+      cutHeightPercentage,
+      innerYOffset,
     } = options[this.constructor.name];
 
+    const outerHeight = outerWidth * outerHeightMultiplier;
     const outerRectangle = new paper.Rectangle(
       new paper.Point(0, 0),
-      new paper.Size(outerWidth, outerWidth * outerHeightMultiplier)
+      new paper.Size(outerWidth, outerHeight)
     );
 
     const outerEllipse = new paper.Path.Ellipse(outerRectangle);
 
     const innerRectangle = new paper.Rectangle(
-      new paper.Point((outerWidth - innerWidth) / 2, -0.2),
+      new paper.Point(0, 0),
       new paper.Size(innerWidth, innerWidth * innerHeightMultiplier)
+    );
+    innerRectangle.center = outerRectangle.center.add(
+      new paper.Point(0, -innerYOffset)
     );
 
     const innerEllipse = new paper.Path.Ellipse(innerRectangle);
     addToDebugLayer(paper, "rectangles", innerRectangle);
     addToDebugLayer(paper, "rectangles", outerRectangle);
 
-    const outerModel = outerEllipse.subtract(innerEllipse);
+    let outerModel = outerEllipse.subtract(innerEllipse);
+    addToDebugLayer(paper, "outerModel", outerModel);
+
+    if (false && cutHeightPercentage) {
+      console.log({ cutHeightPercentage, outerHeight });
+      const cutTopRect = new paper.Path.Rectangle(
+        new paper.Point(-outerWidth / 2, 0),
+        new paper.Size(outerWidth * 2, outerHeight * cutHeightPercentage)
+      );
+      outerModel = outerModel.subtract(cutTopRect);
+      addToDebugLayer(paper, "cutTopRect", cutTopRect);
+    }
 
     const innerOptions = options[this.subModel.constructor.name] || {};
     innerOptions.safeCone = new paper.Path.Rectangle(outerModel.bounds);

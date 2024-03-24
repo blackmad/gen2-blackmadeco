@@ -52,12 +52,12 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
         name: "wristCircumference",
       }),
       new RangeMetaParameter({
-        title: "Wide Wrist Circumference",
+        title: "Wide Wrist Circumference Per Inch Multiplier",
         min: 4,
         max: 10,
-        value: 7.9,
+        value: 0.25,
         step: 0.1,
-        name: "forearmCircumference",
+        name: "wideWristCircumferencePerInchMultiplier",
       }),
     ];
   }
@@ -115,20 +115,13 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
     const {
-      wristCircumference: originalWristCircumference,
-      forearmCircumference: originalForearmCircumference,
+      wristCircumference,
+      height,
+      wideWristCircumferencePerInchMultiplier,
     } = options.StraightCuffOuter;
 
-    const { height } = options.StraightCuffOuter;
-
-    const wristCircumference = Math.min(
-      originalWristCircumference,
-      originalForearmCircumference
-    );
-    const forearmCircumference = Math.max(
-      originalWristCircumference,
-      originalForearmCircumference
-    );
+    const forearmCircumference =
+      wideWristCircumferencePerInchMultiplier * height + wristCircumference;
 
     const gutterWidth = 0.8;
 
