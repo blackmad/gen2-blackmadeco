@@ -12,6 +12,7 @@ import {
   clampPathsToBoundary,
   flattenArrayOfPathItems,
   makeIncrementalPath,
+  makeSyntheticBoundaryModel,
 } from "../../utils/paperjs-utils";
 import { makeLeftBuckle, makeRightBuckle } from "./buckle-helpers";
 
@@ -362,39 +363,4 @@ function tryToSmoothRightAngles({
     newOuterPaths.push(newP);
   });
   return newOuterPaths[0];
-}
-
-function makeSyntheticBoundaryModel(paper: paper.PaperScope, path: paper.Path) {
-  // First let's find where the middle is
-  // Create a line to intersect the middle
-  const middleLine = new paper.Path.Line(
-    path.bounds.topCenter,
-    path.bounds.bottomCenter.add([0, 1])
-  );
-  const middleIntersections = path.getIntersections(middleLine);
-
-  const middleDistance = middleIntersections[0].point.getDistance(
-    middleIntersections[1].point
-  );
-
-  console.log(middleDistance);
-
-  const distanceAbove = path.bounds.height - middleDistance;
-  const newTotalHeight = distanceAbove * 2 + middleDistance;
-
-  console.log("middleDistance", { middleDistance });
-
-  addToDebugLayer(paper, "middleLine", middleLine);
-  // addToDebugLayer(paper, "middleLine", clampedMiddleLine);
-
-  const syntheticBoundaryModel = new paper.Path.Rectangle(
-    new paper.Rectangle(
-      path.bounds.topLeft,
-      new paper.Size(path.bounds.width, newTotalHeight)
-    )
-  );
-
-  addToDebugLayer(paper, "syntheticBoundaryModel", syntheticBoundaryModel);
-
-  return syntheticBoundaryModel;
 }

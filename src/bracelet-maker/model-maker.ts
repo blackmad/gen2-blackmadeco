@@ -1,4 +1,4 @@
-import { MetaParameter, OnOffMetaParameter } from "./meta-parameter";
+import { MetaParameter } from "./meta-parameter";
 
 export interface HasMetaParameters {
   readonly metaParameters: MetaParameter<any>[];
@@ -55,11 +55,11 @@ export abstract class OuterPaperModelMaker implements HasMetaParameters {
 
   get metaParameters() {
     return [
-      new OnOffMetaParameter({
-        title: "Debug",
-        name: "debug",
-        value: true,
-      }),
+      // new OnOffMetaParameter({
+      //   title: "Debug",
+      //   name: "debug",
+      //   value: true,
+      // }),
       ...this.outerMetaParameters,
     ];
   }

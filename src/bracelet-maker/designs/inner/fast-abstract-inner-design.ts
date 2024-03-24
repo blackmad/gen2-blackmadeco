@@ -57,11 +57,11 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
   public get metaParameters() {
     let metaParams: MetaParameter<any>[] = [
-      new OnOffMetaParameter({
-        title: "Debug",
-        name: "debug",
-        value: false,
-      }),
+      // new OnOffMetaParameter({
+      //   title: "Debug",
+      //   name: "debug",
+      //   value: false,
+      // }),
       new RangeMetaParameter({
         title: "Safe Border (in)",
         min: 0.0,
