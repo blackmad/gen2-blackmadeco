@@ -35,15 +35,17 @@ function makeCollarCurve({
   maxHeight,
   minHeight,
   neckSize: originalNeckSize,
+  neckDrop,
 }: {
   maxHeight: number;
   minHeight: number;
   neckSize: number;
+  neckDrop: number;
 }) {
   const neckSize = originalNeckSize - 3;
   const initialRise = (maxHeight - minHeight) * 0.25;
   const flatRunOnBottom = 1;
-  const dropBelowBuckles = 0.5;
+  const dropBelowBuckles = neckDrop;
 
   const topStart = new paper.Point(0, 0);
   const distanceToVeryTop = 2;
@@ -129,6 +131,14 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         value: 13,
         step: 0.1,
         name: "neckSize",
+      }),
+      new RangeMetaParameter({
+        title: "neckDrop",
+        min: 0,
+        max: 10,
+        value: 0.5,
+        step: 0.1,
+        name: "neckDrop",
       }),
       new OnOffMetaParameter({
         title: "Smooth Corners",
@@ -236,8 +246,28 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     innerOptions.outerModel = makeSyntheticBoundaryModel(paper, outerModel);
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
+
+    const slightlySmallerOuterModelBounds = outerModel.bounds
+      .clone()
+      .expand([-2, 0]);
+
+    const slightlySmallerOuterModel = outerModel.intersect(
+      new paper.Path.Rectangle(slightlySmallerOuterModelBounds)
+    );
+    addToDebugLayer(
+      paper,
+      "slightlySmallerOuterModelBounds",
+      slightlySmallerOuterModelBounds
+    );
+
+    addToDebugLayer(
+      paper,
+      "slightlySmallerOuterModel",
+      slightlySmallerOuterModel
+    );
+
     const newSafeBoundaryModel = PaperOffset.offset(
-      outerModel,
+      slightlySmallerOuterModel,
       -innerOptions.safeBorderWidth,
       {
         jointType: "jtMiter",

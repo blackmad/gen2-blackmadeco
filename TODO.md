@@ -1,8 +1,14 @@
+
+
 MAP
 - keep trying to do something cool for AMS
 
 TRACE
 - option to delete points with too acute angle
+
+OVERALL
+- add something to save defaults for sizes
+- add male/female buttons
 
 - add a way to flip holes to engraves
 
@@ -28,8 +34,6 @@ TRACE
 - make a more geometric-intersecting shape design like https://www.pinterest.com/pin/658440408009961386/
 
 
-- bring back breakThePlane
-
 - redo mondrian grid to be on an actual grid
 
 - zero eslint errors
@@ -52,3 +56,5 @@ TRACE
 - would so love to have some designs that do more curving
 - would so love to have some designs that do more organic stuff
 - would so love to have some designs that do more brocade stuff
+
+
