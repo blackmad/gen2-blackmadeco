@@ -1,5 +1,5 @@
 import _ from "lodash";
-import makerjs from "makerjs";
+import TextToSVG from "text-to-svg";
 
 import {
   MetaParameter,
@@ -7,7 +7,7 @@ import {
   SelectMetaParameter,
   StringMetaParameter,
 } from "../../meta-parameter";
-import { BundledFonts, loadFont } from "../../utils/font-utils";
+import { BundledFonts, getFontPath } from "../../utils/font-utils";
 import { flattenArrayOfPathItems, healHoles } from "../../utils/paperjs-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
@@ -25,11 +25,9 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       verticalHealingBarWidth,
       xScale,
       yScale,
-      kerning,
+      letterSpacing,
+      lineHeight,
     } = params;
-
-    //load a font asynchronously
-    const font = await loadFont(fontName);
 
     // balance splitting text across n lines
     const textArray = text.split(" ");
@@ -38,38 +36,47 @@ export class InnerDesignText extends FastAbstractInnerDesign {
 
     let paths: paper.Item[] = [];
 
-    const maxLineHeight = Math.max(
-      ...textLines.map((line, i) => {
-        const textModel = new makerjs.models.Text(font, line, fontSize / 100);
+    // First argument is URL on web browsers, but it is file path on Node.js.
+    const textToSVG: TextToSVG = await new Promise((resolve, reject) => {
+      TextToSVG.load(getFontPath(fontName), function (err, textToSVG) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(textToSVG);
+        }
+      });
+    });
 
-        const svg = makerjs.exporter.toSVG(textModel);
+    const maxLineHeight =
+      Math.max(
+        ...textLines.map((line, i) => {
+          // const textModel = new makerjs.models.Text(font, line, fontSize / 100);
 
-        const importedItem = new paper.Item().importSVG(svg);
-        return importedItem.bounds.height;
-      })
-    );
+          // const svg = makerjs.exporter.toSVG(textModel);
+          const svg = textToSVG.getSVG(line, {
+            letterSpacing,
+            fontSize: fontSize / 100,
+          });
+          console.log({ svg });
+
+          const importedItem = new paper.Item().importSVG(svg);
+          return importedItem.bounds.height;
+        })
+      ) * lineHeight;
 
     let accumulatedYOffset =
       yOffset + (boundaryModel.bounds.height - maxLineHeight * lines) / 2;
 
     textLines.forEach((line, i) => {
-      const textModel = new makerjs.models.Text(
-        font,
-        line,
-        fontSize / 100,
-        false,
-        false,
-        undefined,
-        {
-          kerning,
-          xScale,
-          yScale,
-        }
-      );
-
-      const svg = makerjs.exporter.toSVG(textModel);
+      const svg = textToSVG.getSVG(line, {
+        letterSpacing,
+        fontSize: fontSize / 100,
+        anchor: "left top",
+      });
 
       const importedItem = new paper.Item().importSVG(svg);
+      importedItem.scale(xScale, 1);
+
       // importedItem.fitBounds(boundaryModel.bounds, false);
       console.log(
         importedItem.bounds.center,
@@ -120,8 +127,8 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       }),
       new StringMetaParameter({
         title: "Text",
-        defaults: ["Hello world.", "Hello.", "Hi.", "Hey.", "Sup.", "Yo."],
-        value: "Hello world.",
+        defaults: ["Hello world", "Hello", "Hi", "Hey", "Sup", "Yo"],
+        value: "Hello world",
         name: "text",
       }),
       new RangeMetaParameter({
@@ -133,12 +140,28 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         name: "yOffset",
       }),
       new RangeMetaParameter({
+        title: "xScale",
+        min: -100,
+        max: 100,
+        step: 0.1,
+        value: 1.2,
+        name: "xScale",
+      }),
+      new RangeMetaParameter({
         title: "Lines",
         min: 1,
         max: 10,
         step: 1,
-        value: 1,
+        value: 2,
         name: "lines",
+      }),
+      new RangeMetaParameter({
+        title: "Line Height",
+        min: 0.1,
+        max: 10,
+        step: 0.1,
+        value: 1.2,
+        name: "lineHeight",
       }),
       // new RangeMetaParameter({
       //   title: "Horizontal Healing Bar Height",
@@ -152,33 +175,17 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         title: "Veritical Healing Bar Width",
         min: -100,
         max: 100,
-        step: 0.05,
-        value: 0.1,
+        step: 0.075,
+        value: 0.025,
         name: "verticalHealingBarWidth",
       }),
       new RangeMetaParameter({
-        title: "xScale",
+        title: "letterSpacing",
         min: -100,
         max: 100,
         step: 0.05,
         value: 0.0,
-        name: "xScale",
-      }),
-      new RangeMetaParameter({
-        title: "yScale",
-        min: -100,
-        max: 100,
-        step: 0.05,
-        value: 0.0,
-        name: "yScale",
-      }),
-      new RangeMetaParameter({
-        title: "kerning",
-        min: -100,
-        max: 100,
-        step: 0.05,
-        value: 0.0,
-        name: "kerning",
+        name: "letterSpacing",
       }),
     ];
   }

@@ -6,7 +6,6 @@ import JimpImport from "jimp/es";
 
 const Jimp = configure({ plugins: [threshold] }, JimpImport);
 
-import { CompoundPath } from "paper/dist/paper-core";
 import { PaperOffset } from "paperjs-offset";
 
 import {
@@ -20,6 +19,7 @@ import {
   bufferPointstoPathItem,
   flattenArrayOfPathItems,
   getEvenlySpacePointsAlongPath,
+  removeSharpAngles,
 } from "../../utils/paperjs-utils";
 import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
@@ -113,6 +113,10 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     const item = paper.project.importSVG(tracedSvgString, {
       expandShapes: true,
     });
+
+    addToDebugLayer(paper, "imageTrace", item);
+    removeSharpAngles({ path: item });
+    addToDebugLayer(paper, "postSharpRemoval", item);
 
     // console.log(item.children);
 

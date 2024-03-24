@@ -1,8 +1,5 @@
-FONT
-- increase kerning
-
 MAP
-- keep trying to do something cool for 
+- keep trying to do something cool for AMS
 
 TRACE
 - option to delete points with too acute angle

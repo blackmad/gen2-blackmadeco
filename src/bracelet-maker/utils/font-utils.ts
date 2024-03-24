@@ -114,12 +114,17 @@ export const BundledFonts = {
   },
 };
 
-export function loadFont(f: string) {
+export function getFontPath(f: string) {
   const font = _.find(BundledFonts, (b) => b.displayName === f);
   if (!font) {
     throw new Error(`Font ${f} not found`);
   }
   const fontPath = `/fonts/${font.path}`;
+  return fontPath;
+}
+
+export function loadFont(f: string) {
+  const fontPath = getFontPath(f);
   return new Promise((resolve, reject) => {
     opentype.load(fontPath, (err, font) => {
       if (err) {
