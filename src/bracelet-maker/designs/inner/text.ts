@@ -3,7 +3,6 @@ import TextToSVG from "text-to-svg";
 
 import {
   MetaParameter,
-  OnOffMetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
   StringMetaParameter,
@@ -287,35 +286,35 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         value: 0.0,
         name: "letterSpacing",
       }),
-      new OnOffMetaParameter({
-        title: "useBackgroundGrid",
-        value: false,
-        name: "useBackgroundGrid",
-      }),
-      new RangeMetaParameter({
-        title: "backgroundGridSize",
-        min: -100,
-        max: 100,
-        step: 0.1,
-        value: 0.1,
-        name: "backgroundGridSize",
-      }),
-      new RangeMetaParameter({
-        title: "backgroundGridBorderWidth",
-        min: -100,
-        max: 100,
-        step: 0.05,
-        value: 0.05,
-        name: "backgroundGridBorderWidth",
-      }),
-      new RangeMetaParameter({
-        title: "backgroundGridOmitChance",
-        min: 0,
-        max: 1,
-        step: 0.05,
-        value: 0.05,
-        name: "backgroundGridOmitChance",
-      }),
+      // new OnOffMetaParameter({
+      //   title: "useBackgroundGrid",
+      //   value: false,
+      //   name: "useBackgroundGrid",
+      // }),
+      // new RangeMetaParameter({
+      //   title: "backgroundGridSize",
+      //   min: 0.001,
+      //   max: 100,
+      //   step: 0.01,
+      //   value: 0.1,
+      //   name: "backgroundGridSize",
+      // }),
+      // new RangeMetaParameter({
+      //   title: "backgroundGridBorderWidth",
+      //   min: 0.01,
+      //   max: 100,
+      //   step: 0.01,
+      //   value: 0.05,
+      //   name: "backgroundGridBorderWidth",
+      // }),
+      // new RangeMetaParameter({
+      //   title: "backgroundGridOmitChance",
+      //   min: 0.01,
+      //   max: 1,
+      //   step: 0.01,
+      //   value: 0.05,
+      //   name: "backgroundGridOmitChance",
+      // }),
     ];
   }
 }

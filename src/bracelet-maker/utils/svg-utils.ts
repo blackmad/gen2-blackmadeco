@@ -20,14 +20,16 @@ export function makeSVGData(
 }
 
 export function cleanSVGforDownload(svg: any) {
+  console.log("cleaning svg");
   function recurse(el: Element) {
     for (const x of Array.from(el.children)) {
-      el.removeAttribute("transform");
-      el.setAttribute("fill", "none");
-      el.removeAttribute("fill-rule");
-      if (el.tagName == "g") {
-        el.setAttribute("stroke", "#ff0000");
-        el.setAttribute("stroke-width", "0.001pt");
+      console.log(x);
+      x.removeAttribute("transform");
+      x.setAttribute("fill", "none");
+      x.removeAttribute("fill-rule");
+      if (x.tagName == "g") {
+        x.setAttribute("stroke", "#ff0000");
+        x.setAttribute("stroke-width", "0.001pt");
       }
       recurse(x);
     }
