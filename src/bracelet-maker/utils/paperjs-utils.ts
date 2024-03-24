@@ -500,9 +500,12 @@ export function healHoles(params: {
           // make a rectangle the height of the group and width of healX
           const healRect = new paper.Path.Rectangle(
             child.bounds.center.subtract(
-              new paper.Point(verticalHealingBarWidth / 2, child.bounds.height)
+              new paper.Point(
+                verticalHealingBarWidth / 2,
+                child.bounds.height * 1.3
+              )
             ),
-            new paper.Size(verticalHealingBarWidth, child.bounds.height * 2)
+            new paper.Size(verticalHealingBarWidth, child.bounds.height * 2.6)
           );
 
           healBoxes.push(healRect);

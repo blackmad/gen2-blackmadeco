@@ -106,6 +106,7 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       fontName,
       text,
       yOffset,
+      xOffset,
       lines,
       horizontalHealingBarHeight,
       verticalHealingBarWidth,
@@ -180,7 +181,7 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       importedItem.scale(xScale, 1);
 
       importedItem.translate([
-        boundaryModel.bounds.center.x - importedItem.bounds.center.x,
+        boundaryModel.bounds.center.x - importedItem.bounds.center.x + xOffset,
         accumulatedYOffset,
       ]);
 
@@ -215,13 +216,13 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         min: 0,
         max: 500,
         step: 1,
-        value: 100,
+        value: 70,
         name: "fontSize",
       }),
       new SelectMetaParameter({
         title: "Font",
         options: _.map(BundledFonts, (b) => b.displayName),
-        value: _.map(BundledFonts, (b) => b.displayName)[0],
+        value: "New Rocker",
         name: "fontName",
       }),
       new StringMetaParameter({
@@ -239,11 +240,19 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         name: "yOffset",
       }),
       new RangeMetaParameter({
+        title: "X Offset",
+        min: -100,
+        max: 100,
+        step: 0.1,
+        value: 0,
+        name: "xOffset",
+      }),
+      new RangeMetaParameter({
         title: "xScale",
         min: -100,
         max: 100,
         step: 0.1,
-        value: 1.2,
+        value: 1.8,
         name: "xScale",
       }),
       new RangeMetaParameter({
@@ -275,7 +284,7 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         min: -100,
         max: 100,
         step: 0.075,
-        value: 0.025,
+        value: 0.075,
         name: "verticalHealingBarWidth",
       }),
       new RangeMetaParameter({
@@ -283,7 +292,7 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         min: -100,
         max: 100,
         step: 0.05,
-        value: 0.0,
+        value: 0.1,
         name: "letterSpacing",
       }),
       // new OnOffMetaParameter({

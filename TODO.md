@@ -4,17 +4,12 @@ MAP
 TRACE
 - option to delete points with too acute angle
 
-SVG export
-- fix fill
-
-SACRED GEOMETRY
-- why do I need a manual xOffset / why is circle not filling?
-
-
 - add a way to flip holes to engraves
 
 - fix break-the-plane on voronoi
 
+TEXT:
+- why is centering so bad?
 
 - fix map design
 --> figure out what it needs for yuva's map

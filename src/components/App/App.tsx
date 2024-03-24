@@ -163,7 +163,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     children: [currentModel.outer],
     strokeColor: "red",
     strokeWidth: "0.005",
-    fillColor: "blue",
+    fillColor: "lightslategrey",
     fillRule: "evenodd",
   });
   paper.project.activeLayer.addChild(compoundPath);
