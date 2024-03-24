@@ -34,12 +34,13 @@ type ModelParameters = Record<string, number | string>;
 function makeCollarCurve({
   maxHeight,
   minHeight,
-  neckSize,
+  neckSize: originalNeckSize,
 }: {
   maxHeight: number;
   minHeight: number;
   neckSize: number;
 }) {
+  const neckSize = originalNeckSize - 3;
   const initialRise = (maxHeight - minHeight) * 0.25;
   const flatRunOnBottom = 1;
   const dropBelowBuckles = 0.5;
@@ -114,6 +115,14 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         name: "numBuckles",
       }),
       new RangeMetaParameter({
+        title: "Num Holes",
+        min: 1,
+        max: 20,
+        value: 6,
+        step: 1,
+        name: "numHoles",
+      }),
+      new RangeMetaParameter({
         title: "Neck Size",
         min: 8,
         max: 18,
@@ -140,7 +149,9 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     minHeight,
     mainCollarCurve,
     numBuckles,
+    numHoles,
   }: {
+    numHoles: number;
     numBuckles: number;
     buckleHeight: number;
     minHeight: number;
@@ -165,6 +176,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
       const { buckle: rightBuckle, holes: rightHoles } = makeRightBuckle({
         paper,
         height: buckleHeight,
+        numHoles,
       });
 
       new paper.Group([leftBuckle, ...leftHoles]).translate(
@@ -198,8 +210,14 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     options: ModelParameters
   ): Promise<CompletedModel> {
     const params = options[this.constructor.name];
-    const { buckleHeight, maxHeight, minHeight, numBuckles, smoothCorners } =
-      params;
+    const {
+      buckleHeight,
+      maxHeight,
+      minHeight,
+      numBuckles,
+      smoothCorners,
+      numHoles,
+    } = params;
 
     if (buckleHeight * numBuckles > minHeight) {
       throw new Error(
@@ -239,6 +257,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
       minHeight,
       mainCollarCurve,
       numBuckles,
+      numHoles,
     });
 
     // This is all absolutely absurd 90 degree corner smoothing logic

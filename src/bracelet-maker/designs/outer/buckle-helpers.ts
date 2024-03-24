@@ -115,7 +115,7 @@ export function makeBuckleStrapForBuckleSide(
   const holes = allHoles.flat();
   holes.forEach((h) => h.translate(translate));
 
-  const holeBounds = getBounds(holes).expand(EndPadding, 0);
+  const holeBounds = getBounds(holes).expand(EndPadding * 2, 0);
   addToDebugLayer(params.paper, "holeBounds", holeBounds);
 
   return { holes, holeBounds };
@@ -137,9 +137,10 @@ export function makeLeftBuckle(params: BuckleHoleStrapParams) {
 }
 
 export function makeRightBuckle(params: BuckleHoleStrapParams) {
-  const { paper, height } = params;
+  const { paper, height, numHoles } = params;
   const { holes: buckleHoles, holeBounds: buckleHoleBounds } =
     makeBuckleStrapForStrapSide({
+      numHoles,
       paper,
       height: height,
       offsetX: EndPadding,
