@@ -491,14 +491,10 @@ export function healHoles(params: {
       const healBoxes = [];
       path.children.forEach((child) => {
         // debugger;
-        console.log("compound path");
         // see if this has any holes
         if (child instanceof paper.Path && child.clockwise) {
-          console.log("without holes");
           return;
         }
-
-        console.log("with holes");
 
         if (verticalHealingBarWidth) {
           // make a rectangle the height of the group and width of healX

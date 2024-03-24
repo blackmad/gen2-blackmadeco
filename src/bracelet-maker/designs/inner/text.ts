@@ -23,6 +23,9 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       lines,
       horizontalHealingBarHeight,
       verticalHealingBarWidth,
+      xScale,
+      yScale,
+      kerning,
     } = params;
 
     //load a font asynchronously
@@ -50,7 +53,19 @@ export class InnerDesignText extends FastAbstractInnerDesign {
       yOffset + (boundaryModel.bounds.height - maxLineHeight * lines) / 2;
 
     textLines.forEach((line, i) => {
-      const textModel = new makerjs.models.Text(font, line, fontSize / 100);
+      const textModel = new makerjs.models.Text(
+        font,
+        line,
+        fontSize / 100,
+        false,
+        false,
+        undefined,
+        {
+          kerning,
+          xScale,
+          yScale,
+        }
+      );
 
       const svg = makerjs.exporter.toSVG(textModel);
 
@@ -138,8 +153,32 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         min: -100,
         max: 100,
         step: 0.05,
-        value: 0.05,
+        value: 0.1,
         name: "verticalHealingBarWidth",
+      }),
+      new RangeMetaParameter({
+        title: "xScale",
+        min: -100,
+        max: 100,
+        step: 0.05,
+        value: 0.0,
+        name: "xScale",
+      }),
+      new RangeMetaParameter({
+        title: "yScale",
+        min: -100,
+        max: 100,
+        step: 0.05,
+        value: 0.0,
+        name: "yScale",
+      }),
+      new RangeMetaParameter({
+        title: "kerning",
+        min: -100,
+        max: 100,
+        step: 0.05,
+        value: 0.0,
+        name: "kerning",
       }),
     ];
   }

@@ -1,7 +1,21 @@
+FONT
+- increase kerning
+
+MAP
+- keep trying to do something cool for 
+
+TRACE
+- option to delete points with too acute angle
+
+SVG export
+- fix fill
+
+SACRED GEOMETRY
+- make it work at all in cuff mode
+
 - add a way to flip holes to engraves
 
-FONT
-- make an option to auto-cut holes-in-holes like Q in rocker
+- fix break-the-plane on voronoi
 
 
 - fix map design
@@ -9,20 +23,17 @@ FONT
 --> get it to default to unrounded? or much less rounded?
 --> why kaleido unhappy middle in map someimte
 
-- voronoi still not going to the bottom1!!!!!
-
 TRACE
 - fix the offset of the repeat for centering
 - document some of these
 - remove unneeded inner holes
 
-- fix back/forward in 
+- fix back/forward navigation in the app
 
-- bring back break the plane
+- bring back fillColor in App - it confused lightburn. it should be getting cleared in cleanSVGForDownload but it's not
 
 - make a more geometric-intersecting shape design like https://www.pinterest.com/pin/658440408009961386/
 
-- make colTileBoundary be a number
 
 - bring back breakThePlane
 
