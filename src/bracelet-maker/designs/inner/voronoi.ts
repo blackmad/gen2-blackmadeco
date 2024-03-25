@@ -1,5 +1,4 @@
 import { Delaunay } from "d3-delaunay";
-import ExtendPaperJs from "paperjs-offset";
 
 import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";

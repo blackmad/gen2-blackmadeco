@@ -28,8 +28,6 @@ export function makeSVGData(
     }).join("\n");
   }).join("\n\n");
 
-  console.log({ commentBlock });
-
   const comment = `<!--
 
 Built on ${new Date().toISOString()}
@@ -46,7 +44,6 @@ ${makeUriQueryString(modelParams)}
 }
 
 export function cleanSVGforDownload(svg: any) {
-  console.log("cleaning svg");
   function recurse(el: Element) {
     for (const x of Array.from(el.children)) {
       x.removeAttribute("transform");

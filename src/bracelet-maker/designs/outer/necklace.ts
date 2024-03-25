@@ -98,8 +98,9 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     addToDebugLayer(paper, "rectangles", innerRectangle);
     addToDebugLayer(paper, "rectangles", outerRectangle);
 
-    let outerModel = outerEllipse.subtract(innerEllipse);
-    addToDebugLayer(paper, "outerModel", outerModel);
+    const outerModel = outerEllipse.subtract(innerEllipse, { insert: true });
+    const originalOuterModel = outerModel.clone();
+    addToDebugLayer(paper, "outerModel", originalOuterModel);
 
     if (false && cutHeightPercentage) {
       console.log({ cutHeightPercentage, outerHeight });
@@ -136,10 +137,12 @@ export class NecklaceOuter extends OuterPaperModelMaker {
       "tripleClamped"
     );
 
+    console.log({ outerModel });
+
     return new CompletedModel({
-      outer: outerModel,
+      outer: originalOuterModel,
       holes: [],
-      design: innerDesign.paths,
+      design: [], //innerDesign.paths,
     });
   }
 }

@@ -146,13 +146,21 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     return <div>Loading...</div>;
   }
 
-  const compoundPath = new paper.CompoundPath({
-    children: [currentModel.outer],
+  const outerStyle: paper.Style = {
     strokeColor: "red",
-    strokeWidth: "0.005",
+    strokeWidth: 0.005,
     fillColor: "lightslategrey",
     fillRule: "evenodd",
-  });
+  };
+
+  const compoundPath =
+    currentModel.outer instanceof paper.CompoundPath
+      ? currentModel.outer
+      : new paper.CompoundPath({
+          children: [currentModel.outer],
+        });
+
+  compoundPath.style = outerStyle;
   paper.project.activeLayer.addChild(compoundPath);
 
   [...currentModel.holes, ...currentModel.design].forEach((hole) => {

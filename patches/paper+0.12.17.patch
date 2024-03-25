@@ -1,0 +1,85 @@
+diff --git a/node_modules/paper/dist/paper.d.ts b/node_modules/paper/dist/paper.d.ts
+index 39c66d8..758309f 100644
+--- a/node_modules/paper/dist/paper.d.ts
++++ b/node_modules/paper/dist/paper.d.ts
+@@ -1324,7 +1324,7 @@ declare namespace paper {
+          * If the HitResult has a type of 'pixel', this property refers to the color
+          * of the pixel on the {@link Raster} that was hit.
+          */
+-        color: Color | null
++        color: Color | string | null
+ 
+         /** 
+          * If the HitResult has a type of 'stroke', 'segment', 'handle-in' or
+@@ -1577,7 +1577,7 @@ declare namespace paper {
+         /** 
+          * The color of the stroke.
+          */
+-        strokeColor: Color | null
++        strokeColor: Color | string | null
+ 
+         /** 
+          * The width of the stroke.
+@@ -1626,7 +1626,7 @@ declare namespace paper {
+         /** 
+          * The fill color of the item.
+          */
+-        fillColor: Color | null
++        fillColor: Color | string | null
+ 
+         /** 
+          * The fill-rule with which the shape gets filled. Please note that only
+@@ -1637,7 +1637,7 @@ declare namespace paper {
+         /** 
+          * The shadow color.
+          */
+-        shadowColor: Color | null
++        shadowColor: Color | string | null
+ 
+         /** 
+          * The shadow's blur radius.
+@@ -1653,7 +1653,7 @@ declare namespace paper {
+          * The color the item is highlighted with when selected. If the item does
+          * not specify its own color, the color defined by its layer is used instead.
+          */
+-        selectedColor: Color | null
++        selectedColor: Color | string | null
+ 
+         /** 
+          * Item level handler function to be called on each frame of an animation.
+@@ -6435,7 +6435,7 @@ declare namespace paper {
+         /** 
+          * The color of the stroke.
+          */
+-        strokeColor: Color | null
++        strokeColor: Color | string | null
+ 
+         /** 
+          * The width of the stroke.
+@@ -6483,7 +6483,7 @@ declare namespace paper {
+         /** 
+          * The fill color.
+          */
+-        fillColor: Color | null
++        fillColor: Color | string | null
+ 
+         /** 
+          * The fill-rule with which the shape gets filled. Please note that only
+@@ -6494,7 +6494,7 @@ declare namespace paper {
+         /** 
+          * The shadow color.
+          */
+-        shadowColor: Color | null
++        shadowColor: Color | string | null
+ 
+         /** 
+          * The shadow's blur radius.
+@@ -6510,7 +6510,7 @@ declare namespace paper {
+          * The color the item is highlighted with when selected. If the item does
+          * not specify its own color, the color defined by its layer is used instead.
+          */
+-        selectedColor: Color | null
++        selectedColor: Color | string | null
+ 
+         /** 
+          * The font-family to be used in text content.
