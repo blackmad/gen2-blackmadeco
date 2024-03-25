@@ -1,5 +1,5 @@
 import * as _ from "lodash";
-import ExtendPaperJs, { PaperOffset } from "paperjs-offset";
+import { PaperOffset } from "paperjs-offset";
 import seedrandom from "seedrandom";
 import { createNoise2D, NoiseFunction2D } from "simplex-noise";
 
@@ -233,9 +233,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     });
 
     // Expand it to our outline border
-    outline = PaperOffset.offset(outline, -params.outlineSize, {
-      cap: "miter",
-    });
+    outline = PaperOffset.offset(outline, -params.outlineSize);
     addToDebugLayer(paper, "expandedOutline", outline.clone());
 
     // If we ended up with an outline that's a compound path,
@@ -324,8 +322,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         outlinePaths = clampPathsToBoundary(outlinePaths, params.safeCone);
         outline = new paper.CompoundPath(outlinePaths);
       } else {
-        ExtendPaperJs(paper);
-
         // only look at paths that are inside or touching the model to make into the outline
         // and to use for the final design
         // Otherwise our inner design might have made shapes that are well outside the primary area

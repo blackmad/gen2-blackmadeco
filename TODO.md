@@ -1,3 +1,9 @@
+- finish necklace
+- get break the plane working more reliably
+- earring mode
+- engrave mode
+- revisit map layers / drawing
+
 MAP
 - keep trying to do something cool for AMS
 
@@ -43,10 +49,11 @@ TRACE
 
 - do crazy typesafe stuff
 
-- so an overall problem with the code coupling is how boundaryModel sometimes means the area to draw in and sometimes means the outer bounds
+- so an overall problem with the code coup ling is how boundaryModel sometimes means the area to draw in and sometimes means the outer bounds
 
 - would so love to have some designs that do more curving
 - would so love to have some designs that do more organic stuff
 - would so love to have some designs that do more brocade stuff
 
 
+- god would really love to try adding size below the svg again

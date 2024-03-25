@@ -159,8 +159,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
   }
 
   makeDesign(paper: paper.PaperScope, params: any) {
-    ExtendPaperJs(paper);
-
     const {
       numPoints = 100,
       rows = 1,

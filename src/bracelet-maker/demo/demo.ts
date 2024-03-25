@@ -15,7 +15,6 @@ export async function demoDesign(
   shouldRandomize: boolean,
   bounds: paper.Rectangle = new paper.Rectangle(0, 0, 3, 1.5),
   initialParams: any = {},
-  minimumAreaRatio: number = 0.0,
   numMetaParametersToChange: number = 1000
 ) {
   const params = { ...initialParams };
@@ -70,13 +69,8 @@ export async function demoDesign(
   console.log({ outerArea, innerArea }, innerArea / outerArea);
   console.log({ path });
 
-  let svg;
-  // if (innerArea / outerArea > minimumAreaRatio) {
   paper.project.activeLayer.addChild(path);
-  svg = makeSVGData(paper, paper.project, false, elHydrator);
-  // } else {
-  //   console.log("not making data?");
-  // }
+  const svg = makeSVGData(paper, paper.project, false, elHydrator, {});
 
   return {
     svg,

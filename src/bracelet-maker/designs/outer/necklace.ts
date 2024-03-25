@@ -31,25 +31,25 @@ export class NecklaceOuter extends OuterPaperModelMaker {
         title: "Inner Height Multiplier",
         min: 0.1,
         max: 20,
-        value: 1.1,
+        value: 1.2,
         step: 0.1,
         name: "innerHeightMultiplier",
       }),
       new RangeMetaParameter({
-        title: "Inner Width",
-        min: 0.1,
+        title: "Inner Width Ratio",
+        min: 1,
         max: 20,
-        value: 6.5,
-        step: 0.1,
-        name: "innerWidth",
+        value: 0.75,
+        step: 0.01,
+        name: "innerWidthRatio",
       }),
       new RangeMetaParameter({
-        title: "innerYOffset",
+        title: "Top Band Width",
         min: 0,
         max: 20,
-        value: 0.5,
+        value: 0.75,
         step: 0.01,
-        name: "innerYOffset",
+        name: "topBandWidth",
       }),
       new RangeMetaParameter({
         title: "Cut Height Percentage",
@@ -71,14 +71,16 @@ export class NecklaceOuter extends OuterPaperModelMaker {
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
     const {
       innerHeightMultiplier,
-      innerWidth,
+      innerWidthRatio,
       outerHeightMultiplier,
       outerWidth,
       cutHeightPercentage,
-      innerYOffset,
+      topBandWidth,
     } = options[this.constructor.name];
 
     const outerHeight = outerWidth * outerHeightMultiplier;
+    const innerWidth = outerWidth * innerWidthRatio;
+
     const outerRectangle = new paper.Rectangle(
       new paper.Point(0, 0),
       new paper.Size(outerWidth, outerHeight)
@@ -86,12 +88,24 @@ export class NecklaceOuter extends OuterPaperModelMaker {
 
     const outerEllipse = new paper.Path.Ellipse(outerRectangle);
 
+    const innerHeight = innerWidth * innerHeightMultiplier;
     const innerRectangle = new paper.Rectangle(
       new paper.Point(0, 0),
-      new paper.Size(innerWidth, innerWidth * innerHeightMultiplier)
+      new paper.Size(innerWidth, innerHeight)
     );
+
+    const currentTopSpace = (outerHeight - innerHeight) / 2;
+    const necessaryYMove = currentTopSpace - topBandWidth;
+    console.log({
+      outerHeight,
+      innerHeight,
+      currentTopSpace,
+      topBandWidth,
+      necessaryYMove,
+    });
+    console.log({ currentTopSpace, necessaryYMove });
     innerRectangle.center = outerRectangle.center.add(
-      new paper.Point(0, -innerYOffset)
+      new paper.Point(0, -necessaryYMove)
     );
 
     const innerEllipse = new paper.Path.Ellipse(innerRectangle);
@@ -118,7 +132,14 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     // TODO awful awful awful fix
     this.subModel.scaleWidthForSafeArea = true;
 
-    innerOptions.outerModel = makeSyntheticBoundaryModel(paper, outerModel);
+    const cutTopRectForNecklace = new paper.Path.Rectangle(
+      new paper.Point(-outerWidth / 2, 0),
+      new paper.Size(outerWidth * 2, outerHeight * cutHeightPercentage)
+    );
+    innerOptions.outerModel = makeSyntheticBoundaryModel(
+      paper,
+      outerModel
+    ).subtract(cutTopRectForNecklace);
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
     const newSafeBoundaryModel = PaperOffset.offset(
@@ -131,9 +152,13 @@ export class NecklaceOuter extends OuterPaperModelMaker {
         roundPrecision: 0.25,
       }
     );
+
+    const clampArea = newSafeBoundaryModel
+      .clone()
+      .subtract(cutTopRectForNecklace);
     innerDesign.paths = clampPathsToBoundary(
       innerDesign.paths,
-      newSafeBoundaryModel,
+      clampArea,
       "tripleClamped"
     );
 
@@ -142,7 +167,7 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     return new CompletedModel({
       outer: originalOuterModel,
       holes: [],
-      design: [], //innerDesign.paths,
+      design: innerDesign.paths,
     });
   }
 }
