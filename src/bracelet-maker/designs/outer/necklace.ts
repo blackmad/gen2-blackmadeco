@@ -91,14 +91,25 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     this.subModel.scaleWidthForSafeArea = true;
 
     innerOptions.outerModel = makeSyntheticBoundaryModel(paper, outerModel);
+    innerOptions.originalOuterModel = patternArea.clone();
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
     const newSafeBoundaryModel = PaperOffset.offset(
-      patternArea,
+      innerDesign.outline
+        ? innerDesign.outline.intersect(
+            new paper.Path.Rectangle(patternArea.bounds)
+          )
+        : patternArea,
       -innerOptions.safeBorderWidth
     );
 
     const clampArea = newSafeBoundaryModel.clone();
+
+    console.log({ outerModel });
+
+    const finalOuterModel = innerDesign.outline
+      ? originalOuterModel.unite(innerDesign.outline)
+      : originalOuterModel;
 
     innerDesign.paths = clampPathsToBoundary(
       innerDesign.paths,
@@ -106,10 +117,8 @@ export class NecklaceOuter extends OuterPaperModelMaker {
       "tripleClamped"
     );
 
-    console.log({ outerModel });
-
     return new CompletedModel({
-      outer: originalOuterModel,
+      outer: finalOuterModel,
       holes: [],
       design: innerDesign.paths,
     });
@@ -170,7 +179,7 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     const outerModelPaths = flattenArrayOfPathItems(paper, [outerModel]);
     const topFlats = outerModelPaths.flatMap((path) => {
       return path.segments.filter((segment) => {
-        console.log(segment.point, "vs", outerModel.bounds.y);
+        // console.log(segment.point, "vs", outerModel.bounds.y);
         return (
           almostEqual(segment.point.y, outerModel.bounds.y) &&
           almostEqual(segment.next.point.y, outerModel.bounds.y)
@@ -223,6 +232,10 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     });
     outerModel = outerModel.unite(topFlatRectsUnion);
 
-    return { outerModel, patternArea };
+    const safePatternAreaRect = new paper.Path.Rectangle(patternArea.bounds);
+    safePatternAreaRect.translate([0, 2.5]);
+    const safePatternArea = patternArea.clone().intersect(safePatternAreaRect);
+
+    return { outerModel, patternArea: safePatternArea };
   }
 }

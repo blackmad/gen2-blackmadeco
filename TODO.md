@@ -1,3 +1,9 @@
+- there's something slightly off everywhere about the patterns actually being symmetrical 
+- it seems like it's happening on buffering ... ... maybe the answer when buffering is to make sure I'm recentering to the original center?
+
+http://localhost:8080/#NecklaceOuter/InnerDesignMaze1?NecklaceOuter.neckSize=13.5&NecklaceOuter.outerHeightMultiplier=1.7&NecklaceOuter.outerWidth=8.5&NecklaceOuter.innerHeightMultiplier=1.3&NecklaceOuter.innerWidthRatio=0.85&InnerDesignMaze1.safeBorderWidth=0.25&InnerDesignMaze1.seed=250&InnerDesignMaze1.rows=6&InnerDesignMaze1.cols=6&InnerDesignMaze1.rowRepeat=5&InnerDesignMaze1.colRepeat=4&InnerDesignMaze1.borderSize=0.06&InnerDesignMaze1.maxChainSize=1&InnerDesignMaze1.idealMinChainSize=4&InnerDesignMaze1.minChainSize=0&InnerDesignMaze1.mirrorRows=true&InnerDesignMaze1.mirrorCols=true&InnerDesignMaze1.rowTileBoundary=true&InnerDesignMaze1.colTileBoundary=true&InnerDesignMaze1.omitTileChance=0&InnerDesignMaze1.shouldSmooth=true&InnerDesignMaze1.smoothingFactor=0.85&InnerDesignMaze1.breakThePlane=true&InnerDesignMaze1.extendOutward=0.25&InnerDesignMaze1.concavity=0.4&InnerDesignMaze1.lengthThreshold=0.5&InnerDesignMaze1.outlineSize=0.2&InnerDesignMaze1.safeCone=Path%20%40290023&InnerDesignMaze1.outerModel=Path%20%40290025&InnerDesignMaze1.originalOuterModel=Path%20%40290026
+(see middle line vs pattern)
+
 - finish necklace
 - get break the plane working more reliably
 - earring mode

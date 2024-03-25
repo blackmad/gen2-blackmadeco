@@ -221,17 +221,26 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     safeCone: paper.PathItem
   ) {
     console.log("need to make outline");
+
+    const filteredPaths = paths.filter(
+      (p) =>
+        p.intersects(originalBoundaryModel) || originalBoundaryModel.contains(p)
+    );
+
     // Make the outline
     let outline = makeConcaveOutline({
       paper,
-      paths,
+      paths: filteredPaths,
       concavity: params.concavity,
       lengthThreshold: params.lengthThreshold,
-      minimumOutlinePath: new paper.Path.Rectangle(
-        originalBoundaryModel.bounds
-      ).intersect(safeCone),
+      minimumOutlinePath: originalBoundaryModel.intersect(safeCone),
     });
 
+    addToDebugLayer(
+      paper,
+      "using this originalBoundaryModel",
+      originalBoundaryModel.clone()
+    );
     // Expand it to our outline border
     outline = PaperOffset.offset(outline, -params.outlineSize);
     addToDebugLayer(paper, "expandedOutline", outline.clone());
@@ -459,7 +468,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       params,
       paths,
       design,
-      originalBoundaryModel,
+      params.originalOuterModel ?? originalBoundaryModel,
       params.safeCone
     );
     paths = maybeOutline.paths;

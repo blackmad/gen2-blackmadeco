@@ -1,5 +1,6 @@
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { roundCorners } from "../../utils/round-corners";
 
 export class BoxOuter extends OuterPaperModelMaker {
@@ -69,6 +70,15 @@ export class BoxOuter extends OuterPaperModelMaker {
       );
       outerModel.closePath();
     }
+
+    addToDebugLayer(
+      paper,
+      "middleLine",
+      new paper.Path.Line(
+        new paper.Point(topWidth / 2, -0.1),
+        new paper.Point(bottomWidth / 2, height + 0.1)
+      )
+    );
 
     outerModel = roundCorners({
       paper,

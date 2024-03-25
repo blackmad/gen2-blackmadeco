@@ -31,9 +31,9 @@ export function makeConcaveOutline({
   }
 
   paths.forEach((path: paper.Path) => {
-    path.segments.forEach((s) => addPoint(s.point));
-    for (let offset = 0; offset < 1; offset += 0.025) {
-      addPoint(path.getPointAt(path.length * offset));
+    path.segments.forEach((s) => addPoint(s.point, true));
+    for (let offset = 0; offset < 1; offset += 0.1) {
+      addPoint(path.getPointAt(path.length * offset), true);
     }
   });
 
@@ -41,7 +41,7 @@ export function makeConcaveOutline({
     minimumOutlinePath,
   ]);
   minimumOutlinePaths.forEach((path: paper.Path) => {
-    for (let offset = 0; offset < 1; offset += 0.025) {
+    for (let offset = 0; offset < 1; offset += 0.01) {
       addPoint(path.getPointAt(path.length * offset), true);
     }
   });
@@ -52,6 +52,11 @@ export function makeConcaveOutline({
   );
   addToDebugLayer(paper, "concavePath", concavePath.clone());
   const unkinkedConcavePath = unkinkPath(paper, concavePath);
+
+  // unkinkedConcavePath.flatten(0.05);
+  // unkinkedConcavePath.smooth({ type: "catmull-rom", factor: 1.0 });
+  // unkinkedConcavePath.flatten(0.05);
+  unkinkedConcavePath.simplify(0.05);
 
   const simplifedPath = simplifyPath(paper, unkinkedConcavePath, 0.01);
 

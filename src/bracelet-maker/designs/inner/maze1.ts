@@ -87,6 +87,14 @@ export class InnerDesignMaze1 extends FastAbstractInnerDesign {
       simplifiedPath.translate([0, -borderSize / 2]);
       addToDebugLayer(paper, "fixedPath", simplifiedPath);
       const bufferedPath = bufferPath(paper, -borderSize, simplifiedPath);
+      console.log(
+        bufferedPath.bounds.center,
+        "VS",
+        simplifiedPath.bounds.center
+      );
+
+      // TODO: why the fuck do I need this???
+      bufferedPath.translate([-borderSize / 2, 0]);
 
       addToDebugLayer(paper, "bufferedPaths", bufferedPath.clone());
 
