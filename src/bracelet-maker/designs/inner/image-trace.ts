@@ -15,11 +15,11 @@ import {
   StringMetaParameter,
 } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
+import { displayDataUriImageToConsole } from "../../utils/debug-utils";
 import {
   bufferPointstoPathItem,
   flattenArrayOfPathItems,
   getEvenlySpacePointsAlongPath,
-  removeSharpAngles,
 } from "../../utils/paperjs-utils";
 import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
@@ -100,6 +100,8 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     //   document.body.appendChild(imgEl);
     // }
 
+    displayDataUriImageToConsole(newBuffer.toString("base64"));
+
     const tracedSvgString = await traceFromBufferToSvgString({
       buffer: newBuffer,
       options: {
@@ -115,34 +117,10 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
     });
 
     addToDebugLayer(paper, "imageTrace", item.clone());
-    removeSharpAngles({ item });
-    addToDebugLayer(paper, "postSharpRemoval", item.clone());
+    // removeSharpAngles({ item });
+    // addToDebugLayer(paper, "postSharpRemoval", item.clone());
 
-    // console.log(item.children);
-
-    // if (item.children) {
-    //   const children = item.removeChildren();
-    //   // paper.project.activeLayer.insertChildren(p.index, children);
-
-    //   for (let n = 0; n < children.length; ++n) {
-    //     const child = children[n];
-
-    //     if (child instanceof paper.Path) {
-    //       console.log(child);
-    //       console.log(child.clockwise);
-    //     }
-
-    //     if (!child.clockwise) {
-    //       child.fillColor = "red";
-    //       child.selected = true;
-    //       console.log("not clockwise");
-    //     } else {
-    //       console.log("clockwise");
-    //     }
-    //   }
-    // }
-
-    // item.removeChildren(0, 1);
+    // getOnlyCounterclockwisePaths({ paper, paths: [item] });
 
     item.remove();
     item.translate(

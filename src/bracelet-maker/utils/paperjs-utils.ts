@@ -622,3 +622,42 @@ export function makeSyntheticBoundaryModel(
 
   return syntheticBoundaryModel;
 }
+
+export function getOnlyCounterclockwisePaths(params: {
+  paper: paper.PaperScope;
+  paths: paper.Item[];
+}): paper.Item[] {
+  const { paper, paths } = params;
+  let ret: paper.PathItem[] = [];
+  paths.forEach((path) => {
+    if (path instanceof paper.CompoundPath) {
+      path.children.forEach((child) => {
+        // debugger;
+        // see if this has any holes
+        if (child instanceof paper.Path) {
+          if (child.clockwise) {
+            console.log("found a clockwise path", child.area);
+
+            ret.push(child);
+            addToDebugLayer(paper, "clockwise", child);
+            // child.remove();
+            return;
+          } else {
+            console.log("found a counterclock path", child.bounds.area);
+            addToDebugLayer(paper, "counterclockwise", child);
+          }
+        }
+        // ret.push(child);
+      });
+      // ret.push(fixedPath);
+    } else if (path instanceof paper.Group) {
+      ret = [
+        ...ret,
+        ...getOnlyCounterclockwisePaths({ ...params, paths: path.children }),
+      ];
+    } else if (path instanceof paper.Path) {
+      ret.push(path);
+    }
+  });
+  return ret;
+}

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
+import { makeUriQueryString } from "../../bracelet-maker/meta-parameter";
 import {
   CompletedModel,
   OuterPaperModelMaker,
@@ -13,7 +14,6 @@ import {
   makeSVGData,
   svgStringHydrator,
 } from "../../bracelet-maker/utils/svg-utils";
-import { isNonNullable } from "../../bracelet-maker/utils/type-utils";
 import { MetaParameterChange } from "../../meta-parameter-builder";
 import DebugLayers from "./DebugLayers";
 import DownloadButtons from "./DownloadButtons";
@@ -119,20 +119,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
 
     // // This is totally stupid and broken
     const path = window.location.hash.split("?")[0];
-    const hashParams = _.flatMap(
-      modelParams,
-      (paramDict: Record<string, any>, modelName: string) => {
-        return _.map(paramDict, (paramValue: any, paramName: string) => {
-          return (
-            encodeURIComponent(`${modelName}.${paramName}`) +
-            "=" +
-            encodeURIComponent(`${paramValue}`)
-          );
-        });
-      }
-    )
-      .filter(isNonNullable)
-      .join("&");
+    const hashParams = makeUriQueryString(modelParams);
 
     // history.replaceState(undefined, "", "#" + path + "?" + hashParams);
     window.location.hash = path + "?" + hashParams;
@@ -181,7 +168,15 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   });
 
-  const svgData = makeSVGData(paper, paper.project, false, svgStringHydrator);
+  const svgData = makeSVGData(
+    paper,
+    paper.project,
+    false,
+    svgStringHydrator,
+    modelParams
+  );
+
+  console.log({ svgData });
 
   return (
     <>

@@ -1,9 +1,8 @@
-
-
 MAP
 - keep trying to do something cool for AMS
 
 TRACE
+- would like to fix this http://localhost:8080/#StraightCuffOuter/InnerDesignImageTrace?StraightCuffOuter.height=2&StraightCuffOuter.wristCircumference=7.6&StraightCuffOuter.wideWristCircumferencePerInchMultiplier=0.25&InnerDesignImageTrace.safeBorderWidth=0.2&InnerDesignImageTrace.seed=1&InnerDesignImageTrace.url=https%3A%2F%2Fencrypted-tbn0.gstatic.com%2Fimages%3Fq%3Dtbn%3AANd9GcRUJxR0CBgx8svLMcPBVjkutKMNUuStwJEX8Q%26usqp%3DCAU&InnerDesignImageTrace.objectFit=cover&InnerDesignImageTrace.bufferWidth=0.04&InnerDesignImageTrace.threshold=-1&InnerDesignImageTrace.turdSize=2&InnerDesignImageTrace.turnPolicy=minority&InnerDesignImageTrace.scale=0.5&InnerDesignImageTrace.smooth=false&InnerDesignImageTrace.blackOnWhite=true&InnerDesignImageTrace.repeat=false&InnerDesignImageTrace.simplificationTolerance=10&InnerDesignImageTrace.contrastThresholdMax=58&InnerDesignImageTrace.repeatPadding=0.1&InnerDesignImageTrace.shrinkBy=0&InnerDesignImageTrace.kaleido=true&InnerDesignImageTrace.segmentBuffer=0&InnerDesignImageTrace.segments=1&InnerDesignImageTrace.safeCone=Path%20%4017868&InnerDesignImageTrace.outerModel=Path%20%4017858
 - option to delete points with too acute angle
 
 OVERALL

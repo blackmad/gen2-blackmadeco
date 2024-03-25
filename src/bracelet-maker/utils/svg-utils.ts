@@ -1,8 +1,13 @@
+import _ from "lodash";
+
+import { makeUriQueryString } from "../meta-parameter";
+
 export function makeSVGData(
   paper: paper.PaperScope,
   toExport: Pick<paper.Project, "exportSVG">,
   shouldClean: boolean,
-  elHydrator: (svgData: string) => any
+  elHydrator: (svgData: string) => any,
+  modelParams: Record<string, Record<string, any>>
 ) {
   const svgData: string = toExport.exportSVG({
     asString: true,
@@ -15,15 +20,35 @@ export function makeSVGData(
   if (shouldClean) {
     cleanSVGforDownload(svg);
   }
+
+  // make a big comment
+  const commentBlock = _.map(modelParams, (subDict, modelName) => {
+    return _.map(subDict, (paramValue: any, paramName: string) => {
+      return `  ${modelName}.${paramName}: ${paramValue}`;
+    }).join("\n");
+  }).join("\n\n");
+
+  console.log({ commentBlock });
+
+  const comment = `<!--
+
+Built on ${new Date().toISOString()}
+
+${commentBlock}
+
+## Param string
+${makeUriQueryString(modelParams)}
+
+-->`;
+
   reprocessSVG(paper, svg);
-  return svg.outerHTML;
+  return comment + "\n\n" + svg.outerHTML;
 }
 
 export function cleanSVGforDownload(svg: any) {
   console.log("cleaning svg");
   function recurse(el: Element) {
     for (const x of Array.from(el.children)) {
-      console.log(x);
       x.removeAttribute("transform");
       x.setAttribute("fill", "none");
       x.removeAttribute("fill-rule");

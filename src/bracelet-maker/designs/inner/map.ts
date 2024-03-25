@@ -107,8 +107,8 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       return (
         f["geometry"]["type"] !== "Polygon" &&
         f["geometry"]["type"] !== "MultiPolygon" &&
-        allowedClasses.includes(f["properties"]["class"])
-        // !disallowedSubClasses.includes(f["properties"]["subclass"])
+        allowedClasses.includes(f["properties"]["class"]) &&
+        !disallowedSubClasses.includes(f["properties"]["subclass"])
       );
       // return true;
 

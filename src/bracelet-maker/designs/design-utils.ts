@@ -3,8 +3,8 @@ import * as _ from "lodash";
 import { addToDebugLayer } from "../utils/debug-layers";
 
 export const MillimeterToInches = 0.0393701;
-export const RivetRadius = 2.5 * MillimeterToInches;
-export const BeltHoleRadius = 3 * MillimeterToInches;
+export const RivetRadius = 1.5 * MillimeterToInches;
+export const BeltHoleRadius = 2 * MillimeterToInches;
 
 export function makeEvenlySpacedBolts(
   paper: paper.PaperScope,

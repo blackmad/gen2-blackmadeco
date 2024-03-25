@@ -3,6 +3,7 @@ import turfBooleanPointInPolygon from "@turf/boolean-point-in-polygon";
 import * as _ from "lodash";
 
 import nyc from "./geojson/simplified/nyc.json";
+import { isNonNullable } from "./utils/type-utils";
 
 export enum MetaParameterType {
   Range,
@@ -181,4 +182,21 @@ export class GeocodeMetaParameter extends MetaParameter<string> {
 
     return "ERROR";
   }
+}
+
+export function makeUriQueryString(modelParams: any) {
+  return _.flatMap(
+    modelParams,
+    (paramDict: Record<string, any>, modelName: string) => {
+      return _.map(paramDict, (paramValue: any, paramName: string) => {
+        return (
+          encodeURIComponent(`${modelName}.${paramName}`) +
+          "=" +
+          encodeURIComponent(`${paramValue}`)
+        );
+      });
+    }
+  )
+    .filter(isNonNullable)
+    .join("&");
 }

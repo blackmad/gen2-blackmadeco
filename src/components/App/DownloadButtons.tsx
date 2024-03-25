@@ -52,7 +52,13 @@ export default function DownloadButtons({
   //   }
 
   function downloadPDF() {
-    const svg = makeSVGData(paper, paper.project, true, svgStringHydrator);
+    const svg = makeSVGData(
+      paper,
+      paper.project,
+      true,
+      svgStringHydrator,
+      params
+    );
     downloadPDFHelper({
       paper,
       modelMaker,
@@ -62,7 +68,13 @@ export default function DownloadButtons({
   }
 
   function downloadSVG() {
-    const data = makeSVGData(paper, paper.project, true, svgStringHydrator);
+    const data = makeSVGData(
+      paper,
+      paper.project,
+      true,
+      svgStringHydrator,
+      params
+    );
     const mimeType = "image/svg+xml";
     const encoded = encodeURIComponent(data);
     const uriPrefix = "data:" + mimeType + ",";
