@@ -1,9 +1,20 @@
-export function roundCorners({ paper, path, radius }) {
+export function roundCorners({
+  paper,
+  path,
+  radius,
+}: {
+  paper: paper.PaperScope;
+  path: paper.Item;
+  radius: number;
+}): paper.Item {
   if (path instanceof paper.CompoundPath) {
     return new paper.CompoundPath(
-      path.children.map((child) =>
-        roundCornersHelper({ paper, path: child, radius })
-      )
+      path.children.flatMap((child) => {
+        if (child instanceof paper.Path) {
+          return [roundCornersHelper({ paper, path: child, radius })];
+        }
+        return [];
+      })
     );
   } else if (path instanceof paper.Path) {
     return roundCornersHelper({ paper, path, radius });
@@ -13,7 +24,15 @@ export function roundCorners({ paper, path, radius }) {
   }
 }
 
-export function roundCornersHelper({ paper, path, radius }) {
+export function roundCornersHelper({
+  paper,
+  path,
+  radius,
+}: {
+  paper: paper.PaperScope;
+  path: paper.Path;
+  radius: number;
+}) {
   if (!path || !path.segments || path.segments.length < 3) {
     // console.log("can't round", {path})
     return path;

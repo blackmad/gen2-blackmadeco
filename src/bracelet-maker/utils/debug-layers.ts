@@ -25,6 +25,10 @@ export function addToDebugLayer(
   } else if (item instanceof paper.Rectangle) {
     path = new paper.Path.Rectangle(item);
   } else {
+    if (item instanceof paper.Path.Line) {
+      debugLayers[layerName].style.strokeWidth = 0.1;
+    }
+
     path = item;
   }
   debugLayers[layerName].addChild(path);

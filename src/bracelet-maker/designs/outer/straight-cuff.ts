@@ -2,11 +2,24 @@ import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
 import { makeEvenlySpacedBolts, RivetRadius } from "../design-utils";
 
-function roundCorners(paper, path, radius) {
+function roundCorners({
+  paper,
+  path,
+  radius,
+}: {
+  paper: paper.PaperScope;
+  path: paper.Path;
+  radius: number;
+}) {
   const segments = path.segments.slice(0);
   path.removeSegments();
 
   for (let i = 0, l = segments.length; i < l; i++) {
+    const segment = segments[i];
+    if (segment.isSmooth()) {
+      continue;
+    }
+
     const curPoint = segments[i].point;
     const nextPoint = segments[i + 1 == l ? 0 : i + 1].point;
     const prevPoint = segments[i - 1 < 0 ? segments.length - 1 : i - 1].point;
@@ -135,7 +148,7 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     cuffOuter.add(new paper.Point(widthDiff, height));
     cuffOuter.add(new paper.Point(minWidth + widthDiff, height));
     cuffOuter.add(new paper.Point(maxWidth, 0));
-    roundCorners(paper, cuffOuter, "0.2");
+    roundCorners({ paper, path: cuffOuter, radius: "0.2" });
     const holes = this.makeHoles({
       paper: paper,
       maxWidth,
@@ -149,7 +162,7 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     safeAreaPath.add(new paper.Point(gutterWidth / 2 + widthDiff, height));
     safeAreaPath.add(new paper.Point(minWidth - gutterWidth / 2, height));
     safeAreaPath.add(new paper.Point(maxWidth - gutterWidth / 2, 0));
-    roundCorners(paper, safeAreaPath, "0.2");
+    roundCorners({ paper, path: safeAreaPath, radius: "0.2" });
 
     // const safeCone = safeAreaPath.clone().scale(0.97, 10);
     // const halfSafeConeAngle = Math.atan(widthDiff / height);
