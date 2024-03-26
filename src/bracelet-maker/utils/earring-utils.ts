@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import { addToDebugLayer } from "./debug-layers";
 
 export function addEarringHoleToModel({
@@ -35,7 +37,6 @@ export function addEarringHoleToModel({
   );
   middleLine.scale(2);
   addToDebugLayer(paper, "middleLine", middleLine);
-  console.log({ middleLine });
 
   const middleIntersections = model.getIntersections(middleLine);
   const sortedMiddleIntersections = _.sortBy(
@@ -46,7 +47,6 @@ export function addEarringHoleToModel({
     ? _.first(sortedMiddleIntersections)
     : _.last(sortedMiddleIntersections);
 
-  console.log({ middleIntersections, sortedMiddleIntersections });
   const middleIntersection = middleIntersectionPoint?.point;
   if (!middleIntersection) {
     throw new Error("Couldn't find a place to put a hole");
@@ -62,7 +62,6 @@ export function addEarringHoleToModel({
 
   // move the earring hole to the middle intersection point
   if (earringHolePosition.includes("Inside")) {
-    console.log(safeBorderWidth);
     const yOffset = -safeBorderWidth / 2 - outerCircleRadius / 2;
     earringHole.bounds.center = middleIntersection.subtract([
       0,
