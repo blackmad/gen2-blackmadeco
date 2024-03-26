@@ -1,11 +1,3 @@
-// import "jimp";
-
-import configure from "@jimp/custom";
-import threshold from "@jimp/plugin-threshold";
-import JimpImport from "jimp/es";
-
-const Jimp = configure({ plugins: [threshold] }, JimpImport);
-
 import { PaperOffset } from "paperjs-offset";
 
 import {
@@ -15,32 +7,12 @@ import {
   StringMetaParameter,
 } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
-import { displayDataUriImageToConsole } from "../../utils/debug-utils";
 import {
   bufferPointstoPathItem,
-  flattenArrayOfPathItems,
   getEvenlySpacePointsAlongPath,
 } from "../../utils/paperjs-utils";
-import { traceFromBufferToSvgString } from "../../utils/potrace-utils";
+import { downloadAndTraceImage } from "../../utils/trace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
-
-export class ImageDownloaderImpl {
-  lastUrl: string | null = null;
-  lastBuffer: Buffer | null = null;
-
-  async fetch(url: string): Promise<Buffer> {
-    if (this.lastUrl === url && this.lastBuffer) {
-      return this.lastBuffer;
-    }
-
-    const corsUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
-    const response = await fetch(corsUrl);
-    this.lastBuffer = Buffer.from(await response.arrayBuffer());
-    return this.lastBuffer;
-  }
-}
-
-export const ImageDownloader = new ImageDownloaderImpl();
 
 export class InnerDesignImageTrace extends FastAbstractInnerDesign {
   allowOutline = false;
@@ -65,114 +37,24 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     const boundaryModel: paper.Path = params.boundaryModel;
 
-    if (url === "") {
+    let { paths, item } = await downloadAndTraceImage({
+      paper,
+      bounds: boundaryModel.bounds,
+      threshold,
+      turnPolicy,
+      turdSize,
+      objectFit,
+      scale,
+      smooth,
+      simplificationTolerance,
+      url,
+      contrastThresholdMax,
+      blackOnWhite,
+    });
+
+    if (!item) {
       return { paths: [] };
     }
-
-    async function getBuffer() {
-      try {
-        return await ImageDownloader.fetch(url);
-      } catch {
-        return;
-      }
-    }
-
-    const buffer = await getBuffer();
-    if (!buffer) {
-      return { paths: [] };
-    }
-
-    const image = await Jimp.read(buffer);
-
-    // Convert the image to black and white
-    image.threshold({
-      max: contrastThresholdMax,
-      replace: 255,
-      autoGreyscale: false,
-    });
-
-    // Get the buffer of the modified image
-    const newBuffer = await image.getBufferAsync("image/png");
-
-    // if (typeof window !== "undefined") {
-    //   const imgEl = document.createElement("img");
-    //   imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
-    //   document.body.appendChild(imgEl);
-    // }
-
-    displayDataUriImageToConsole(newBuffer.toString("base64"));
-
-    const tracedSvgString = await traceFromBufferToSvgString({
-      buffer: newBuffer,
-      options: {
-        blackOnWhite,
-        threshold,
-        turnPolicy,
-        turdSize,
-      },
-    });
-
-    const item = paper.project.importSVG(tracedSvgString, {
-      expandShapes: true,
-    });
-
-    addToDebugLayer(paper, "imageTrace", item.clone());
-    // removeSharpAngles({ item });
-    // addToDebugLayer(paper,  "postSharpRemoval", item.clone());
-
-    // getOnlyCounterclockwisePaths({ paper, paths: [item] });
-
-    item.remove();
-    item.translate(
-      new paper.Point(-item.bounds.width / 2, -item.bounds.height / 2)
-    );
-
-    const scaleW = (boundaryModel.bounds.width / item.bounds.width) * scale;
-    const scaleH = (boundaryModel.bounds.height / item.bounds.height) * scale;
-
-    console.log(`scaling to ${scaleW}, ${scaleH}`);
-
-    if (objectFit === "contain" || objectFit === "contain-fill") {
-      item.scale(
-        scaleW > scaleH ? scaleH : scaleW,
-        boundaryModel.bounds.center
-      );
-    } else if (objectFit === "cover") {
-      item.scale(
-        scaleW > scaleH ? scaleW : scaleH,
-        boundaryModel.bounds.center
-      );
-    } else if (objectFit === "fill") {
-      item.scale(scaleW, scaleH, boundaryModel.bounds.center);
-    }
-
-    item.children.forEach((child) => {
-      if (child instanceof paper.Shape) {
-        // console.log("child is a shape!!!");
-        child.remove();
-      }
-    });
-
-    let paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
-
-    paths.forEach((path) => {
-      path.closePath();
-
-      // console.log(path.hasChildren());
-      if (path instanceof paper.CompoundPath) {
-        // console.log("this one is a path!");
-      }
-
-      if (simplificationTolerance > 0) {
-        path.flatten(simplificationTolerance / 500);
-      }
-
-      // path.simplify(0.00005);
-
-      if (smooth) {
-        path.smooth({ type: "continuous" });
-      }
-    });
 
     if (shrinkBy > 0) {
       paths = paths.map((path) => {

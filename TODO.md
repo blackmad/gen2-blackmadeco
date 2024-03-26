@@ -67,9 +67,11 @@ VORONOI
 - would so love to have some designs that do more brocade stuff
 
 
-- god would really love to try adding size below the svg again
+- god would really love to try adding grid below the svg display
 
 noise plane partition https://observablehq.com/@esperanc/noise-plane-partition
+
+- make all the throws become toasts
 
 
 EARRINGS

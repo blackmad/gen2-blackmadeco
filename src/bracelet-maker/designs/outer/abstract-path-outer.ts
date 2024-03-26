@@ -1,5 +1,3 @@
-import _ from "lodash";
-
 import {
   MetaParameter,
   OnOffMetaParameter,
@@ -7,7 +5,7 @@ import {
   SelectMetaParameter,
 } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
-import { addToDebugLayer } from "../../utils/debug-layers";
+import { addEarringHoleToModel } from "../../utils/earring-utils";
 import { roundCorners } from "../../utils/round-corners";
 
 export abstract class AbstractPathOuter extends OuterPaperModelMaker {
@@ -58,14 +56,6 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
         step: 0.01,
         name: "earringHoleInnerSize",
       }),
-      // new OnOff({
-      //   title: "Width",
-      //   min: 0.1,
-      //   max: 20,
-      //   value: 3,
-      //   step: 0.01,
-      //   name: "width",
-      // }),
     ];
   }
 
@@ -97,70 +87,14 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
       ? outerModel.unite(innerDesign.outline)
       : outerModel;
 
-    const { earringHole, earringHoleInnerSize, earringHolePosition } = params;
-    if (earringHole) {
-      const outerCircleRadius = earringHoleInnerSize * 2;
-      const innerCircle = new paper.Path.Circle({
-        center: finalOuterModel.bounds.center,
-        radius: earringHoleInnerSize,
-      });
-      const outerCircle = new paper.Path.Circle({
-        center: finalOuterModel.bounds.center,
-        radius: outerCircleRadius,
-      });
-      const earringHole = new paper.CompoundPath([outerCircle, innerCircle]);
-
-      // find the middle intersection point
-      const middleLine = new paper.Path.Line(
-        outerModel.bounds.topCenter,
-        outerModel.bounds.bottomCenter
-      );
-      middleLine.scale(2);
-      addToDebugLayer(paper, "middleLine", middleLine);
-      console.log({ middleLine });
-
-      const middleIntersections = finalOuterModel.getIntersections(middleLine);
-      const sortedMiddleIntersections = _.sortBy(
-        middleIntersections,
-        (p) => p.point.y
-      );
-      const middleIntersectionPoint = earringHolePosition.includes("Top")
-        ? _.first(sortedMiddleIntersections)
-        : _.last(sortedMiddleIntersections);
-
-      console.log({ middleIntersections, sortedMiddleIntersections });
-      const middleIntersection = middleIntersectionPoint?.point;
-      if (!middleIntersection) {
-        throw new Error("Couldn't find a place to put a hole");
-      }
-
-      addToDebugLayer(
+    if (params.earringHole) {
+      finalOuterModel = addEarringHoleToModel({
         paper,
-        "middleIntersectionPoint",
-        middleIntersectionPoint.point
-      );
-
-      const offsetSignFlip = earringHolePosition.includes("Top") ? 1 : -1;
-
-      // move the earring hole to the middle intersection point
-      if (earringHolePosition.includes("Inside")) {
-        console.log(innerOptions.safeBorderWidth);
-        const yOffset =
-          -innerOptions.safeBorderWidth / 2 - outerCircleRadius / 2;
-        earringHole.bounds.center = middleIntersection.subtract([
-          0,
-          offsetSignFlip * yOffset,
-        ]);
-        finalOuterModel = finalOuterModel.subtract(innerCircle);
-      } else {
-        earringHole.bounds.center = middleIntersection.subtract([
-          0,
-          (offsetSignFlip * outerCircleRadius) / 4,
-        ]);
-        finalOuterModel = finalOuterModel.unite(earringHole);
-        finalOuterModel = finalOuterModel.subtract(innerCircle);
-      }
-      addToDebugLayer(paper, "earringHole", earringHole);
+        earringHoleInnerSize: params.earringHoleInnerSize,
+        earringHolePosition: params.earringHolePosition,
+        model: finalOuterModel,
+        safeBorderWidth: innerOptions.safeBorderWidth,
+      });
     }
 
     return new CompletedModel({
