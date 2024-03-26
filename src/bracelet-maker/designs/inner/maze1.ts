@@ -101,6 +101,9 @@ export class InnerDesignMaze1 extends FastAbstractInnerDesign {
       // return bufferedPaths;
     });
 
+    const pathGroup = new paper.Group(allPaths);
+    pathGroup.fitBounds(boundaryModel.bounds, true);
+
     return Promise.resolve({ paths: allPaths });
   }
 

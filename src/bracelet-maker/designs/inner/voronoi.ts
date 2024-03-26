@@ -230,9 +230,6 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     }
 
     const pathGroup = new paper.Group(polys);
-    console.log("group bounds", pathGroup.bounds);
-    console.log("group bounds", boundaryModel.bounds);
-    // pathGroup.bounds.center = boundaryModel.bounds.center;
     pathGroup.fitBounds(boundaryModel.bounds, true);
 
     return Promise.resolve({ paths: polys });
