@@ -1,7 +1,6 @@
 import * as potrace from "potrace";
 
 import { displayDataUriImageToConsole } from "./debug-utils";
-import { flattenArrayOfPathItems } from "./paperjs-utils";
 
 export async function traceFromBufferToSvgString({
   buffer,
@@ -22,38 +21,6 @@ export async function traceFromBufferToSvgString({
       resolve(svg);
     });
   });
-}
-
-export function svgStringToPaper({
-  paper,
-  svg,
-  scale,
-}: {
-  paper: paper.PaperScope;
-  svg: string;
-  scale: number;
-}) {
-  const item = paper.project.importSVG(svg, { expandShapes: true });
-  const paths: paper.Path[] = flattenArrayOfPathItems(paper, item.children);
-  item.remove();
-  item.translate(
-    new paper.Point(-item.bounds.width / 2, -item.bounds.height / 2)
-  );
-  item.scale(1 / scale, boundaryModel.bounds.center);
-
-  paths.forEach((path) => {
-    path.closePath();
-
-    if (smooth) {
-      path.smooth({ type: "continuous" });
-    }
-
-    if (simplificationTolerance > 0) {
-      path.simplify(simplificationTolerance / 50000);
-    }
-  });
-
-  return item;
 }
 
 export async function reTracePaperPath({

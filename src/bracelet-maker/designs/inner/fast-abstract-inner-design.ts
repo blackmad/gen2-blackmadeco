@@ -14,7 +14,7 @@ import { makeConcaveOutline } from "../../utils/outline";
 import {
   bufferPath,
   clampPathsToBoundary,
-  flattenArrayOfPathItems,
+  isInside,
   makeSymmetric,
 } from "../../utils/paperjs-utils";
 import { roundCorners } from "../../utils/round-corners";
@@ -129,7 +129,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           title: "Extend outward (in)",
           min: 0.1,
           max: 2.0,
-          value: 0.5,
+          value: 0.25,
           step: 0.01,
           name: "extendOutward",
           // parentParam: breakThePlane,
@@ -172,6 +172,40 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           // parentParam: breakThePlane,
         })
       );
+      metaParams.push(
+        new OnOffMetaParameter({
+          title: "Symmetric",
+          value: true,
+          name: "symmetric",
+          group: "Break the plane!!!!",
+        })
+      );
+
+      metaParams.push(
+        new RangeMetaParameter({
+          title: "Flatten Outline Tolerance",
+          min: 0.0,
+          max: 2000,
+          value: 10,
+          step: 0.5,
+          name: "flattenOutlineTolerance",
+          group: "Break the plane!!!!",
+          // parentParam: breakThePlane,
+        })
+      );
+      metaParams.push(
+        new RangeMetaParameter({
+          title: "Simplfy Outline Tolerance",
+          min: 0.0,
+          max: 100,
+          value: 20,
+          step: 0.5,
+          name: "simplifyOutlineTolerance",
+          group: "Break the plane!!!!",
+          // parentParam: breakThePlane,
+        })
+      );
+
       // metaParams.push(
       //   new OnOffMetaParameter({
       //     title: 'Smooth Outline',
@@ -245,15 +279,39 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       originalBoundaryModel.clone()
     );
     // Expand it to our outline border
-    outline = PaperOffset.offset(outline, params.outlineSize);
-    outline.flatten(0.01);
-    outline.simplify(0.01);
+    outline = PaperOffset.offset(outline, params.outlineSize, {
+      // join: "miter",
+      // cap: "butt",
+      limit: 1,
+      // join?: 'miter' | 'bevel' | 'round';
+      // the cap style of offset (only validate for offsetStroke), default is 'butt', ('square' will be supported in future)
+      // cap?: 'butt' | 'round';
+      // the limit for miter style (refer to the miterLimit definition in paper)
+      // limit?: number;
+    });
+    if (params.flattenOutlineTolerance) {
+      outline.flatten(params.flattenOutlineTolerance / 1000);
+    }
+
+    if (params.simplifyOutlineTolerance) {
+      outline.simplify(params.simplifyOutlineTolerance / 2000);
+    }
+
+    outline.smooth({ type: "catmull-rom" });
 
     addToDebugLayer(paper, "expandedOutline", outline.clone());
 
+    console.log({ outline });
+
     if (symmetric) {
+      const originalOutline = outline.clone();
       outline = makeSymmetric(paper, outline);
+      if (outline.area === 0) {
+        outline = originalOutline;
+      }
     }
+
+    console.log({ outline });
 
     // If we ended up with an outline that's a compound path,
     // just take the child path that's the biggest
@@ -303,14 +361,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         //   containsOrIntersects({ needle: p, haystack: params.outerModel })
         // );
 
-        function isInside(needle: paper.PathItem, haystack: paper.PathItem) {
-          const paths = flattenArrayOfPathItems(paper, [needle]);
-          const outerPaths = flattenArrayOfPathItems(paper, [haystack]);
-          return paths.every((p) =>
-            p.segments.every((s) => outerPaths.some((o) => o.contains(s.point)))
-          );
-        }
-
         paths = paths.filter(
           (p) =>
             p.intersects(originalBoundaryModel) ||
@@ -323,6 +373,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           paths,
           originalBoundaryModel,
           safeCone,
+          symmetric: params.symmetric,
         });
       }
     }

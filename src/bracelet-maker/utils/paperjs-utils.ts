@@ -700,3 +700,11 @@ export function makeSymmetric(paper: paper.PaperScope, path: paper.Path) {
 
   return symmetricalPath;
 }
+
+export function isInside(needle: paper.PathItem, haystack: paper.PathItem) {
+  const paths = flattenArrayOfPathItems(paper, [needle]);
+  const outerPaths = flattenArrayOfPathItems(paper, [haystack]);
+  return paths.every((p) =>
+    p.segments.every((s) => outerPaths.some((o) => o.contains(s.point)))
+  );
+}

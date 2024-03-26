@@ -23,7 +23,7 @@ export async function makeConcaveOutline({
   minimumOutlinePath: paper.PathItem;
   symmetric: boolean;
 }): Promise<paper.Path> {
-  const allPoints = [];
+  const allPoints: number[][] = [];
   paths.forEach((p) => addToDebugLayer(paper, "outlinePaths", p.clone()));
 
   function addPoint(point: paper.Point, force: boolean = false) {
@@ -66,11 +66,15 @@ export async function makeConcaveOutline({
     ? makeSymmetric(paper, concavePath)
     : concavePath;
 
-  const tracedItem = await reTracePaperPath({
+  let tracedItem = await reTracePaperPath({
     paper,
     item: symmetricalPath,
     options: {},
   });
+
+  if (tracedItem instanceof paper.CompoundPath) {
+    tracedItem = tracedItem.children[0];
+  }
 
   unkinkPath(paper, tracedItem);
 
