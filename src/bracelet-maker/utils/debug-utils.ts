@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-function isBrowser() {
+export function isBrowser() {
   return typeof window !== "undefined";
 }
 

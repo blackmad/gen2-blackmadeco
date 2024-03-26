@@ -11,6 +11,8 @@
 ![public/demo-output/EllipseOuter.png](public/demo-output/EllipseOuter.png)
 ## NecklaceOuter
 ![public/demo-output/NecklaceOuter.png](public/demo-output/NecklaceOuter.png)
+## RegularPolygonOuter
+![public/demo-output/RegularPolygonOuter.png](public/demo-output/RegularPolygonOuter.png)
 # Inner Designs
 ## InnerDesignImageTrace
 ![public/demo-output/InnerDesignImageTrace.png](public/demo-output/InnerDesignImageTrace.png)
@@ -32,3 +34,11 @@
 ![public/demo-output/InnerDesignMap.png](public/demo-output/InnerDesignMap.png)
 ## InnerDesignSunflower
 ![public/demo-output/InnerDesignSunflower.png](public/demo-output/InnerDesignSunflower.png)
+## InnerDesignSacredGeometry
+![public/demo-output/InnerDesignSacredGeometry.png](public/demo-output/InnerDesignSacredGeometry.png)
+## InnerDesignText
+![public/demo-output/InnerDesignText.png](public/demo-output/InnerDesignText.png)
+## InnerDesignCurves
+![public/demo-output/InnerDesignCurves.png](public/demo-output/InnerDesignCurves.png)
+## InnerDesignCirclePacking
+![public/demo-output/InnerDesignCirclePacking.png](public/demo-output/InnerDesignCirclePacking.png)

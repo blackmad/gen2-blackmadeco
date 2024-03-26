@@ -1,5 +1,6 @@
 - earring mode
 - other outline shapes (regular polygons, the bird curve)
+- svg outer / trace outer
 - engrave mode
 - revisit map layers / drawing
 

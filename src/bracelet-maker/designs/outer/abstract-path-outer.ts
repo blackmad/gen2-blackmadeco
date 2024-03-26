@@ -5,6 +5,7 @@ import {
   SelectMetaParameter,
 } from "../../meta-parameter";
 import { CompletedModel, OuterPaperModelMaker } from "../../model-maker";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { roundCorners } from "../../utils/round-corners";
 
 export abstract class AbstractPathOuter extends OuterPaperModelMaker {
@@ -48,7 +49,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
         max: 20,
         value: 0.04,
         step: 0.01,
-        name: "width",
+        name: "earringHoleInnerSize",
       }),
       // new OnOff({
       //   title: "Width",
@@ -84,6 +85,31 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
     this.subModel.scaleWidthForSafeArea = true;
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
+
+    const { earringHole, earringHoleInnerSize, earringHolePosition } = params;
+    if (earringHole) {
+      const innerCircle = new paper.Path.Circle({
+        center: outerModel.bounds.center,
+        radius: earringHoleInnerSize,
+      });
+      const outerCircle = new paper.Path.Circle({
+        center: outerModel.bounds.center,
+        radius: earringHoleInnerSize * 2,
+      });
+      const earringHole = new paper.CompoundPath([outerCircle, innerCircle]);
+
+      // find the middle intersection point
+      const middleLine = new paper.Path.Line(
+        outerModel.bounds.topCenter,
+        outerModel.bounds.bottomCenter
+      );
+      const middleIntersection =
+        outerModel.getIntersections(middleLine)[0].point;
+
+      // move the earring hole to the middle intersection point
+      earringHole.position = middleIntersection;
+      addToDebugLayer(paper, "earringHole", earringHole);
+    }
 
     const finalOuterModel = innerDesign.outline
       ? outerModel.unite(innerDesign.outline)

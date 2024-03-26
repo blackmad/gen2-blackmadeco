@@ -1,6 +1,8 @@
 import _ from "lodash";
 import opentype from "opentype.js";
 
+import { isBrowser } from "./debug-utils";
+
 export const BundledFonts = {
   "allertastencil-regular": {
     displayName: "Allerta Stencil",
@@ -120,6 +122,11 @@ export function getFontPath(f: string) {
     throw new Error(`Font ${f} not found`);
   }
   const fontPath = `/fonts/${font.path}`;
+
+  if (!isBrowser()) {
+    return `./public${fontPath}`;
+  }
+
   return fontPath;
 }
 

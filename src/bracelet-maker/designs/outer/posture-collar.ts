@@ -1,4 +1,3 @@
-import paper from "paper";
 import { PaperOffset } from "paperjs-offset";
 
 import {
@@ -31,17 +30,20 @@ import { makeLeftBuckle, makeRightBuckle } from "./buckle-helpers";
 
 type ModelParameters = Record<string, number | string>;
 
-function makeCollarCurve({
-  maxHeight,
-  minHeight,
-  neckSize: originalNeckSize,
-  neckDrop,
-}: {
-  maxHeight: number;
-  minHeight: number;
-  neckSize: number;
-  neckDrop: number;
-}) {
+function makeCollarCurve(
+  paper: paper.PaperScope,
+  {
+    maxHeight,
+    minHeight,
+    neckSize: originalNeckSize,
+    neckDrop,
+  }: {
+    maxHeight: number;
+    minHeight: number;
+    neckSize: number;
+    neckDrop: number;
+  }
+) {
   const neckSize = originalNeckSize - 3;
   const initialRise = (maxHeight - minHeight) * 0.25;
   const flatRunOnBottom = 1;
@@ -155,12 +157,14 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
   }
 
   private makeFinalCollarOutline({
+    paper,
     buckleHeight,
     minHeight,
     mainCollarCurve,
     numBuckles,
     numHoles,
   }: {
+    paper: paper.PaperScope;
     numHoles: number;
     numBuckles: number;
     buckleHeight: number;
@@ -235,7 +239,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
       );
     }
 
-    const mainCollarCurve = makeCollarCurve(params);
+    const mainCollarCurve = makeCollarCurve(paper, params);
 
     const outerModel = mainCollarCurve;
 
@@ -283,6 +287,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     );
 
     const { model: finalOuterModel, holes } = this.makeFinalCollarOutline({
+      paper,
       buckleHeight,
       minHeight,
       mainCollarCurve,

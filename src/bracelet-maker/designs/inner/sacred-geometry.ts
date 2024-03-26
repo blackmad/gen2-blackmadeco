@@ -1,6 +1,9 @@
 import { RangeMetaParameter } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
-import { displayDataUriImageToConsole } from "../../utils/debug-utils";
+import {
+  displayDataUriImageToConsole,
+  isBrowser,
+} from "../../utils/debug-utils";
 import {
   flattenArrayOfPathItems,
   getEvenlySpacePointsAlongPath,
@@ -98,7 +101,7 @@ function makeSeedPoints(params: SeedPointMakerArgs) {
 }
 
 export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
-  async makeDesign(paper: paper.PaperScope, params: any) {
+  async makeDesign(_paper: paper.PaperScope, params: any) {
     const {
       numPoints,
       shearY,
@@ -109,6 +112,11 @@ export class InnerDesignSacredGeometry extends FastAbstractInnerDesign {
       seedShapeSides,
       minSpokeLength,
     } = params;
+    const paper: paper.PaperScope = isBrowser()
+      ? _paper
+      : (await import("paper-jsdom-canvas")).default;
+    console.log({ paper });
+
     const boundaryModel: paper.Path = params.boundaryModel;
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
 
