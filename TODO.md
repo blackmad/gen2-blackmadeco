@@ -1,13 +1,14 @@
+- earring mode
+- other outline shapes (regular polygons, the bird curve)
+- engrave mode
+- revisit map layers / drawing
+
+
 KALEIDO / snowflow
 - clamp voronoi to http://localhost:8080/#StraightCuffOuter/InnerDesignSnowflake?StraightCuffOuter.height=1.5&StraightCuffOuter.wristCircumference=7.2&StraightCuffOuter.wideWristCircumferencePerInchMultiplier=0.25&InnerDesignSnowflake.safeBorderWidth=0.25&InnerDesignSnowflake.seed=16&InnerDesignSnowflake.numPoints=20&InnerDesignSnowflake.numBorderPoints=0&InnerDesignSnowflake.borderSize=0.1&InnerDesignSnowflake.rows=1&InnerDesignSnowflake.cols=1&InnerDesignSnowflake.mirror=true&InnerDesignSnowflake.voronoi=true&InnerDesignSnowflake.removeEdgePolygons=false&InnerDesignSnowflake.kaleido=true&InnerDesignSnowflake.segmentBuffer=0&InnerDesignSnowflake.segments=12&InnerDesignSnowflake.shouldSmooth=true&InnerDesignSnowflake.smoothingFactor=0.4&InnerDesignSnowflake.breakThePlane=true&InnerDesignSnowflake.extendOutward=0.22&InnerDesignSnowflake.concavity=2&InnerDesignSnowflake.lengthThreshold=0.25&InnerDesignSnowflake.outlineSize=0.2&InnerDesignSnowflake.safeCone=Path%20%40144062&InnerDesignSnowflake.outerModel=Path%20%40144052
 
 OUTLINE
 - turn off symmetry when not needed
-
-
-- earring mode
-- engrave mode
-- revisit map layers / drawing
 
 MAP
 - keep trying to do something cool for AMS
@@ -67,3 +68,5 @@ VORONOI
 
 
 - god would really love to try adding size below the svg again
+
+noise plane partition https://observablehq.com/@esperanc/noise-plane-partition

@@ -1,4 +1,5 @@
 import { InnerDesignCirclePacking } from "./circle-packing";
+import { InnerDesignCurves } from "./curves";
 import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignHexes } from "./hexes";
 import { InnerDesignImageTrace } from "./image-trace";
@@ -25,6 +26,7 @@ export const AllInnerDesigns = [
   InnerDesignSunflower,
   InnerDesignSacredGeometry,
   InnerDesignText,
+  InnerDesignCurves,
   // InnerDesignGrid,
   // InnerDesignPerlinBlobs,
   // InnerDesignLattice,

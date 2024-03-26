@@ -301,8 +301,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     addToDebugLayer(paper, "expandedOutline", outline.clone());
 
-    console.log({ outline });
-
     if (symmetric) {
       const originalOutline = outline.clone();
       outline = makeSymmetric(paper, outline);
@@ -310,8 +308,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         outline = originalOutline;
       }
     }
-
-    console.log({ outline });
 
     // If we ended up with an outline that's a compound path,
     // just take the child path that's the biggest
@@ -504,16 +500,10 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       addToDebugLayer(paper, "finalOutline", outline);
     }
 
-    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
-
     outline?.translate([
       outerModelToUse.bounds.center.x - outline.bounds.center.x,
       0,
     ]);
-
-    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
-
-    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
 
     return new InnerCompletedModel({
       paths,

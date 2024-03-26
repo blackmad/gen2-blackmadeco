@@ -57,10 +57,18 @@ function fillAGrid({
     const y = Math.floor(Math.random() * boxGrid[x].length);
     const rect = boxGrid[x][y];
     if (rect) {
-      boxGrid[x]?.[y] = null;
-      boxGrid[x + 1]?.[y] = null;
-      boxGrid[x]?.[y + 1] = null;
-      boxGrid[x + 1]?.[y + 1] = null;
+      if (boxGrid[x]?.[y]) {
+        boxGrid[x][y] = null;
+      }
+      if (boxGrid[x + 1]?.[y]) {
+        boxGrid[x + 1][y] = null;
+      }
+      if (boxGrid[x]?.[y + 1]) {
+        boxGrid[x][y + 1] = null;
+      }
+      if (boxGrid[x + 1]?.[y + 1]) {
+        boxGrid[x + 1][y + 1] = null;
+      }
       // const rectRight = boxGrid[x + 1]?.[y];
       // const rectBottom = boxGrid[x]?.[y + 1];
       // const rectBottomRight = boxGrid[x + 1]?.[y + 1];

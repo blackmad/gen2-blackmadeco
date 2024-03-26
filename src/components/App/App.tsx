@@ -184,8 +184,6 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     modelParams
   );
 
-  console.log({ svgData });
-
   return (
     <>
       <div id="previewArea">
