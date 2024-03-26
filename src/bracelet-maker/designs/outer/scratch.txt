@@ -36,7 +36,7 @@
 //     const originalSegmentPoint = segment.point.clone();
 //     segment.transform(new paper.Matrix().translate([x, y]));
 
-//     addToDebugLayer(paper, "newPoint", segment.point);
+//     addToDebugLayer(paper,  "newPoint", segment.point);
 
 //     const newPoint = originalSegmentPoint.add(new paper.Point(2 * x, 0));
 //     insertLater.push({
@@ -44,7 +44,7 @@
 //       point: newPoint,
 //       offset: 0,
 //     });
-//     addToDebugLayer(paper, "newPoint2", newPoint);
+//     addToDebugLayer(paper,  "newPoint2", newPoint);
 
 //     const newPoint2 = originalSegmentPoint.add(new paper.Point(3 * x, 0));
 //     insertLater.push({
@@ -52,7 +52,7 @@
 //       point: newPoint2,
 //       offset: x < 0 ? 0 : -1,
 //     });
-//     addToDebugLayer(paper, "newPoint", newPoint2);
+//     addToDebugLayer(paper,  "newPoint", newPoint2);
 //     p.insert(segmentIndex + 1, newPoint);
 //   }
 // });

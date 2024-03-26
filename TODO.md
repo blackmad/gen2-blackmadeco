@@ -1,11 +1,10 @@
-- there's something slightly off everywhere about the patterns actually being symmetrical 
-- it seems like it's happening on buffering ... ... maybe the answer when buffering is to make sure I'm recentering to the original center?
+KALEIDO / snowflow
+- clamp voronoi to http://localhost:8080/#StraightCuffOuter/InnerDesignSnowflake?StraightCuffOuter.height=1.5&StraightCuffOuter.wristCircumference=7.2&StraightCuffOuter.wideWristCircumferencePerInchMultiplier=0.25&InnerDesignSnowflake.safeBorderWidth=0.25&InnerDesignSnowflake.seed=16&InnerDesignSnowflake.numPoints=20&InnerDesignSnowflake.numBorderPoints=0&InnerDesignSnowflake.borderSize=0.1&InnerDesignSnowflake.rows=1&InnerDesignSnowflake.cols=1&InnerDesignSnowflake.mirror=true&InnerDesignSnowflake.voronoi=true&InnerDesignSnowflake.removeEdgePolygons=false&InnerDesignSnowflake.kaleido=true&InnerDesignSnowflake.segmentBuffer=0&InnerDesignSnowflake.segments=12&InnerDesignSnowflake.shouldSmooth=true&InnerDesignSnowflake.smoothingFactor=0.4&InnerDesignSnowflake.breakThePlane=true&InnerDesignSnowflake.extendOutward=0.22&InnerDesignSnowflake.concavity=2&InnerDesignSnowflake.lengthThreshold=0.25&InnerDesignSnowflake.outlineSize=0.2&InnerDesignSnowflake.safeCone=Path%20%40144062&InnerDesignSnowflake.outerModel=Path%20%40144052
 
-http://localhost:8080/#NecklaceOuter/InnerDesignMaze1?NecklaceOuter.neckSize=13.5&NecklaceOuter.outerHeightMultiplier=1.7&NecklaceOuter.outerWidth=8.5&NecklaceOuter.innerHeightMultiplier=1.3&NecklaceOuter.innerWidthRatio=0.85&InnerDesignMaze1.safeBorderWidth=0.25&InnerDesignMaze1.seed=250&InnerDesignMaze1.rows=6&InnerDesignMaze1.cols=6&InnerDesignMaze1.rowRepeat=5&InnerDesignMaze1.colRepeat=4&InnerDesignMaze1.borderSize=0.06&InnerDesignMaze1.maxChainSize=1&InnerDesignMaze1.idealMinChainSize=4&InnerDesignMaze1.minChainSize=0&InnerDesignMaze1.mirrorRows=true&InnerDesignMaze1.mirrorCols=true&InnerDesignMaze1.rowTileBoundary=true&InnerDesignMaze1.colTileBoundary=true&InnerDesignMaze1.omitTileChance=0&InnerDesignMaze1.shouldSmooth=true&InnerDesignMaze1.smoothingFactor=0.85&InnerDesignMaze1.breakThePlane=true&InnerDesignMaze1.extendOutward=0.25&InnerDesignMaze1.concavity=0.4&InnerDesignMaze1.lengthThreshold=0.5&InnerDesignMaze1.outlineSize=0.2&InnerDesignMaze1.safeCone=Path%20%40290023&InnerDesignMaze1.outerModel=Path%20%40290025&InnerDesignMaze1.originalOuterModel=Path%20%40290026
-(see middle line vs pattern)
+OUTLINE
+- turn off symmetry when not needed
 
-- finish necklace
-- get break the plane working more reliably
+
 - earring mode
 - engrave mode
 - revisit map layers / drawing
@@ -37,7 +36,12 @@ TRACE
 - document some of these
 - remove unneeded inner holes
 
+
+APP
 - fix back/forward navigation in the app
+
+VORONOI
+- open debug layer - notice how the blobs are not perfectly symmetric here for some reason? http://localhost:8080/#NecklaceOuter/InnerDesignVoronoi?NecklaceOuter.neckSize=15.5&NecklaceOuter.outerHeightMultiplier=1.7&NecklaceOuter.outerWidth=8.5&NecklaceOuter.innerHeightMultiplier=1.3&NecklaceOuter.innerWidthRatio=0.85&InnerDesignVoronoi.safeBorderWidth=0.25&InnerDesignVoronoi.seed=2007&InnerDesignVoronoi.numPoints=40&InnerDesignVoronoi.numBorderPoints=0&InnerDesignVoronoi.borderSize=0.1&InnerDesignVoronoi.rows=1&InnerDesignVoronoi.cols=2&InnerDesignVoronoi.mirror=true&InnerDesignVoronoi.voronoi=true&InnerDesignVoronoi.removeEdgePolygons=false&InnerDesignVoronoi.shouldSmooth=true&InnerDesignVoronoi.smoothingFactor=0.8&InnerDesignVoronoi.breakThePlane=true&InnerDesignVoronoi.extendOutward=0.26&InnerDesignVoronoi.concavity=1.8&InnerDesignVoronoi.lengthThreshold=0.5&InnerDesignVoronoi.outlineSize=0.26&InnerDesignVoronoi.safeCone=Path%20%4059510&InnerDesignVoronoi.outerModel=Path%20%4059512&InnerDesignVoronoi.originalOuterModel=Path%20%4059513
 
 - make a more geometric-intersecting shape design like https://www.pinterest.com/pin/658440408009961386/
 

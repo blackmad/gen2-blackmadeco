@@ -116,7 +116,7 @@ export class KaleidoscopeMaker {
     boundarySegment.closePath();
 
     if (this.debug) {
-      addToDebugLayer(paper, "boundarySegment", boundarySegment.clone());
+      addToDebugLayer(this.paper, "boundarySegment", boundarySegment.clone());
     }
 
     return boundarySegment;

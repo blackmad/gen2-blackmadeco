@@ -118,7 +118,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     addToDebugLayer(paper, "imageTrace", item.clone());
     // removeSharpAngles({ item });
-    // addToDebugLayer(paper, "postSharpRemoval", item.clone());
+    // addToDebugLayer(paper,  "postSharpRemoval", item.clone());
 
     // getOnlyCounterclockwisePaths({ paper, paths: [item] });
 

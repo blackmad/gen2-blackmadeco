@@ -3,23 +3,26 @@ import concaveman from "concaveman";
 import { addToDebugLayer } from "./debug-layers";
 import {
   flattenArrayOfPathItems,
-  simplifyPath,
+  makeSymmetric,
   unkinkPath,
 } from "./paperjs-utils";
+import { reTracePaperPath } from "./potrace-utils";
 
-export function makeConcaveOutline({
+export async function makeConcaveOutline({
   paper,
   paths,
   concavity,
   lengthThreshold,
   minimumOutlinePath,
+  symmetric,
 }: {
   paper: paper.PaperScope;
   paths: paper.PathItem[];
   concavity: number;
   lengthThreshold: number;
   minimumOutlinePath: paper.PathItem;
-}): paper.Path {
+  symmetric: boolean;
+}): Promise<paper.Path> {
   const allPoints = [];
   paths.forEach((p) => addToDebugLayer(paper, "outlinePaths", p.clone()));
 
@@ -30,35 +33,48 @@ export function makeConcaveOutline({
     }
   }
 
-  paths.forEach((path: paper.Path) => {
+  const flattenedPaths = flattenArrayOfPathItems(paper, paths);
+  flattenedPaths.forEach((path: paper.Path) => {
     path.segments.forEach((s) => addPoint(s.point, true));
-    for (let offset = 0; offset < 1; offset += 0.1) {
+    for (let offset = 0; offset < 1; offset += 0.05) {
       addPoint(path.getPointAt(path.length * offset), true);
     }
   });
 
-  const minimumOutlinePaths = flattenArrayOfPathItems(paper, [
-    minimumOutlinePath,
-  ]);
-  minimumOutlinePaths.forEach((path: paper.Path) => {
-    for (let offset = 0; offset < 1; offset += 0.01) {
-      addPoint(path.getPointAt(path.length * offset), true);
-    }
-  });
+  // const minimumOutlinePaths = flattenArrayOfPathItems(paper, [
+  //   minimumOutlinePath,
+  // ]);
+  // minimumOutlinePaths.forEach((path: paper.Path) => {
+  //   for (let offset = 0; offset < 1; offset += 0.01) {
+  //     addPoint(path.getPointAt(path.length * offset), true);
+  //   }
+  // });
 
   const concaveHull = concaveman(allPoints, concavity, lengthThreshold);
   const concavePath = new paper.Path(
     concaveHull.map((p) => new paper.Point(p[0], p[1]))
   );
+  concavePath.closePath();
   addToDebugLayer(paper, "concavePath", concavePath.clone());
-  const unkinkedConcavePath = unkinkPath(paper, concavePath);
+  // const concavePath = unkinkPath(paper, concavePath);
 
-  // unkinkedConcavePath.flatten(0.05);
-  // unkinkedConcavePath.smooth({ type: "catmull-rom", factor: 1.0 });
-  // unkinkedConcavePath.flatten(0.05);
-  unkinkedConcavePath.simplify(0.05);
+  // let's make this symmetrical
 
-  const simplifedPath = simplifyPath(paper, unkinkedConcavePath, 0.01);
+  addToDebugLayer(paper, "cleanedUpConcavePath", concavePath.clone());
 
-  return unkinkedConcavePath;
+  const symmetricalPath = symmetric
+    ? makeSymmetric(paper, concavePath)
+    : concavePath;
+
+  const tracedItem = await reTracePaperPath({
+    paper,
+    item: symmetricalPath,
+    options: {},
+  });
+
+  unkinkPath(paper, tracedItem);
+
+  addToDebugLayer(paper, "tracedItem", tracedItem.clone());
+
+  return tracedItem;
 }

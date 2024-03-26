@@ -93,8 +93,7 @@ export class InnerDesignMaze1 extends FastAbstractInnerDesign {
         simplifiedPath.bounds.center
       );
 
-      // TODO: why the fuck do I need this???
-      bufferedPath.translate([-borderSize / 2, 0]);
+      bufferedPath.translate([(-borderSize * 2) / 3, 0]);
 
       addToDebugLayer(paper, "bufferedPaths", bufferedPath.clone());
 

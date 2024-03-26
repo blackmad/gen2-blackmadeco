@@ -12,10 +12,15 @@ export function addToDebugLayer(
     debugLayers[layerName] = newLayer;
     newLayer.visible = false;
 
+    const color = new paper.Color(randomColor());
+    const fillColor = color.clone();
+    fillColor.alpha = 0.5;
+
     newLayer.style = {
       ...newLayer.style,
-      strokeColor: new paper.Color(randomColor()),
+      strokeColor: color,
       strokeWidth: 0.04,
+      fillColor: fillColor,
     };
   }
 

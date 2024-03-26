@@ -14,10 +14,9 @@ import { makeConcaveOutline } from "../../utils/outline";
 import {
   bufferPath,
   clampPathsToBoundary,
-  simplifyPath,
-  unkinkPath,
+  flattenArrayOfPathItems,
+  makeSymmetric,
 } from "../../utils/paperjs-utils";
-import { removeBadSegments } from "../../utils/remove-bad-segments";
 import { roundCorners } from "../../utils/round-corners";
 import {
   KaleidoscopeMaker,
@@ -140,9 +139,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       metaParams.push(
         new RangeMetaParameter({
           title: "Outline Concavity",
-          min: 0.1,
+          min: 1,
           max: 3,
-          value: 0.4,
+          value: 1,
           step: 0.01,
           name: "concavity",
           // parentParam: breakThePlane,
@@ -213,27 +212,31 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     return paths;
   }
 
-  private makeOutline(
-    paper: paper.PaperScope,
-    params: any,
-    paths: paper.PathItem[],
-    originalBoundaryModel: paper.PathItem,
-    safeCone: paper.PathItem
-  ) {
+  private async makeOutline({
+    paper,
+    params,
+    paths,
+    originalBoundaryModel,
+    safeCone,
+    symmetric,
+  }: {
+    paper: paper.PaperScope;
+    params: any;
+    paths: paper.PathItem[];
+    originalBoundaryModel: paper.PathItem;
+    safeCone: paper.PathItem;
+    symmetric: boolean;
+  }) {
     console.log("need to make outline");
 
-    const filteredPaths = paths.filter(
-      (p) =>
-        p.intersects(originalBoundaryModel) || originalBoundaryModel.contains(p)
-    );
-
     // Make the outline
-    let outline = makeConcaveOutline({
+    let outline = await makeConcaveOutline({
       paper,
-      paths: filteredPaths,
+      paths,
       concavity: params.concavity,
       lengthThreshold: params.lengthThreshold,
       minimumOutlinePath: originalBoundaryModel.intersect(safeCone),
+      symmetric,
     });
 
     addToDebugLayer(
@@ -242,8 +245,15 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       originalBoundaryModel.clone()
     );
     // Expand it to our outline border
-    outline = PaperOffset.offset(outline, -params.outlineSize);
+    outline = PaperOffset.offset(outline, params.outlineSize);
+    outline.flatten(0.01);
+    outline.simplify(0.01);
+
     addToDebugLayer(paper, "expandedOutline", outline.clone());
+
+    if (symmetric) {
+      outline = makeSymmetric(paper, outline);
+    }
 
     // If we ended up with an outline that's a compound path,
     // just take the child path that's the biggest
@@ -254,50 +264,12 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       )[0] as paper.Path;
     }
 
-    console.log("about to unkink expanded outline", { outline });
-
-    removeBadSegments({ paper, path: outline });
-
-    outline = simplifyPath(paper, outline, 0.05);
-
-    outline = unkinkPath(paper, outline);
-
-    removeBadSegments({ paper, path: outline });
-
-    outline = roundCorners({
-      paper,
-      path: outline,
-      radius: 0.5,
-    });
-
-    // outline.smooth();
-
     addToDebugLayer(paper, "unkinkedexpandedOutline", outline.clone());
 
-    console.log(outline.exportSVG({ asString: true }));
-
-    outline.closePath();
-    // outline = roundCorners({ paper, path: outline, radius: 0.9 });
-
     return outline;
-
-    // This logic is supposed to be for if we have a design that feeds us circles or curves
-    // point sampling concave outline isn't going to give us nice curves
-    // but I don't have a great way right now to detect if I want that logic - like
-    // I probably don't want to do this version for rounded shapes?
-    // } else {
-    //   paths.map(p => {
-    //     const exploded = paper.Path.prototype.offset.call(
-    //       p,
-    //       params.outlineSize,
-    //       { cap: "miter" }
-    //     );
-    //     outline = outline.unite(exploded);
-    //   });
-    // }
   }
 
-  private maybeMakeOutline(
+  private async maybeMakeOutline(
     paper: paper.PaperScope,
     params: any,
     _paths: paper.PathItem[],
@@ -306,20 +278,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     safeCone: paper.PathItem
   ) {
     let outline: paper.PathItem | null = null;
-    const paths: paper.PathItem[] = _paths;
+    let paths: paper.PathItem[] = _paths;
 
     const shouldMakeOutline = params.breakThePlane;
-
-    // if (this.allowOutline && shouldMakeOutline) {
-    //   const outline = PaperOffset.offset(
-    //     params.outerModel,
-    //     params.outlineSize,
-    //     {
-    //       cap: "miter",
-    //     }
-    //   );
-    //   return { outline, paths };
-    // }
 
     if (this.allowOutline && shouldMakeOutline) {
       addToDebugLayer(paper, "safeCone", params.safeCone);
@@ -342,13 +303,27 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         //   containsOrIntersects({ needle: p, haystack: params.outerModel })
         // );
 
-        outline = this.makeOutline(
+        function isInside(needle: paper.PathItem, haystack: paper.PathItem) {
+          const paths = flattenArrayOfPathItems(paper, [needle]);
+          const outerPaths = flattenArrayOfPathItems(paper, [haystack]);
+          return paths.every((p) =>
+            p.segments.every((s) => outerPaths.some((o) => o.contains(s.point)))
+          );
+        }
+
+        paths = paths.filter(
+          (p) =>
+            p.intersects(originalBoundaryModel) ||
+            isInside(p, originalBoundaryModel)
+        );
+
+        outline = await this.makeOutline({
           paper,
           params,
           paths,
           originalBoundaryModel,
-          safeCone
-        );
+          safeCone,
+        });
       }
     }
     return { outline, paths };
@@ -373,7 +348,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     this.initRNGs(params);
 
-    // addToDebugLayer(paper, "boundaryModel", params.boundaryModel.clone());
+    // addToDebugLayer(paper,  "boundaryModel", params.boundaryModel.clone());
 
     addToDebugLayer(paper, "safeCone", params.safeCone.clone());
 
@@ -463,12 +438,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       paths = clampPathsToBoundary(paths, params.safeCone);
     }
 
-    const maybeOutline = this.maybeMakeOutline(
+    const outerModelToUse = params.originalOuterModel ?? originalBoundaryModel;
+    const maybeOutline = await this.maybeMakeOutline(
       paper,
       params,
       paths,
       design,
-      params.originalOuterModel ?? originalBoundaryModel,
+      outerModelToUse,
       params.safeCone
     );
     paths = maybeOutline.paths;
@@ -476,6 +452,17 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     if (outline) {
       addToDebugLayer(paper, "finalOutline", outline);
     }
+
+    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
+
+    outline?.translate([
+      outerModelToUse.bounds.center.x - outline.bounds.center.x,
+      0,
+    ]);
+
+    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
+
+    console.log(outline?.bounds.center, outerModelToUse.bounds.center);
 
     return new InnerCompletedModel({
       paths,

@@ -276,8 +276,10 @@ export function polygonize(
 
 export function flattenArrayOfPathItems(
   paper: paper.PaperScope,
-  paths: paper.Item[]
+  _paths: paper.Item[] | paper.Item
 ): paper.Path[] {
+  const paths = _.isArray(_paths) ? _paths : [_paths];
+
   const ret: paper.Path[] = [];
   paths.forEach((path) => {
     if (path instanceof paper.CompoundPath || path instanceof paper.Group) {
@@ -575,7 +577,7 @@ export function removeSharpAngles({ item }: { item: paper.Item }) {
       const angle = point1.getDirectedAngle(point2);
 
       console.log({ angle });
-      if (Math.abs(angle) < 90) {
+      if (Math.abs(angle) % 90 < 45) {
         segmentsToRemove.push(segment);
       }
     });
@@ -609,7 +611,7 @@ export function makeSyntheticBoundaryModel(
   console.log("middleDistance", { middleDistance });
 
   addToDebugLayer(paper, "middleLine", middleLine);
-  // addToDebugLayer(paper, "middleLine", clampedMiddleLine);
+  // addToDebugLayer(paper,  "middleLine", clampedMiddleLine);
 
   const syntheticBoundaryModel = new paper.Path.Rectangle(
     new paper.Rectangle(
@@ -660,4 +662,41 @@ export function getOnlyCounterclockwisePaths(params: {
     }
   });
   return ret;
+}
+
+export function mirrorPath({
+  path,
+  orientation,
+}: {
+  path: paper.Path;
+  orientation: "horizontal" | "vertical";
+}) {
+  const axis = {
+    horizontal: {
+      x: -1,
+      y: 1,
+    },
+    vertical: {
+      x: 1,
+      y: -1,
+    },
+  };
+  const newPath = path.clone();
+  newPath.scale(axis[orientation].x, axis[orientation].y);
+  return newPath;
+}
+
+export function makeSymmetric(paper: paper.PaperScope, path: paper.Path) {
+  const mirroredPath = mirrorPath({
+    path,
+    orientation: "horizontal",
+  });
+  mirroredPath.bounds.center = path.bounds.center;
+  addToDebugLayer(paper, "mirroredPath", mirroredPath.clone());
+
+  // TODO: make this an option
+  const symmetricalPath = mirroredPath.unite(path, { trace: "true" });
+  addToDebugLayer(paper, "symmetricalPath", symmetricalPath);
+
+  return symmetricalPath;
 }

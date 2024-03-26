@@ -111,11 +111,13 @@ export class NecklaceOuter extends OuterPaperModelMaker {
       ? originalOuterModel.unite(innerDesign.outline)
       : originalOuterModel;
 
-    innerDesign.paths = clampPathsToBoundary(
-      innerDesign.paths,
-      clampArea,
-      "tripleClamped"
-    );
+    if (!innerDesign.outline) {
+      innerDesign.paths = clampPathsToBoundary(
+        innerDesign.paths,
+        clampArea,
+        "tripleClamped"
+      );
+    }
 
     return new CompletedModel({
       outer: finalOuterModel,

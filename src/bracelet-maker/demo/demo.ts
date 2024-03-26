@@ -70,7 +70,7 @@ export async function demoDesign(
   console.log({ path });
 
   paper.project.activeLayer.addChild(path);
-  const svg = makeSVGData(paper, paper.project, false, elHydrator, {});
+  const svg = makeSVGData(paper.project, false, elHydrator, {});
 
   return {
     svg,

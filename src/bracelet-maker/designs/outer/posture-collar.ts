@@ -364,7 +364,7 @@ function tryToSmoothRightAngles({
 
       // const diamond11 = diamond1.clone();
       // diamonds.push(diamond11);
-      // addToDebugLayer(paper, "diamond", diamond11);
+      // addToDebugLayer(paper,  "diamond", diamond11);
       addToDebugLayer(paper, "diamond", diamond1);
 
       const diamond2 = new paper.Path.Star({
