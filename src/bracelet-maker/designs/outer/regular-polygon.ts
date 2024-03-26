@@ -4,7 +4,7 @@ import { AbstractPathOuter } from "./abstract-path-outer";
 export class RegularPolygonOuter extends AbstractPathOuter {
   get outerMetaParameters(): MetaParameter<any>[] {
     return [
-      ...super.outerMetaParameters,
+      ...super.abstractPathOuterMetaParameters({}),
       new RangeMetaParameter({
         title: "Sides",
         min: 3,

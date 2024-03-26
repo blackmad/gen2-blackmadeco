@@ -14,7 +14,11 @@ export function addDebugInfo(s: string) {
   }
 }
 
-export function displayDataUriImageToConsole(dataUri: string) {
+export function displayDataUriImageToConsole(_data: Buffer | string) {
+  const dataUri = _.isString(_data)
+    ? _data
+    : "data:image/png;base64," + _data.toString("base64");
+
   // console.log(dataUri);
   // const height = 100;
   // console.log(
@@ -36,4 +40,5 @@ export function displayDataUriImageToConsole(dataUri: string) {
   `;
 
   console.info(º + " ", consoleBackground);
+  console.log({ consoleBackground });
 }

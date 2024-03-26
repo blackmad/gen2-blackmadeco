@@ -2,6 +2,12 @@ import configure from "@jimp/custom";
 import threshold from "@jimp/plugin-threshold";
 import JimpImport from "jimp/es";
 
+import {
+  OnOffMetaParameter,
+  RangeMetaParameter,
+  SelectMetaParameter,
+  StringMetaParameter,
+} from "../meta-parameter";
 import { addToDebugLayer } from "./debug-layers";
 import { displayDataUriImageToConsole } from "./debug-utils";
 import { ImageDownloader } from "./image-downloader";
@@ -9,41 +15,69 @@ import { flattenArrayOfPathItems } from "./paperjs-utils";
 import { traceFromBufferToSvgString } from "./potrace-utils";
 const Jimp = configure({ plugins: [threshold] }, JimpImport);
 
-export async function downloadAndTraceImage({
-  paper,
-  bounds,
-  threshold,
-  turnPolicy,
-  turdSize,
-  objectFit,
-  scale,
-  smooth,
-  simplificationTolerance,
-  url,
-  contrastThresholdMax,
-  blackOnWhite,
-}: {
-  paper: paper.PaperScope;
-  bounds: paper.Rectangle;
-  url: string;
-  threshold: number;
-  turnPolicy: string;
-  turdSize: number;
-  objectFit: string;
-  scale: number;
-  smooth: boolean;
-  simplificationTolerance: number;
-  contrastThresholdMax: number;
-  blackOnWhite: boolean;
-}): Promise<{
+type TraceReturn = {
   paths: paper.Path[];
   item?: paper.Item;
-}> {
+};
+const cache: Record<string, TraceReturn> = {};
+
+export async function downloadAndTraceImage(
+  paper: paper.PaperScope,
+  params: {
+    bounds: paper.Rectangle;
+    url: string;
+    threshold: number;
+    turnPolicy: string;
+    turdSize: number;
+    objectFit: string;
+    scale: number;
+    smooth: boolean;
+    simplificationTolerance: number;
+    contrastThresholdMax: number;
+    blackOnWhite: boolean;
+  }
+): Promise<TraceReturn> {
+  // create custom cachKey with custom stringify for bounds field
+  const cacheKey = JSON.stringify({
+    ...params,
+    bounds: {
+      x: params.bounds.x,
+      y: params.bounds.y,
+      width: params.bounds.width,
+      height: params.bounds.height,
+    },
+  });
+
+  if (cache[cacheKey]) {
+    console.log("have cache for this!");
+    return cache[cacheKey];
+  }
+
+  const {
+    bounds,
+    threshold,
+    turnPolicy,
+    turdSize,
+    objectFit,
+    scale,
+    smooth,
+    simplificationTolerance,
+    url,
+    contrastThresholdMax,
+    blackOnWhite,
+  } = params;
+
   if (url === "") {
     return { paths: [] };
   }
 
   async function getBuffer() {
+    if (url.startsWith("data")) {
+      // data:image/jpeg;base64,/9j/4AAQSkZJR
+      const parts = url.split(",");
+      return Buffer.from(parts[1], "base64");
+    }
+
     try {
       return await ImageDownloader.fetch(url);
     } catch {
@@ -62,7 +96,7 @@ export async function downloadAndTraceImage({
   image.threshold({
     max: contrastThresholdMax,
     replace: 255,
-    autoGreyscale: false,
+    autoGreyscale: true,
   });
 
   // Get the buffer of the modified image
@@ -73,8 +107,8 @@ export async function downloadAndTraceImage({
   //   imgEl.src = URL.createObjectURL(new Blob([newBuffer]));
   //   document.body.appendChild(imgEl);
   // }
-
-  displayDataUriImageToConsole(newBuffer.toString("base64"));
+  console.log("thresholding image");
+  displayDataUriImageToConsole(newBuffer);
 
   const tracedSvgString = await traceFromBufferToSvgString({
     buffer: newBuffer,
@@ -143,5 +177,99 @@ export async function downloadAndTraceImage({
     }
   });
 
+  cache[cacheKey] = { item: item.clone(), paths: paths.map((p) => p.clone()) };
+
   return { item, paths };
+}
+
+export function makeImageTraceMetaParameters(defaultUrl?: string) {
+  return [
+    new StringMetaParameter({
+      title: "URL to image",
+      value:
+        defaultUrl ??
+        "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
+      defaults: [
+        defaultUrl ??
+          "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
+      ],
+      name: "url",
+    }),
+    new SelectMetaParameter({
+      title: "Object Fit",
+      value: "cover",
+      options: ["contain", "cover", "fill", "contain-fill"],
+      name: "objectFit",
+    }),
+    new RangeMetaParameter({
+      title: "Border Size (in)",
+      min: 0.02,
+      max: 0.75,
+      value: 0.04,
+      step: 0.01,
+      name: "bufferWidth",
+    }),
+    new RangeMetaParameter({
+      title: "Threshold",
+      min: -1,
+      max: 255,
+      value: -1,
+      step: 1,
+      name: "threshold",
+    }),
+    new RangeMetaParameter({
+      title: "turdSize",
+      min: 0,
+      max: 200,
+      value: 2,
+      step: 1,
+      name: "turdSize",
+    }),
+    new SelectMetaParameter({
+      title: "Turn Policy",
+      options: ["minority", "majority", "black", "white", "left", "right"],
+      value: "minority",
+      name: "turnPolicy",
+    }),
+    new RangeMetaParameter({
+      title: "scale",
+      min: 0,
+      max: 100,
+      value: 1,
+      step: 0.1,
+      name: "scale",
+    }),
+    new OnOffMetaParameter({
+      title: "Smooth blobs",
+      value: false,
+      name: "smooth",
+    }),
+    new OnOffMetaParameter({
+      title: "blackOnWhite",
+      value: false,
+      name: "blackOnWhite",
+    }),
+    new OnOffMetaParameter({
+      title: "repeat",
+      value: false,
+      name: "repeat",
+    }),
+    new RangeMetaParameter({
+      title: "Simplification Tolerance",
+      min: 0,
+      max: 1000,
+      value: 10,
+      step: 1,
+      name: "simplificationTolerance",
+    }),
+
+    new RangeMetaParameter({
+      title: "Contrast Max",
+      min: 0,
+      max: 256,
+      value: 100,
+      step: 1,
+      name: "contrastThresholdMax",
+    }),
+  ];
 }

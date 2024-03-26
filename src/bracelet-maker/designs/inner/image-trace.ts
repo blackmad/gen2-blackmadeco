@@ -1,17 +1,15 @@
 import { PaperOffset } from "paperjs-offset";
 
-import {
-  OnOffMetaParameter,
-  RangeMetaParameter,
-  SelectMetaParameter,
-  StringMetaParameter,
-} from "../../meta-parameter";
+import { RangeMetaParameter } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import {
   bufferPointstoPathItem,
   getEvenlySpacePointsAlongPath,
 } from "../../utils/paperjs-utils";
-import { downloadAndTraceImage } from "../../utils/trace-utils";
+import {
+  downloadAndTraceImage,
+  makeImageTraceMetaParameters,
+} from "../../utils/trace-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignImageTrace extends FastAbstractInnerDesign {
@@ -37,8 +35,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     const boundaryModel: paper.Path = params.boundaryModel;
 
-    let { paths, item } = await downloadAndTraceImage({
-      paper,
+    let { paths, item } = await downloadAndTraceImage(paper, {
       bounds: boundaryModel.bounds,
       threshold,
       turnPolicy,
@@ -138,91 +135,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
   get designMetaParameters() {
     return [
-      new StringMetaParameter({
-        title: "URL to image",
-        value:
-          "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
-        defaults: [
-          "https://uploads2.wikiart.org/images/princess-fahrelnissa-zeid/untitled-1950-1.jpg",
-        ],
-        name: "url",
-      }),
-      new SelectMetaParameter({
-        title: "Object Fit",
-        value: "cover",
-        options: ["contain", "cover", "fill", "contain-fill"],
-        name: "objectFit",
-      }),
-      new RangeMetaParameter({
-        title: "Border Size (in)",
-        min: 0.02,
-        max: 0.75,
-        value: 0.04,
-        step: 0.01,
-        name: "bufferWidth",
-      }),
-      new RangeMetaParameter({
-        title: "Threshold",
-        min: -1,
-        max: 255,
-        value: -1,
-        step: 1,
-        name: "threshold",
-      }),
-      new RangeMetaParameter({
-        title: "turdSize",
-        min: 0,
-        max: 200,
-        value: 2,
-        step: 1,
-        name: "turdSize",
-      }),
-      new SelectMetaParameter({
-        title: "Turn Policy",
-        options: ["minority", "majority", "black", "white", "left", "right"],
-        value: "minority",
-        name: "turnPolicy",
-      }),
-      new RangeMetaParameter({
-        title: "scale",
-        min: 0,
-        max: 100,
-        value: 1,
-        step: 0.1,
-        name: "scale",
-      }),
-      new OnOffMetaParameter({
-        title: "Smooth blobs",
-        value: false,
-        name: "smooth",
-      }),
-      new OnOffMetaParameter({
-        title: "blackOnWhite",
-        value: false,
-        name: "blackOnWhite",
-      }),
-      new OnOffMetaParameter({
-        title: "repeat",
-        value: false,
-        name: "repeat",
-      }),
-      new RangeMetaParameter({
-        title: "Simplification Tolerance",
-        min: 0,
-        max: 1000,
-        value: 10,
-        step: 1,
-        name: "simplificationTolerance",
-      }),
-
-      new RangeMetaParameter({
-        title: "Contrast Max",
-        min: 0,
-        max: 256,
-        value: 100,
-        step: 1,
-        name: "contrastThresholdMax",
-      }),
+      ...makeImageTraceMetaParameters(),
       new RangeMetaParameter({
         title: "Repeat Padding",
         min: 0,

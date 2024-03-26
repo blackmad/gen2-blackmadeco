@@ -464,7 +464,6 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     if (kaleidoscopeMaker) {
       params.boundaryModel = safeBoundaryModel;
-      console.log("putting back boundary for kaleido / reflecting paths");
       paths = kaleidoscopeMaker.reflectPaths(paths);
       console.log("done reflecting paths");
     }

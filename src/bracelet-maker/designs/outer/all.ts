@@ -5,6 +5,7 @@ import { PostureCollarOuter } from "./posture-collar";
 import { RegularPolygonOuter } from "./regular-polygon";
 import { StraightCollarOuter } from "./straight-collar";
 import { StraightCuffOuter } from "./straight-cuff";
+import { TraceOuter } from "./trace";
 
 export const AllOuterDesigns = [
   StraightCollarOuter,
@@ -15,4 +16,5 @@ export const AllOuterDesigns = [
   EllipseOuter,
   NecklaceOuter,
   RegularPolygonOuter,
+  TraceOuter,
 ];

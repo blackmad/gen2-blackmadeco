@@ -1,3 +1,5 @@
+import { PaperOffset } from "paperjs-offset";
+
 import {
   MetaParameter,
   OnOffMetaParameter,
@@ -9,7 +11,11 @@ import { addEarringHoleToModel } from "../../utils/earring-utils";
 import { roundCorners } from "../../utils/round-corners";
 
 export abstract class AbstractPathOuter extends OuterPaperModelMaker {
-  public get outerMetaParameters(): MetaParameter<any>[] {
+  public abstractPathOuterMetaParameters({
+    shouldRoundCorners = false,
+  }: {
+    shouldRoundCorners?: boolean;
+  }): MetaParameter<any>[] {
     return [
       new RangeMetaParameter({
         title: "Height",
@@ -29,7 +35,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
       }),
       new OnOffMetaParameter({
         title: "Round Corners",
-        value: true,
+        value: shouldRoundCorners,
         name: "shouldRoundCorners",
       }),
       new OnOffMetaParameter({
@@ -63,19 +69,25 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
     super();
   }
 
-  abstract makeOuterModel(paper: paper.PaperScope, params: any): paper.PathItem;
+  abstract makeOuterModel(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<paper.PathItem>;
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
     const params = options[this.constructor.name];
     const { shouldRoundCorners } = params;
 
-    let outerModel = this.makeOuterModel(paper, params);
+    let outerModel = await this.makeOuterModel(paper, params);
     outerModel = shouldRoundCorners
       ? roundCorners({ paper, path: outerModel, radius: 0.1 })
       : outerModel;
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.safeCone = outerModel.clone().scale(5, 5);
+    innerOptions.safeCone = PaperOffset.offset(outerModel.clone(), 5, {
+      limit: 1,
+    });
+    // innerOptions.safeCone = outerModel;
     innerOptions.outerModel = outerModel;
 
     // TODO awful awful awful fix
