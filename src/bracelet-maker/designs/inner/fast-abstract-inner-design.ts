@@ -186,7 +186,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           title: "Flatten Outline Tolerance",
           min: 0.0,
           max: 2000,
-          value: 10,
+          value: 0,
           step: 0.5,
           name: "flattenOutlineTolerance",
           group: "Break the plane!!!!",
@@ -198,11 +198,19 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           title: "Simplfy Outline Tolerance",
           min: 0.0,
           max: 100,
-          value: 20,
+          value: 0,
           step: 0.5,
           name: "simplifyOutlineTolerance",
           group: "Break the plane!!!!",
           // parentParam: breakThePlane,
+        })
+      );
+      metaParams.push(
+        new OnOffMetaParameter({
+          title: "Shrink-to-fit",
+          value: false,
+          name: "shrinkToFit",
+          group: "Break the plane!!!!",
         })
       );
 
@@ -362,6 +370,12 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
             p.intersects(originalBoundaryModel) ||
             isInside(p, originalBoundaryModel)
         );
+
+        if (params.shrinkToFit) {
+          // TOOD: wrong shrink
+          const pathGroup = new paper.Group(paths);
+          pathGroup.fitBounds(originalBoundaryModel.bounds);
+        }
 
         outline = await this.makeOutline({
           paper,

@@ -19,7 +19,7 @@ export function addEarringHoleToModel({
   model: paper.PathItem;
   safeBorderWidth: number;
 }) {
-  const outerCircleRadius = earringHoleInnerSize * 2;
+  const outerCircleRadius = safeBorderWidth;
   const innerCircle = new paper.Path.Circle({
     center: model.bounds.center,
     radius: earringHoleInnerSize,

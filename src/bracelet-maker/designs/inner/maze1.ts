@@ -13,6 +13,7 @@ import { MazePatternMaker1 } from "./mazeMaker1";
 export class InnerDesignMaze1 extends FastAbstractInnerDesign {
   canRound = true;
   allowOutline = true;
+  canKaleido = true;
 
   makeDesign(paper: paper.PaperScope, params) {
     const {
