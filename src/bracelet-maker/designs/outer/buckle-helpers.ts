@@ -43,7 +43,7 @@ export function makeBuckleStrapForStrapSide(
     offsetX: number;
   }
 ) {
-  const { offsetX } = params;
+  const { offsetX, paper } = params;
 
   const holes = getBuckleHolesForStrapSide(params);
   holes.forEach((h) => h.translate([offsetX, 0]));

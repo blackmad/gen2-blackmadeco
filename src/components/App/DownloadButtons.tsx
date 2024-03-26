@@ -52,13 +52,13 @@ export default function DownloadButtons({
   //   }
 
   function downloadPDF() {
-    const svg = makeSVGData(
+    const svg = makeSVGData({
       paper,
-      paper.project,
-      true,
-      svgStringHydrator,
-      params
-    );
+      toExport: paper.project,
+      shouldClean: true,
+      elHydrator: svgStringHydrator,
+      modelParams: params,
+    });
     downloadPDFHelper({
       paper,
       modelMaker,
@@ -68,13 +68,13 @@ export default function DownloadButtons({
   }
 
   function downloadSVG() {
-    const data = makeSVGData(
+    const data = makeSVGData({
       paper,
-      paper.project,
-      true,
-      svgStringHydrator,
-      params
-    );
+      toExport: paper.project,
+      shouldClean: true,
+      elHydrator: svgStringHydrator,
+      modelParams: params,
+    });
     const mimeType = "image/svg+xml";
     const encoded = encodeURIComponent(data);
     const uriPrefix = "data:" + mimeType + ",";

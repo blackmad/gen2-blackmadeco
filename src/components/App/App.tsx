@@ -176,13 +176,13 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     }
   });
 
-  const svgData = makeSVGData(
+  const svgData = makeSVGData({
     paper,
-    paper.project,
-    false,
-    svgStringHydrator,
-    modelParams
-  );
+    toExport: paper.project,
+    shouldClean: false,
+    elHydrator: svgStringHydrator,
+    modelParams,
+  });
 
   return (
     <>

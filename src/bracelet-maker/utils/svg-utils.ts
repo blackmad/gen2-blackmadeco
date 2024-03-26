@@ -2,13 +2,19 @@ import _ from "lodash";
 
 import { makeUriQueryString } from "../meta-parameter";
 
-export function makeSVGData(
-  paper: paper.PaperScope,
-  toExport: Pick<paper.Project, "exportSVG">,
-  shouldClean: boolean,
-  elHydrator: (svgData: string) => any,
-  modelParams: Record<string, Record<string, any>>
-) {
+export function makeSVGData({
+  paper,
+  toExport,
+  shouldClean,
+  elHydrator,
+  modelParams,
+}: {
+  paper: paper.PaperScope;
+  toExport: Pick<paper.Project, "exportSVG">;
+  shouldClean: boolean;
+  elHydrator: (svgData: string) => any;
+  modelParams: Record<string, Record<string, any>>;
+}) {
   const svgData: string = toExport.exportSVG({
     asString: true,
     matrix: new paper.Matrix(),

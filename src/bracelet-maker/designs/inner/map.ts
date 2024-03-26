@@ -77,8 +77,8 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       subClassDict[f["properties"]["subclass"]]++;
     });
 
-    console.table(classDict, { depth: null });
-    console.table(subClassDict, { depth: null });
+    // console.table(classDict, { depth: null });
+    // console.table(subClassDict, { depth: null });
 
     const allowedClasses = [
       "minor",
@@ -126,8 +126,8 @@ export class InnerDesignMap extends FastAbstractInnerDesign {
       subClassDict2[f["properties"]["subclass"]]++;
     });
 
-    console.table(classDict2, { depth: null });
-    console.table(subClassDict2, { depth: null });
+    // console.table(classDict2, { depth: null });
+    // console.table(subClassDict2, { depth: null });
 
     return filteredFeatures;
   }
