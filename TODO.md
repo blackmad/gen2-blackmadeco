@@ -1,5 +1,4 @@
-- earring mode
-- other outline shapes (regular polygons, the bird curve)
+- other outline shapes (the bird curve)
 - svg outer / trace outer
 - engrave mode
 - revisit map layers / drawing
@@ -71,3 +70,7 @@ VORONOI
 - god would really love to try adding size below the svg again
 
 noise plane partition https://observablehq.com/@esperanc/noise-plane-partition
+
+
+EARRINGS
+- why does this put it at the bottom http://localhost:8080/#RegularPolygonOuter/InnerDesignMaze1?RegularPolygonOuter.height=3&RegularPolygonOuter.width=3&RegularPolygonOuter.shouldRoundCorners=true&RegularPolygonOuter.earringHole=true&RegularPolygonOuter.earringHolePosition=Outside&RegularPolygonOuter.earringHoleInnerSize=0.04&RegularPolygonOuter.sides=8&InnerDesignMaze1.safeBorderWidth=0.25&InnerDesignMaze1.seed=1&InnerDesignMaze1.rows=2&InnerDesignMaze1.cols=4&InnerDesignMaze1.rowRepeat=2&InnerDesignMaze1.colRepeat=2&InnerDesignMaze1.borderSize=0.06&InnerDesignMaze1.maxChainSize=5&InnerDesignMaze1.idealMinChainSize=3&InnerDesignMaze1.minChainSize=0&InnerDesignMaze1.mirrorRows=true&InnerDesignMaze1.mirrorCols=true&InnerDesignMaze1.rowTileBoundary=true&InnerDesignMaze1.colTileBoundary=false&InnerDesignMaze1.omitTileChance=0&InnerDesignMaze1.shouldSmooth=true&InnerDesignMaze1.smoothingFactor=0.4&InnerDesignMaze1.breakThePlane=true&InnerDesignMaze1.extendOutward=0.25&InnerDesignMaze1.concavity=2&InnerDesignMaze1.lengthThreshold=0.25&InnerDesignMaze1.outlineSize=0.15&InnerDesignMaze1.symmetric=true&InnerDesignMaze1.flattenOutlineTolerance=10&InnerDesignMaze1.simplifyOutlineTolerance=20&InnerDesignMaze1.safeCone=Path%20%403898&InnerDesignMaze1.outerModel=Path%20%403897

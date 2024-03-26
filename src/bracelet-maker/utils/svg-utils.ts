@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import { makeUriQueryString } from "../meta-parameter";
+import { isBrowser } from "./debug-utils";
 
 export function makeSVGData({
   paper,
@@ -42,6 +43,9 @@ ${commentBlock}
 
 ## Param string
 ${makeUriQueryString(modelParams)}
+
+## Generated From
+${isBrowser() ? window.location.href : "n/a"}
 
 -->`;
 

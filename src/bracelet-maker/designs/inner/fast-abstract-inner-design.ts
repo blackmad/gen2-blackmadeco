@@ -500,10 +500,10 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       addToDebugLayer(paper, "finalOutline", outline);
     }
 
-    outline?.translate([
-      outerModelToUse.bounds.center.x - outline.bounds.center.x,
-      0,
-    ]);
+    // outline?.translate([
+    //   outerModelToUse.bounds.center.x - outline.bounds.center.x,
+    //   0,
+    // ]);
 
     return new InnerCompletedModel({
       paths,
