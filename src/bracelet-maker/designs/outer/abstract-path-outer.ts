@@ -40,7 +40,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
       }),
       new OnOffMetaParameter({
         title: "Earring Hole",
-        value: true,
+        value: false,
         name: "earringHole",
       }),
       new SelectMetaParameter({
