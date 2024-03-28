@@ -161,11 +161,12 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
       .make(paper, modelParams)
       .then(setCurrentModel)
       .catch((e) => {
+        console.error(e);
         console.log("setting error", e.message);
         setError(e.message.toString());
         showModal();
       });
-  }, [modelMaker, modelParams, showModal]);
+  }, [hideModal, modelMaker, modelParams, showModal]);
 
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {

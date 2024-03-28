@@ -1,5 +1,6 @@
 import { RangeMetaParameter } from "../../meta-parameter";
 import { cascadedUnion } from "../../utils/cascaded-union";
+import { phyllotaxisPoints } from "../../utils/phyllotaxis-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignSunflower extends FastAbstractInnerDesign {
@@ -14,30 +15,24 @@ export class InnerDesignSunflower extends FastAbstractInnerDesign {
 
     const numDots = 5000;
 
-    const circles = [];
+    const points = phyllotaxisPoints({
+      paper,
+      boundaryModel,
+      numDots,
+      angle,
+      scalingParam,
+    });
 
-    function deg2rad(d) {
-      return (d * Math.PI) / 180;
-    }
-
-    for (let n = 1; n < numDots; n++) {
-      const theta = n * angle;
-      const r = scalingParam * Math.sqrt(n);
-
-      const circle = new paper.Path.Circle(
-        new paper.Point(
-          boundaryModel.bounds.center.x + r * Math.cos(deg2rad(theta)),
-          boundaryModel.bounds.center.y + r * Math.sin(deg2rad(theta))
-        ),
-        circleSize
-      );
+    const circles = points.flatMap((point) => {
+      const circle = new paper.Path.Circle(point, circleSize);
       if (
         circle.isInside(boundaryModel.bounds) ||
         circle.intersects(boundaryModel)
       ) {
-        circles.push(circle);
+        return [circle];
       }
-    }
+      return [];
+    });
 
     return Promise.resolve({
       paths: cascadedUnion(circles),

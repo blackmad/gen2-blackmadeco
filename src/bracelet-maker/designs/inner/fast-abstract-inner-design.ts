@@ -71,6 +71,14 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         name: "safeBorderWidth",
         shouldDisplay: (p: { breakThePlane: boolean }) => !p.breakThePlane,
       }),
+      new RangeMetaParameter({
+        title: "Minimum Hole Size (in)",
+        min: 0.01,
+        max: 0.25,
+        value: 0.05,
+        step: 0.01,
+        name: "minimumHoleSize",
+      }),
     ];
 
     if (this.needSeed) {
@@ -458,6 +466,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       extendOutward: number;
       safeBorderWidth: number;
       ellipseExpand: boolean;
+      minimumHoleSize: number;
     } & KaleidoscopeMakerParams
   ): Promise<InnerCompletedModel> => {
     // NOTE: we are copying this so we don't modify the global object
@@ -529,7 +538,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
     // filter out possibly null paths for ease of designs
     let paths = design.paths
       .filter((p) => !!p)
-      .filter((p) => p.bounds.area !== 0);
+      .filter((p) => p.bounds.area !== 0)
+      .filter((p) => p.bounds.area > params.minimumHoleSize);
 
     // explode compound paths to make everything easier
     paths = paths.flatMap((path) => {

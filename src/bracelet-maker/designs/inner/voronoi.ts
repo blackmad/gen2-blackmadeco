@@ -1,12 +1,17 @@
 import { Delaunay } from "d3-delaunay";
 
-import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import {
+  OnOffMetaParameter,
+  RangeMetaParameter,
+  SelectMetaParameter,
+} from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import {
   approxShape,
   bufferPointstoPathItem,
   randomPointInPolygon,
 } from "../../utils/paperjs-utils";
+import { phyllotaxisPoints } from "../../utils/phyllotaxis-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 function almostEqual(a: number, b: number, epsilon = 0.0001) {
@@ -42,6 +47,9 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     numTotalPoints,
     numBorderPoints,
     mirror,
+    pointStrategy,
+    sunflowerAngle,
+    sunflowerScalingParam,
   }) {
     const numPoints = numTotalPoints; // (rows * cols);
 
@@ -140,11 +148,38 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       }
     };
 
-    for (let i = 0; i < numPoints; i++) {
-      const testPoint = randomPointInPolygon(paper, partialRect, this.rng);
-      addToDebugLayer(paper, "initialPoints", testPoint);
-      addSeedPoint(testPoint, "seedPoints");
-    }
+    const generatePoints = (): paper.PointLike[] => {
+      if (pointStrategy === "random") {
+        return generateRandomPoints();
+      } else if (pointStrategy === "sunflower") {
+        return phyllotaxisPoints({
+          paper,
+          boundaryModel,
+          numDots: numPoints,
+          angle: sunflowerAngle,
+          scalingParam: sunflowerScalingParam,
+        });
+      }
+      return [];
+    };
+
+    const generateRandomPoints = (): paper.PointLike[] => {
+      const points: paper.PointLike[] = [];
+      for (let i = 0; i < numPoints; i++) {
+        const testPoint = randomPointInPolygon(paper, partialRect, this.rng);
+        if (!testPoint) {
+          continue;
+        }
+        points.push(testPoint);
+      }
+      return points;
+    };
+
+    const originalPoints = generatePoints();
+    originalPoints.forEach((point) => {
+      addToDebugLayer(paper, "initialPoints", point);
+      addSeedPoint(point, "seedPoints");
+    });
 
     if (numBorderPoints > 0) {
       // console.log(approxShape(paper, partialRect, numBorderPoints));
@@ -167,6 +202,9 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       mirror = false,
       removeEdgePolygons = false,
       borderSize = 0,
+      pointStrategy = "random",
+      sunflowerAngle,
+      sunflowerScalingParam,
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
@@ -182,6 +220,9 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       numTotalPoints: numPoints,
       numBorderPoints,
       mirror,
+      pointStrategy,
+      sunflowerAngle,
+      sunflowerScalingParam,
     });
 
     // console.log(seedPoints.length);
@@ -237,6 +278,12 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
   get designMetaParameters() {
     return [
+      new SelectMetaParameter({
+        title: "Point strategy",
+        options: ["random", "sunflower"],
+        value: "random",
+        name: "pointStrategy",
+      }),
       new RangeMetaParameter({
         title: "Num Points",
         min: 3,
@@ -307,6 +354,29 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         title: "Remove Edge Polygons",
         value: false,
         name: "removeEdgePolygons",
+      }),
+
+      // sunflower params
+      new RangeMetaParameter({
+        title: "Sunflower Angle",
+        min: 100,
+        max: 200,
+        step: 0.1,
+        value: 137.5,
+        name: "sunflowerAngle",
+        group: "Sunflower Params",
+        // shouldDisplay: (params: any) => params.pointStrategy === "sunflower",
+      }),
+
+      new RangeMetaParameter({
+        title: "Sunflower Angle",
+        min: 0.0001,
+        max: 1,
+        step: 0.005,
+        value: 0.2,
+        name: "sunflowerScalingParam",
+        group: "Sunflower Params",
+        // shouldDisplay: (params: any) => params.pointStrategy === "sunflower",
       }),
     ];
   }
