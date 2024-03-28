@@ -1,6 +1,7 @@
 import configure from "@jimp/custom";
 import threshold from "@jimp/plugin-threshold";
 import JimpImport from "jimp/es";
+import safeStringify from "safe-stringify";
 
 import {
   OnOffMetaParameter,
@@ -38,7 +39,7 @@ export async function downloadAndTraceImage(
   }
 ): Promise<TraceReturn> {
   // create custom cachKey with custom stringify for bounds field
-  const cacheKey = JSON.stringify({
+  const cacheKey = safeStringify({
     ...params,
     bounds: {
       x: params.bounds.x,

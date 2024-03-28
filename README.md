@@ -13,6 +13,16 @@
 ![public/demo-output/NecklaceOuter.png](public/demo-output/NecklaceOuter.png)
 ## RegularPolygonOuter
 ![public/demo-output/RegularPolygonOuter.png](public/demo-output/RegularPolygonOuter.png)
+## TraceOuter
+![public/demo-output/TraceOuter.png](public/demo-output/TraceOuter.png)
+## WomensThongFront
+![public/demo-output/WomensThongFront.png](public/demo-output/WomensThongFront.png)
+## WomensThongBack
+![public/demo-output/WomensThongBack.png](public/demo-output/WomensThongBack.png)
+## MaleThongFront
+![public/demo-output/MaleThongFront.png](public/demo-output/MaleThongFront.png)
+## MaleThongBack
+![public/demo-output/MaleThongBack.png](public/demo-output/MaleThongBack.png)
 # Inner Designs
 ## InnerDesignImageTrace
 ![public/demo-output/InnerDesignImageTrace.png](public/demo-output/InnerDesignImageTrace.png)

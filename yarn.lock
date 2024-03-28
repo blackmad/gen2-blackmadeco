@@ -9031,6 +9031,11 @@ safe-regex-test@^1.0.3:
     es-errors "^1.3.0"
     is-regex "^1.1.4"
 
+safe-stringify@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/safe-stringify/-/safe-stringify-1.1.0.tgz#9fc0c792eeb4cc86da3d7df53afafab3df332550"
+  integrity sha512-GQtvNzmfVbumWXSGW1WAQy+KgxGChBShulCXoAKFh4GPOvQ45504EQkoC+W48Yb3f43Iozfx6F3oxykhnDMJ3w==
+
 "safer-buffer@>= 2.1.2 < 3", "safer-buffer@>= 2.1.2 < 3.0.0":
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
