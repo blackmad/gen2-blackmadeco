@@ -3,6 +3,9 @@
 import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
 export class WomensThongBack extends AbstractNavelCircumferenceScaledOuter {
+  unitsPerA = 24;
+  navelCircumferenceToAMultiplier = 0.4;
+
   public controlInfo = "It's a box";
 
   public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {

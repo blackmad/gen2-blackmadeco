@@ -2,13 +2,16 @@ import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
 import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
 
 export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurvedOuterModelMaker {
+  abstract unitsPerA: number;
+  abstract navelCircumferenceToAMultiplier: number;
+
   get outerMetaParameters(): MetaParameter<any>[] {
     return [
       new RangeMetaParameter({
         title: "Body Circumference Around the Navel (inches)",
         min: 0.1,
         max: 20,
-        value: 3,
+        value: 30,
         step: 0.01,
         name: "bodyCircumferenceAroundTheNavel",
       }),
@@ -30,7 +33,10 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
     outerModel.scale(1, -1);
 
     // and scale it such that the width is the circumference
-    outerModel.scale(outerModel.bounds.width / bodyCircumferenceAroundTheNavel);
+    outerModel.scale(
+      (bodyCircumferenceAroundTheNavel * this.navelCircumferenceToAMultiplier) /
+        this.unitsPerA
+    );
 
     return outerModel;
   }

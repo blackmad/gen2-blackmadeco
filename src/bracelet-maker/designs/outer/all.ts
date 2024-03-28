@@ -1,6 +1,7 @@
 import { BoxOuter } from "./box";
 import { EllipseOuter } from "./ellipse";
-import { MaleThongFront } from "./male-thong-back";
+import { MaleThongBack } from "./male-thong-back";
+import { MaleThongFront } from "./male-thong-front";
 import { NecklaceOuter } from "./necklace";
 import { PostureCollarOuter } from "./posture-collar";
 import { RegularPolygonOuter } from "./regular-polygon";
@@ -23,4 +24,5 @@ export const AllOuterDesigns = [
   WomensThongFront,
   WomensThongBack,
   MaleThongFront,
+  MaleThongBack,
 ];

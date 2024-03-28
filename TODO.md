@@ -1,3 +1,14 @@
+TODAY
+DONE - implemement women's panties
+- implement men's panties
+- implement vest pieces
+- implement samurai gauntlets
+- implement gothic gauntlets
+
+- implement switching out designs without losing everything
+- implement saving designs to firebase (stretch)
+
+
 voronoi
 - add perlin?
 - fix interference

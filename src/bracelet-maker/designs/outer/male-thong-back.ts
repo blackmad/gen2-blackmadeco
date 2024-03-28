@@ -1,7 +1,10 @@
 // TODO: add incisions
 import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
-export class MaleThongFront extends AbstractNavelCircumferenceScaledOuter {
+export class MaleThongBack extends AbstractNavelCircumferenceScaledOuter {
+  unitsPerA = 10;
+  navelCircumferenceToAMultiplier = 0.12;
+
   public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {
     const outerModel: paper.Path = new paper.Path();
     outerModel.add(new paper.Point(0, 0));
