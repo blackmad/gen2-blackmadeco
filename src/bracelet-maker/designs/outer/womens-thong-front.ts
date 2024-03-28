@@ -1,5 +1,5 @@
 // TODO: add incisions
-import { AbstractNavelCircumferenceScaledOuter } from "./navel-circumference-scaled-outer";
+import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
 export class WomensThongFront extends AbstractNavelCircumferenceScaledOuter {
   public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {

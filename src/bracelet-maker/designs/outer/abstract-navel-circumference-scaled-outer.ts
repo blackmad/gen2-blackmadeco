@@ -1,4 +1,5 @@
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
 
 export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurvedOuterModelMaker {
   get outerMetaParameters(): MetaParameter<any>[] {
@@ -13,7 +14,7 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
       }),
     ];
   }
-  abstract makeUnscaledOuter(
+  abstract makeUpsideDownUnscaledOuter(
     paper: paper.PaperScope,
     params: any
   ): Promise<paper.Path>;
@@ -21,7 +22,7 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
   public async makePath(paper: paper.PaperScope, params: any) {
     const { bodyCircumferenceAroundTheNavel } = params;
 
-    const outerModel = await this.makeUnscaledOuter(paper, params);
+    const outerModel = await this.makeUpsideDownUnscaledOuter(paper, params);
 
     outerModel.closePath();
 
