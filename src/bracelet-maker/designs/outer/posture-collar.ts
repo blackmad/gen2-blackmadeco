@@ -15,19 +15,6 @@ import {
 } from "../../utils/paperjs-utils";
 import { makeLeftBuckle, makeRightBuckle } from "./buckle-helpers";
 
-// TOOD
-// one buckle, left side
-// one buckle, right side
-
-// mulitple buckle, left side
-// mulitple buckle, right side
-
-// post style closure
-
-// corset style closure
-
-// different cuvrve / deeper neck
-
 type ModelParameters = Record<string, number | string>;
 
 function makeCollarCurve(
@@ -106,7 +93,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         title: "Buckle Height",
         min: 1,
         max: 5,
-        value: 1,
+        value: 0.75,
         step: 0.25,
         name: "buckleHeight",
       }),
@@ -146,6 +133,14 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         title: "Smooth Corners",
         value: true,
         name: "smoothCorners",
+      }),
+      new RangeMetaParameter({
+        title: "bottomRingLength",
+        min: 0,
+        max: 10,
+        value: 0,
+        step: 0.1,
+        name: "bottomRingLength",
       }),
     ];
   }

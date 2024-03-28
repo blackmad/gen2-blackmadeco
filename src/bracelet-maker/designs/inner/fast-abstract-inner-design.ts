@@ -402,7 +402,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         );
 
         function shouldUsePath(p: paper.PathItem) {
-          const containmentBoundaryModel = params.boundaryModel;
+          const containmentBoundaryModel =
+            params.originalOuterModel ?? originalBoundaryModel;
           if (isInside(p, containmentBoundaryModel)) {
             return true;
           }

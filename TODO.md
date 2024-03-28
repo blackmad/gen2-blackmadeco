@@ -87,6 +87,11 @@ variable width outlines https://openprocessing.org/sketch/1451109
 particle system to make curves https://openprocessing.org/sketch/2135543
 venation: https://medium.com/@jason.webb/space-colonization-algorithm-in-javascript-6f683b743dc5
 differential growth: https://medium.com/@jason.webb/space-colonization-algorithm-in-javascript-6f683b743dc5
+differential: https://github.com/ulrikah/morph
 
 ### app
 - fix shouldDisplay
+
+## posture collar
+- make a wavier version like https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpajFX6-LR0DO--ENHo-WLCQuh5nJj54N7KaNvhahKV9j8iBwntaCFctYykjmgofNJcnY&usqp=CAU
+- fleet ilya cutout https://www.fleetilya.com/cdn/shop/products/studded-cut-out-posture-collar-229056_1200x.jpg?v=1663320242

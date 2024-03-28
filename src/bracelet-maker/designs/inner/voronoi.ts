@@ -9,8 +9,8 @@ import {
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { allLSystems } from "../../utils/lsystem-utils";
 import {
-  approxShape,
   bufferPointstoPathItem,
+  flattenArrayOfPathItems,
   randomPointInPolygon,
 } from "../../utils/paperjs-utils";
 import { phyllotaxisPoints } from "../../utils/phyllotaxis-utils";
@@ -58,6 +58,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     minusAngle,
     numIterations,
     lSystemScale,
+    breakThePlane,
   }) {
     const numPoints = numTotalPoints; // (rows * cols);
 
@@ -180,21 +181,19 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       addSeedPoint(point, "seedPoints");
     });
 
-    if (numBorderPoints > 0) {
-      // console.log(approxShape(paper, partialRect, numBorderPoints));
-      approxShape(
-        paper,
-        new paper.Path.Rectangle(partialRect),
-        numBorderPoints
-      ).forEach((p) => addSeedPoint(p, "borderPoints"));
-    }
-
     // Reprocess the seedPoints
     const seedPoints2: Array<[number, number]> = [];
-    let startR = -1;
-    let endR = rows + 1;
-    let startC = 0 - 1;
-    let endC = cols + 1;
+    let startR = 0;
+    let endR = rows;
+    let startC = 0;
+    let endC = cols;
+
+    if (breakThePlane) {
+      startR -= 1;
+      endR += 1;
+      startC -= 1;
+      endC += 1;
+    }
 
     if (overlapInterferencePercentage > 0) {
       const overlap = 1 - overlapInterferencePercentage / 100;
@@ -255,6 +254,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       minusAngle,
       numIterations,
       lSystemScale,
+      breakThePlane,
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
@@ -279,7 +279,23 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       minusAngle,
       numIterations,
       lSystemScale,
+      breakThePlane,
     });
+
+    if (numBorderPoints > 0) {
+      const paths = flattenArrayOfPathItems(paper, params.safeCone);
+      paths.forEach((path) => {
+        const numPointsOnPath = Math.floor(numBorderPoints / paths.length);
+        for (let i = 0; i < numPointsOnPath; i++) {
+          const testPoint = path.getPointAt(
+            path.length * (i / numPointsOnPath)
+          );
+          seedPoints.push([testPoint.x, testPoint.y]);
+          addToDebugLayer(paper, "borderPoints", testPoint);
+          addToDebugLayer(paper, "seedPoints", testPoint);
+        }
+      });
+    }
 
     // console.log(seedPoints.length);
     // console.log(seedPoints);
