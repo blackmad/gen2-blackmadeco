@@ -19,9 +19,13 @@ function HardcodedRouter() {
   const [hasInitted, setHasInnited] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("popstate", (e) => {
-      reparseUrl();
-    });
+    window.addEventListener("popstate", reparseUrl);
+    window.addEventListener("hashchange", reparseUrl);
+
+    return () => {
+      window.removeEventListener("popstate", reparseUrl);
+      window.removeEventListener("hashchange", reparseUrl);
+    };
   });
 
   const reparseUrl = () => {

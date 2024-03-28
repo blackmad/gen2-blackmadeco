@@ -155,7 +155,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     const hashParams = makeUriQueryString(modelParams);
 
     // history.replaceState(undefined, "", "#" + path + "?" + hashParams);
-    window.location.hash = path + "?" + hashParams;
+    // window.location.hash = path + "?" + hashParams;
 
     modelMaker
       .make(paper, modelParams)
