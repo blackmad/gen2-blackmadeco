@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { OnOffMetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import {
   checkCircleCircleIntersection,
   randomLineOnRectangle,
@@ -66,6 +67,8 @@ export class InnerDesignCirclePacking extends FastAbstractInnerDesign {
         boundaryRect.bottomRight.subtract(offsetPoint)
       );
     }
+
+    addToDebugLayer(paper, "circle-boundaryModel", boundaryRect);
 
     const circles: paper.Path.Circle[] = [];
     const simpleCircles: SimpleCircle[] = [];

@@ -65,7 +65,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         title: "Safe Border (in)",
         min: 0.0,
         max: 0.75,
-        value: 0.25,
+        value: 0.2,
         step: 0.01,
         name: "safeBorderWidth",
         shouldDisplay: (p: { breakThePlane: boolean }) => !p.breakThePlane,
@@ -374,7 +374,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         if (params.shrinkToFit) {
           // TOOD: wrong shrink
           const pathGroup = new paper.Group(paths);
-          pathGroup.fitBounds(originalBoundaryModel.bounds);
+          pathGroup.fitBounds(params.boundaryModel.bounds);
         }
 
         outline = await this.makeOutline({

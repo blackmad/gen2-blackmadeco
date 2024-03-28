@@ -60,7 +60,7 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
         title: "Wrist Circumference",
         min: 4,
         max: 10,
-        value: 7.2,
+        value: 7.5,
         step: 0.1,
         name: "wristCircumference",
       }),

@@ -85,7 +85,10 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     addToDebugLayer(paper, "outerModel", originalOuterModel);
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.safeCone = new paper.Path.Rectangle(outerModel.bounds);
+    innerOptions.safeCone = new paper.Path.Rectangle(outerModel.bounds).scale(
+      3,
+      3
+    );
 
     // TODO awful awful awful fix
     this.subModel.scaleWidthForSafeArea = true;
@@ -200,7 +203,7 @@ export class NecklaceOuter extends OuterPaperModelMaker {
     const currentSize = innerEllipse.length / 2;
     console.log("Ellipse half circumference", { currentSize });
 
-    const extraNeckHeight = (neckSize - currentSize) / 2 + 2;
+    const extraNeckHeight = (neckSize - currentSize) / 2 + 4;
     console.log("padding out to " + extraNeckHeight);
 
     // Now for each topFlat make a rectangle going up from it
