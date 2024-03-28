@@ -158,23 +158,16 @@ export class StraightCuffOuter extends OuterPaperModelMaker {
     });
 
     const safeAreaPath: paper.Path = new paper.Path();
-    safeAreaPath.add(new paper.Point(gutterWidth / 2, 0));
-    safeAreaPath.add(new paper.Point(gutterWidth / 2 + widthDiff, height));
-    safeAreaPath.add(new paper.Point(minWidth - gutterWidth / 2, height));
-    safeAreaPath.add(new paper.Point(maxWidth - gutterWidth / 2, 0));
+    // TODO: undo maybe
+    // safeAreaPath.add(new paper.Point(gutterWidth / 2, 0));
+    // safeAreaPath.add(new paper.Point(gutterWidth / 2 + widthDiff, height));
+    // safeAreaPath.add(new paper.Point(minWidth - gutterWidth / 2, height));
+    // safeAreaPath.add(new paper.Point(maxWidth - gutterWidth / 2, 0));
+    safeAreaPath.add(new paper.Point(gutterWidth, 0));
+    safeAreaPath.add(new paper.Point(gutterWidth + widthDiff, height));
+    safeAreaPath.add(new paper.Point(minWidth - gutterWidth, height));
+    safeAreaPath.add(new paper.Point(maxWidth - gutterWidth, 0));
     roundCorners({ paper, path: safeAreaPath, radius: "0.2" });
-
-    // const safeCone = safeAreaPath.clone().scale(0.97, 10);
-    // const halfSafeConeAngle = Math.atan(widthDiff / height);
-    // const otherAngle = (Math.PI / 2)
-    // const safeConeExtraHeight = 5;
-    // const safeCone: paper.Path = new paper.Path();
-    // safeAreaPath.add(new paper.Point(safeConeExtraHeight * Math.tan(halfSafeConeAngle), -safeConeExtraHeight));
-    // safeAreaPath.add(new paper.Point((safeConeExtraHeight * Math.tan(halfSafeConeAngle))+maxWidth, -safeConeExtraHeight));
-    // safeAreaPath.add(new paper.Point(gutterWidth +  widthDiff, height));
-    // safeAreaPath.add(new paper.Point(minWidth - gutterWidth, height));
-    // safeAreaPath.add(new paper.Point(maxWidth - gutterWidth, 0));
-    // roundCorners(paper, safeAreaPath, "0.2");
 
     const halfSafeConeAngle = Math.atan(widthDiff / height);
     const safeConeExtraHeight = 5;

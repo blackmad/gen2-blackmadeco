@@ -1,4 +1,5 @@
 import { Delaunay } from "d3-delaunay";
+import { objectKeys } from "ts-extras";
 
 import {
   OnOffMetaParameter,
@@ -6,6 +7,7 @@ import {
   SelectMetaParameter,
 } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
+import { allLSystems } from "../../utils/lsystem-utils";
 import {
   approxShape,
   bufferPointstoPathItem,
@@ -52,6 +54,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     sunflowerAngle,
     sunflowerScalingParam,
     overlapInterferencePercentage,
+    plusAngle,
+    minusAngle,
+    numIterations,
+    lSystemScale,
   }) {
     const numPoints = numTotalPoints; // (rows * cols);
 
@@ -109,6 +115,17 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       addToDebugLayer(paper, layerName, testPoint);
     };
 
+    const perlinPoints = ({ paper, bounds, numDots }: BasicLSystemArgs) => {
+      const points: paper.PointLike[] = [];
+      const perlin = this.simplex;
+      for (let i = 0; i < numDots; i++) {
+        const x = bounds.x + bounds.width * Math.abs(perlin(i * 0.1, 0));
+        const y = bounds.y + bounds.height * Math.abs(perlin(i * 0.1, 1));
+        points.push(new paper.Point(x, y));
+      }
+      return points;
+    };
+
     const generatePoints = (): paper.PointLike[] => {
       if (pointStrategy === "random") {
         return generateRandomPoints();
@@ -120,6 +137,27 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
           angle: sunflowerAngle,
           scalingParam: sunflowerScalingParam,
         });
+      } else if (pointStrategy === "perlin") {
+        return perlinPoints({
+          paper,
+          bounds: partialRect,
+          numDots: numPoints,
+        });
+      } else if (objectKeys(allLSystems).includes(pointStrategy)) {
+        console.log({ plusAngle, minusAngle, numIterations });
+        const points = allLSystems[pointStrategy]({
+          paper,
+          bounds: partialRect,
+          numDots: numPoints,
+          plusAngle,
+          minusAngle,
+          numIterations,
+        });
+        const scaledPath = new paper.Path(points).scale([
+          lSystemScale,
+          lSystemScale,
+        ]);
+        return scaledPath.segments.map((s) => s.point);
       }
       return [];
     };
@@ -153,10 +191,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     // Reprocess the seedPoints
     const seedPoints2: Array<[number, number]> = [];
-    let startR = 0;
-    let endR = rows;
-    let startC = 0;
-    let endC = cols;
+    let startR = -1;
+    let endR = rows + 1;
+    let startC = 0 - 1;
+    let endC = cols + 1;
 
     if (overlapInterferencePercentage > 0) {
       const overlap = 1 - overlapInterferencePercentage / 100;
@@ -213,6 +251,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       sunflowerAngle,
       sunflowerScalingParam,
       overlapInterferencePercentage,
+      plusAngle,
+      minusAngle,
+      numIterations,
+      lSystemScale,
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
@@ -233,6 +275,10 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       sunflowerAngle,
       sunflowerScalingParam,
       overlapInterferencePercentage,
+      plusAngle,
+      minusAngle,
+      numIterations,
+      lSystemScale,
     });
 
     // console.log(seedPoints.length);
@@ -290,7 +336,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     return [
       new SelectMetaParameter({
         title: "Point strategy",
-        options: ["random", "sunflower"],
+        options: ["random", "sunflower", "perlin", ...objectKeys(allLSystems)],
         value: "random",
         name: "pointStrategy",
       }),
@@ -394,7 +440,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       }),
 
       new RangeMetaParameter({
-        title: "Sunflower Angle",
+        title: "Sunflower Scale",
         min: 0.0001,
         max: 1,
         step: 0.005,
@@ -402,6 +448,50 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         name: "sunflowerScalingParam",
         group: "Sunflower Params",
         // shouldDisplay: (params: any) => params.pointStrategy === "sunflower",
+      }),
+
+      // LSystem params
+      new RangeMetaParameter({
+        title: "Iterations",
+        min: 1,
+        max: 5,
+        step: 1,
+        value: 3,
+        name: "numIterations",
+        group: "L-System params",
+        // shouldDisplay: (params: any) =>objectKeys(allLSystems).includes(pointStrategy)
+      }),
+
+      new RangeMetaParameter({
+        title: "Plus Angle",
+        min: 0,
+        max: 90,
+        step: 0.5,
+        value: 60,
+        name: "plusAngle",
+        group: "L-System params",
+        // shouldDisplay: (params: any) =>objectKeys(allLSystems).includes(pointStrategy)
+      }),
+
+      new RangeMetaParameter({
+        title: "Minus Angle",
+        min: 0,
+        max: 90,
+        step: 0.5,
+        value: 60,
+        name: "minusAngle",
+        group: "L-System params",
+        // shouldDisplay: (params: any) =>objectKeys(allLSystems).includes(pointStrategy)
+      }),
+      new RangeMetaParameter({
+        title: "Scale points",
+        min: 0.1,
+        max: 10,
+        step: 0.1,
+        value: 1,
+        name: "lSystemScale",
+        group: "L-System params",
+        // shouldDisplay: (params: any) =>objectKeys(allLSystems).includes(pointStrategy)
       }),
     ];
   }

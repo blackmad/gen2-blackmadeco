@@ -1,10 +1,12 @@
 voronoi
 - add perlin?
-- fix mirror
+- fix interference
 - add normal spiral
 
 - engrave mode
 - revisit map layers / drawing
+
+- why is this not generating all the polys http://localhost:8080/#EllipseOuter/InnerDesignVoronoi?EllipseOuter.height=3&EllipseOuter.width=3&EllipseOuter.shouldRoundCorners=false&EllipseOuter.earringHole=false&EllipseOuter.earringHolePosition=Outside-Top&EllipseOuter.earringHoleInnerSize=0.04&InnerDesignVoronoi.safeBorderWidth=0.15&InnerDesignVoronoi.minimumHoleSize=0.04&InnerDesignVoronoi.seed=1&InnerDesignVoronoi.pointStrategy=perlin&InnerDesignVoronoi.numPoints=20&InnerDesignVoronoi.numBorderPoints=0&InnerDesignVoronoi.borderSize=0.01&InnerDesignVoronoi.rows=2&InnerDesignVoronoi.cols=2&InnerDesignVoronoi.mirrorX=true&InnerDesignVoronoi.mirrorY=true&InnerDesignVoronoi.voronoi=true&InnerDesignVoronoi.removeEdgePolygons=false&InnerDesignVoronoi.overlapInterferencePercentage=0&InnerDesignVoronoi.sunflowerAngle=137.5&InnerDesignVoronoi.sunflowerScalingParam=0.2&InnerDesignVoronoi.shouldSmooth=true&InnerDesignVoronoi.smoothingFactor=0.4&InnerDesignVoronoi.breakThePlane=true&InnerDesignVoronoi.extendOutward=0.9&InnerDesignVoronoi.concavity=1&InnerDesignVoronoi.lengthThreshold=0.25&InnerDesignVoronoi.outlineSize=0.15&InnerDesignVoronoi.symmetric=true&InnerDesignVoronoi.flattenOutlineTolerance=0&InnerDesignVoronoi.simplifyOutlineTolerance=0&InnerDesignVoronoi.shrinkToFit=false&InnerDesignVoronoi.ellipseExpand=true&InnerDesignVoronoi.percentageOutlineOverlapRequired=0&InnerDesignVoronoi.safeCone=Path%20%40229199&InnerDesignVoronoi.outerModel=Path%20%40229191
 
 
 KALEIDO / snowflow

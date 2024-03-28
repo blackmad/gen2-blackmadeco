@@ -412,18 +412,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           }
 
           if (!p.intersects(containmentBoundaryModel)) {
-            console.log("p does not intersect");
             return false;
           }
-
-          console.log("p does intersect");
 
           const intersection = p.intersect(containmentBoundaryModel);
 
           const intersectionPercentage =
             pathItemArea(intersection) / pathItemArea(p);
-
-          console.log({ intersection, intersectionPercentage });
 
           return (
             intersectionPercentage >

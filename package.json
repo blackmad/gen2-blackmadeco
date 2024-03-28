@@ -58,6 +58,7 @@
     "jimp": "^0.22.12",
     "jquery": "^3.7.1",
     "jsts": "^2.11.0",
+    "lindenmayer": "^1.5.4",
     "lodash": "^4.17.21",
     "makerjs": "^0.18.1",
     "opentype.js": "^1.3.4",
@@ -86,6 +87,7 @@
     "svg-to-pdfkit": "^0.1.8",
     "text-to-svg": "^3.1.5",
     "topojson-client": "^3.1.0",
+    "ts-extras": "^0.11.0",
     "util": "^0.12.5",
     "uuid": "^9.0.1"
   },
