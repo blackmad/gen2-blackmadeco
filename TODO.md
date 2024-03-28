@@ -1,6 +1,7 @@
 voronoi
 - add perlin?
-- rewrite all the addPoint logic it makes no sense
+- fix mirror
+- add normal spiral
 
 - engrave mode
 - revisit map layers / drawing

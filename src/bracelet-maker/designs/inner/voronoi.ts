@@ -46,7 +46,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     cols,
     numTotalPoints,
     numBorderPoints,
-    mirror,
+    mirrorX,
+    mirrorY,
     pointStrategy,
     sunflowerAngle,
     sunflowerScalingParam,
@@ -99,16 +100,25 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       }
     }
 
-    const seedPoints: paper.Point[] = [];
+    const seedPoints: Array<[number, number]> = [];
 
     const addSeedPoint = (
       testPointLike: paper.PointLike,
       layerName: string
     ) => {
-      const startR = 0 - (1 - overlapInterferencePercentage / 100);
-      const endR = rows + (1 - overlapInterferencePercentage / 100);
-      const startC = 0 - (1 - overlapInterferencePercentage / 100);
-      const endC = cols + (1 - overlapInterferencePercentage / 100);
+      let startR = 0;
+      let endR = rows;
+      let startC = 0;
+      let endC = cols;
+
+      if (overlapInterferencePercentage > 0) {
+        const overlap = 1 - overlapInterferencePercentage / 100;
+        startR -= overlap;
+        endR += overlap;
+
+        startC -= overlap;
+        endC += overlap;
+      }
 
       console.log({ overlapInterferencePercentage });
       const testPoint = new paper.Point(testPointLike);
@@ -123,21 +133,29 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
           c < endC;
           c += 1 - overlapInterferencePercentage / 100
         ) {
-          const relativePoint = testPoint.subtract(
-            boundaryModel.bounds.topLeft
+          let x: number = testPoint.x + colOffset * c;
+          let y: number = testPoint.y + rowOffset * r;
+
+          console.log(
+            `x=${x}, in col ${c}, r=${r}. colOffset is ${colOffset}, our line boundary is ${colOffset * c}`
           );
 
-          let x = testPoint.x + colOffset * c;
-          let y = testPoint.y + rowOffset * r;
+          // This is just entirely wrong now
+          if (mirrorX && c % 2 == 1) {
+            x = colOffset * (c + 1) - testPoint.x;
 
-          if (mirror && c % 2 == 1) {
-            x =
-              colOffset * c + boundaryModel.bounds.topLeft.x - relativePoint.x;
+            console.log(
+              `mirroring, so update x=${x}, in col ${c}, r=${r}. colOffset is ${colOffset}, our line boundary is ${colOffset * (c + 1)}`
+            );
+
+            //   x =
+            //     colOffset * c + boundaryModel.bounds.topLeft.x - relativePoint.x;
           }
 
-          if (mirror && r % 2 == 1) {
-            y =
-              rowOffset * r + boundaryModel.bounds.topLeft.y - relativePoint.y;
+          if (mirrorY && r % 2 == 1) {
+            y = rowOffset * (r + 1) - testPoint.y;
+            //   y =
+            //     rowOffset * r + boundaryModel.bounds.topLeft.y - relativePoint.y;
           }
 
           addToDebugLayer(paper, layerName, new paper.Point(x, y));
@@ -197,7 +215,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       rows = 1,
       cols = 1,
       numBorderPoints = 0,
-      mirror = false,
+      mirrorX = false,
+      mirrorY = false,
       removeEdgePolygons = false,
       borderSize = 0,
       pointStrategy = "random",
@@ -218,7 +237,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       cols,
       numTotalPoints: numPoints,
       numBorderPoints,
-      mirror,
+      mirrorX,
+      mirrorY,
       pointStrategy,
       sunflowerAngle,
       sunflowerScalingParam,
@@ -341,9 +361,14 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         randMax: 3,
       }),
       new OnOffMetaParameter({
-        title: "Mirror",
+        title: "MirrorX",
         value: true,
-        name: "mirror",
+        name: "mirrorX",
+      }),
+      new OnOffMetaParameter({
+        title: "MirrorY",
+        value: true,
+        name: "mirrorY",
       }),
       new OnOffMetaParameter({
         title: "Voronoi",

@@ -15,7 +15,7 @@ import { addToDebugLayer } from "./debug-layers";
 
 export function randomPointInPolygon(
   paper: paper.PaperScope,
-  polygon: paper.PathItem,
+  polygon: paper.PathItem | paper.Rectangle,
   rng: () => number
 ): paper.Point | undefined {
   let bounds = null;
