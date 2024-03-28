@@ -72,7 +72,7 @@ export function makeBuckleStrapForBuckleSide(
 
   const distanceToFirstBolts = 0.5;
   const distanceBetweenBolts = 0.378;
-  const slotHeight = 0.125;
+  const slotHeight = 0.125 * height;
   const slotPadding = 0.5;
   const slotLength = 0.75;
 

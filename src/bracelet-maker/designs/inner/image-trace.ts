@@ -13,7 +13,7 @@ import {
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignImageTrace extends FastAbstractInnerDesign {
-  allowOutline = false;
+  allowOutline = true;
   needSubtraction = true;
   canKaleido = true;
 

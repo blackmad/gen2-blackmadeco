@@ -3,6 +3,7 @@ import TextToSVG from "text-to-svg";
 
 import {
   MetaParameter,
+  OnOffMetaParameter,
   RangeMetaParameter,
   SelectMetaParameter,
   StringMetaParameter,
@@ -42,6 +43,8 @@ function fillAGrid({
       const rect = new paper.Path.Rectangle(
         new paper.Rectangle(x, y, boxSize, boxSize)
       );
+      // const rect = new paper.Path.Circle([x, y], boxSize / 2);
+
       boxGrid[xIndex] = boxGrid[xIndex] ?? [];
       boxGrid[xIndex][yIndex] = rect;
       yIndex += 1;
@@ -210,7 +213,10 @@ export class InnerDesignText extends FastAbstractInnerDesign {
 
     const compoundTextPath = new paper.CompoundPath(paths);
     const unionedGrid = useBackgroundGrid
-      ? compoundTextPath.unite(grid)
+      ? new paper.CompoundPath([
+          compoundTextPath.intersect(grid),
+          // grid?.exclude(compoundTextPath),
+        ])
       : compoundTextPath;
     addToDebugLayer(paper, "unionGrid", unionedGrid);
 
@@ -303,35 +309,35 @@ export class InnerDesignText extends FastAbstractInnerDesign {
         value: 0.1,
         name: "letterSpacing",
       }),
-      // new OnOffMetaParameter({
-      //   title: "useBackgroundGrid",
-      //   value: false,
-      //   name: "useBackgroundGrid",
-      // }),
-      // new RangeMetaParameter({
-      //   title: "backgroundGridSize",
-      //   min: 0.001,
-      //   max: 100,
-      //   step: 0.01,
-      //   value: 0.1,
-      //   name: "backgroundGridSize",
-      // }),
-      // new RangeMetaParameter({
-      //   title: "backgroundGridBorderWidth",
-      //   min: 0.01,
-      //   max: 100,
-      //   step: 0.01,
-      //   value: 0.05,
-      //   name: "backgroundGridBorderWidth",
-      // }),
-      // new RangeMetaParameter({
-      //   title: "backgroundGridOmitChance",
-      //   min: 0.01,
-      //   max: 1,
-      //   step: 0.01,
-      //   value: 0.05,
-      //   name: "backgroundGridOmitChance",
-      // }),
+      new OnOffMetaParameter({
+        title: "useBackgroundGrid",
+        value: false,
+        name: "useBackgroundGrid",
+      }),
+      new RangeMetaParameter({
+        title: "backgroundGridSize",
+        min: 0.001,
+        max: 100,
+        step: 0.01,
+        value: 0.1,
+        name: "backgroundGridSize",
+      }),
+      new RangeMetaParameter({
+        title: "backgroundGridBorderWidth",
+        min: 0.01,
+        max: 100,
+        step: 0.01,
+        value: 0.05,
+        name: "backgroundGridBorderWidth",
+      }),
+      new RangeMetaParameter({
+        title: "backgroundGridOmitChance",
+        min: 0.01,
+        max: 1,
+        step: 0.01,
+        value: 0.05,
+        name: "backgroundGridOmitChance",
+      }),
     ];
   }
 }
