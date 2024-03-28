@@ -63,6 +63,8 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       new paper.Size(colOffset, rowOffset)
     );
 
+    console.log(boundaryModel.bounds.topLeft);
+
     addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
 
@@ -102,66 +104,9 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     const seedPoints: Array<[number, number]> = [];
 
-    const addSeedPoint = (
-      testPointLike: paper.PointLike,
-      layerName: string
-    ) => {
-      let startR = 0;
-      let endR = rows;
-      let startC = 0;
-      let endC = cols;
-
-      if (overlapInterferencePercentage > 0) {
-        const overlap = 1 - overlapInterferencePercentage / 100;
-        startR -= overlap;
-        endR += overlap;
-
-        startC -= overlap;
-        endC += overlap;
-      }
-
-      console.log({ overlapInterferencePercentage });
-      const testPoint = new paper.Point(testPointLike);
-
-      for (
-        let r = startR;
-        r < endR;
-        r += 1 - overlapInterferencePercentage / 100
-      ) {
-        for (
-          let c = startC;
-          c < endC;
-          c += 1 - overlapInterferencePercentage / 100
-        ) {
-          let x: number = testPoint.x + colOffset * c;
-          let y: number = testPoint.y + rowOffset * r;
-
-          console.log(
-            `x=${x}, in col ${c}, r=${r}. colOffset is ${colOffset}, our line boundary is ${colOffset * c}`
-          );
-
-          // This is just entirely wrong now
-          if (mirrorX && c % 2 == 1) {
-            x = colOffset * (c + 1) - testPoint.x;
-
-            console.log(
-              `mirroring, so update x=${x}, in col ${c}, r=${r}. colOffset is ${colOffset}, our line boundary is ${colOffset * (c + 1)}`
-            );
-
-            //   x =
-            //     colOffset * c + boundaryModel.bounds.topLeft.x - relativePoint.x;
-          }
-
-          if (mirrorY && r % 2 == 1) {
-            y = rowOffset * (r + 1) - testPoint.y;
-            //   y =
-            //     rowOffset * r + boundaryModel.bounds.topLeft.y - relativePoint.y;
-          }
-
-          addToDebugLayer(paper, layerName, new paper.Point(x, y));
-          seedPoints.push([x, y]);
-        }
-      }
+    const addSeedPoint = (testPoint: paper.Point, layerName: string) => {
+      seedPoints.push([testPoint.x, testPoint.y]);
+      addToDebugLayer(paper, layerName, testPoint);
     };
 
     const generatePoints = (): paper.PointLike[] => {
@@ -206,7 +151,52 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       ).forEach((p) => addSeedPoint(p, "borderPoints"));
     }
 
-    return seedPoints;
+    // Reprocess the seedPoints
+    const seedPoints2: Array<[number, number]> = [];
+    let startR = 0;
+    let endR = rows;
+    let startC = 0;
+    let endC = cols;
+
+    if (overlapInterferencePercentage > 0) {
+      const overlap = 1 - overlapInterferencePercentage / 100;
+      startR -= overlap;
+      endR += overlap;
+
+      startC -= overlap;
+      endC += overlap;
+    }
+
+    const pointGroup = new paper.Path(seedPoints);
+
+    for (
+      let r = startR;
+      r < endR;
+      r += 1 - overlapInterferencePercentage / 100
+    ) {
+      for (
+        let c = startC;
+        c < endC;
+        c += 1 - overlapInterferencePercentage / 100
+      ) {
+        const newPoints = pointGroup.clone();
+        newPoints.translate(new paper.Point(colOffset * c, rowOffset * r));
+
+        if (mirrorX && c % 2 == 1) {
+          newPoints.scale(-1, 1);
+        }
+
+        if (mirrorY && r % 2 == 1) {
+          newPoints.scale(1, -1);
+        }
+
+        newPoints.segments.forEach((s) => {
+          seedPoints2.push([s.point.x, s.point.y]);
+        });
+      }
+    }
+
+    return seedPoints2;
   }
 
   makeDesign(paper: paper.PaperScope, params: any) {
