@@ -16,6 +16,7 @@ import {
   clampPathsToBoundary,
   isInside,
   makeSymmetric,
+  pathItemArea,
 } from "../../utils/paperjs-utils";
 import { roundCorners } from "../../utils/round-corners";
 import {
@@ -213,6 +214,26 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
           group: "Break the plane!!!!",
         })
       );
+      metaParams.push(
+        new OnOffMetaParameter({
+          title: "Ellipse Exapnd",
+          value: true,
+          name: "ellipseExpand",
+          group: "Break the plane!!!!",
+        })
+      );
+      metaParams.push(
+        new RangeMetaParameter({
+          title: "Percentage Outline Overlap Required",
+          min: 0.0,
+          max: 100,
+          value: 50,
+          step: 0.5,
+          name: "percentageOutlineOverlapRequired",
+          group: "Break the plane!!!!",
+          // parentParam: breakThePlane,
+        })
+      );
 
       // metaParams.push(
       //   new OnOffMetaParameter({
@@ -365,11 +386,46 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         //   containsOrIntersects({ needle: p, haystack: params.outerModel })
         // );
 
-        paths = paths.filter(
-          (p) =>
-            p.intersects(originalBoundaryModel) ||
-            isInside(p, originalBoundaryModel)
+        paths.forEach((p) => addToDebugLayer(paper, "allPathsPreFilter", p));
+        addToDebugLayer(
+          paper,
+          "originalBoundaryModel-inFilter",
+          params.boundaryModel.clone()
         );
+
+        function shouldUsePath(p: paper.PathItem) {
+          const containmentBoundaryModel = params.boundaryModel;
+          if (isInside(p, containmentBoundaryModel)) {
+            return true;
+          }
+
+          if (params.percentageOutlineOverlapRequired === 0) {
+            return false;
+          }
+
+          if (!p.intersects(containmentBoundaryModel)) {
+            console.log("p does not intersect");
+            return false;
+          }
+
+          console.log("p does intersect");
+
+          const intersection = p.intersect(containmentBoundaryModel);
+
+          const intersectionPercentage =
+            pathItemArea(intersection) / pathItemArea(p);
+
+          console.log({ intersection, intersectionPercentage });
+
+          return (
+            intersectionPercentage >
+            params.percentageOutlineOverlapRequired / 100
+          );
+        }
+
+        paths = paths.filter((p) => shouldUsePath(p));
+
+        paths.forEach((p) => addToDebugLayer(paper, "allPathsPostFilter", p));
 
         if (params.shrinkToFit) {
           // TOOD: wrong shrink
@@ -401,6 +457,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       breakThePlane: boolean;
       extendOutward: number;
       safeBorderWidth: number;
+      ellipseExpand: boolean;
     } & KaleidoscopeMakerParams
   ): Promise<InnerCompletedModel> => {
     // NOTE: we are copying this so we don't modify the global object
@@ -421,6 +478,13 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         params.extendOutward,
         params.outerModel
       );
+
+      if (params.ellipseExpand) {
+        params.boundaryModel = new paper.Path.Ellipse(
+          params.boundaryModel.bounds
+        );
+      }
+
       params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
         insert: false,
       });

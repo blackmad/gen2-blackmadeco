@@ -708,3 +708,16 @@ export function isInside(needle: paper.PathItem, haystack: paper.PathItem) {
     p.segments.every((s) => outerPaths.some((o) => o.contains(s.point)))
   );
 }
+
+export function pathItemArea(pathItem: paper.Item): number {
+  if (pathItem instanceof paper.Path) {
+    return pathItem.area;
+  } else {
+    return _.sum(
+      pathItem.children.map((p) => {
+        return pathItemArea(p);
+      })
+    );
+  }
+  return 0;
+}
