@@ -1,26 +1,11 @@
 // TODO: add incisions
-import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
-import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
 
-export class WomensThongBack extends GenericCurvedOuterModelMaker {
-  get outerMetaParameters(): MetaParameter<any>[] {
-    return [
-      new RangeMetaParameter({
-        title: "Body Circumference Around the Navel (inches)",
-        min: 0.1,
-        max: 20,
-        value: 3,
-        step: 0.01,
-        name: "bodyCircumferenceAroundTheNavel",
-      }),
-    ];
-  }
+import { AbstractNavelCircumferenceScaledOuter } from "./navel-circumference-scaled-outer";
 
+export class WomensThongBack extends AbstractNavelCircumferenceScaledOuter {
   public controlInfo = "It's a box";
 
-  public async makePath(paper: paper.PaperScope, params: any) {
-    const { bodyCircumferenceAroundTheNavel } = params;
-
+  public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {
     const outerModel: paper.Path = new paper.Path();
     outerModel.add(new paper.Point(0, 0));
     // initial rise
@@ -47,13 +32,6 @@ export class WomensThongBack extends GenericCurvedOuterModelMaker {
       [-0.2, 8], // through
       [-5.2, 14.8] // to
     );
-    outerModel.closePath();
-
-    // flip it upside down
-    outerModel.scale(1, -1);
-
-    // and scale it such that the width is the circumference
-    outerModel.scale(outerModel.bounds.width / bodyCircumferenceAroundTheNavel);
 
     return outerModel;
   }
