@@ -3,6 +3,7 @@ import "./styles.css";
 // import "bootstrap/dist/css/bootstrap.css";
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
+import { ModalProvider } from "react-modal-hook";
 
 import App from "./components/App/App";
 import SelectInnerDesignPage from "./components/SelectInnerDesignPage";
@@ -65,6 +66,8 @@ function HardcodedRouter() {
 
 root.render(
   <React.StrictMode>
-    <HardcodedRouter />
+    <ModalProvider>
+      <HardcodedRouter />
+    </ModalProvider>
   </React.StrictMode>
 );

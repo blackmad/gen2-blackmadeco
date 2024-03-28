@@ -35,7 +35,7 @@ export class InnerDesignImageTrace extends FastAbstractInnerDesign {
 
     const boundaryModel: paper.Path = params.boundaryModel;
 
-    let { paths, item } = await downloadAndTraceImage(paper, {
+    const { paths, item } = await downloadAndTraceImage(paper, {
       bounds: boundaryModel.bounds,
       threshold,
       turnPolicy,

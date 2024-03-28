@@ -1,5 +1,5 @@
 diff --git a/node_modules/paper/dist/paper.d.ts b/node_modules/paper/dist/paper.d.ts
-index 39c66d8..75b9cc8 100644
+index 39c66d8..fb79b60 100644
 --- a/node_modules/paper/dist/paper.d.ts
 +++ b/node_modules/paper/dist/paper.d.ts
 @@ -1324,7 +1324,7 @@ declare namespace paper {
@@ -56,6 +56,15 @@ index 39c66d8..75b9cc8 100644
  
          /** 
           * Item level handler function to be called on each frame of an animation.
+@@ -4975,7 +4975,7 @@ declare namespace paper {
+          * The currently active path style. All selected items and newly
+          * created items will be styled with this style.
+          */
+-        currentStyle: Style
++        currentStyle: Partial<Style>
+ 
+         /** 
+          * The index of the project in the {@link PaperScope#projects} list.
 @@ -6435,7 +6435,7 @@ declare namespace paper {
          /** 
           * The color of the stroke.

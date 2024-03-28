@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 import * as paper from "paper";
 import { useCallback, useEffect, useState } from "react";
+import { useModal } from "react-modal-hook";
 
 import { AllInnerDesigns } from "../../bracelet-maker/designs/inner/all";
 import { AllOuterDesigns } from "../../bracelet-maker/designs/outer/all";
@@ -10,14 +11,10 @@ import {
   OuterPaperModelMaker,
 } from "../../bracelet-maker/model-maker";
 import { getDebugLayers } from "../../bracelet-maker/utils/debug-layers";
-import {
-  makeSVGData,
-  svgStringHydrator,
-} from "../../bracelet-maker/utils/svg-utils";
 import { MetaParameterChange } from "../../meta-parameter-builder";
 import DebugLayers from "./DebugLayers";
-import DownloadButtons from "./DownloadButtons";
 import { MetaParamsContainer } from "./MetaParamsContainer";
+import { SVGRenderer } from "./SVGRenderer";
 
 const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   // const previewDiv = document.getElementById("previewArea");
@@ -109,7 +106,43 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     window.location.pathname = "/";
   }, []);
 
+  const [error, setError] = useState("");
+  const [showModal, hideModal] = useModal(
+    () => (
+      <div
+        className="alert alert-danger"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: "50%",
+          transform: "translate(-50%, 0)",
+          margin: "auto",
+        }}
+      >
+        <div className="toast-header">
+          <strong className="mr-auto">Rendering Error</strong>
+          <small>11 mins ago</small>
+          <button
+            type="button"
+            className="ml-2 mb-1 close"
+            data-dismiss="toast"
+            aria-label="Close"
+            onClick={hideModal}
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div className="toast-body">{error}</div>
+      </div>
+    ),
+    [error]
+  );
+
   const rerender = useCallback(() => {
+    hideModal();
     if (paper != null && paper.project != null) {
       paper.project.activeLayer.removeChildren();
       _.forEach(getDebugLayers(), (v: paper.Group, _k) => {
@@ -124,8 +157,15 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     // history.replaceState(undefined, "", "#" + path + "?" + hashParams);
     window.location.hash = path + "?" + hashParams;
 
-    modelMaker.make(paper, modelParams).then(setCurrentModel);
-  }, [modelMaker, modelParams]);
+    modelMaker
+      .make(paper, modelParams)
+      .then(setCurrentModel)
+      .catch((e) => {
+        console.log("setting error", e.message);
+        setError(e.message.toString());
+        showModal();
+      });
+  }, [modelMaker, modelParams, showModal]);
 
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {
@@ -142,65 +182,18 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     rerender();
   }, [modelMaker, modelParams, rerender]);
 
-  if (!currentModel) {
+  if (!currentModel && !error) {
     return <div>Loading...</div>;
   }
 
-  const outerStyle: paper.Style = {
-    strokeColor: "red",
-    strokeWidth: 0.005,
-    fillColor: "lightslategrey",
-    fillRule: "evenodd",
-  };
-
-  const compoundPath =
-    currentModel.outer instanceof paper.CompoundPath
-      ? currentModel.outer
-      : new paper.CompoundPath({
-          children: [currentModel.outer],
-        });
-
-  compoundPath.style = outerStyle;
-  paper.project.activeLayer.addChild(compoundPath);
-
-  [...currentModel.holes, ...currentModel.design].forEach((hole) => {
-    hole.strokeColor = "red";
-    hole.strokeWidth = 0.005;
-    hole.fillColor = "white";
-    paper.project.activeLayer.addChild(hole);
-  });
-
-  _.forEach(getDebugLayers(), (v: paper.Group, _k: string) => {
-    if (v.visible) {
-      paper.project.activeLayer.addChild(v);
-    }
-  });
-
-  const svgData = makeSVGData({
-    paper,
-    toExport: paper.project,
-    shouldClean: false,
-    elHydrator: svgStringHydrator,
-    modelParams,
-  });
-
   return (
     <>
-      <div id="previewArea">
-        <div
-          id="svgArea"
-          style={{
-            justifyContent: "center",
-            display: "flex",
-          }}
-          dangerouslySetInnerHTML={{ __html: svgData }}
-        />
-        <DownloadButtons
-          modelMaker={modelMaker}
-          params={modelParams}
-          paper={paper}
-        />
-      </div>
+      <SVGRenderer
+        currentModel={currentModel}
+        paper={paper}
+        modelParams={modelParams}
+        modelMaker={modelMaker}
+      />
       <div className="container px-xs-3 px-sm-3 px-md-4 px-lg-5">
         <div className="previewAreaPadding"></div>
         <DebugLayers onChange={rerender} />
