@@ -17,7 +17,7 @@ export class InnerDesignSunflower extends FastAbstractInnerDesign {
 
     const points = phyllotaxisPoints({
       paper,
-      boundaryModel,
+      bounds: boundaryModel.bounds,
       numDots,
       angle,
       scalingParam,

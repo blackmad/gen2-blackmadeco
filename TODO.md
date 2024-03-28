@@ -1,3 +1,7 @@
+voronoi
+- add perlin?
+- rewrite all the addPoint logic it makes no sense
+
 - engrave mode
 - revisit map layers / drawing
 

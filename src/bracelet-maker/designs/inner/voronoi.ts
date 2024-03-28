@@ -50,19 +50,20 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     pointStrategy,
     sunflowerAngle,
     sunflowerScalingParam,
+    overlapInterferencePercentage,
   }) {
     const numPoints = numTotalPoints; // (rows * cols);
 
     const colOffset = boundaryModel.bounds.width / cols;
-    const rowOffset = boundaryModel.bounds.height + 1 / rows;
+    const rowOffset = boundaryModel.bounds.height / rows;
 
-    addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
-    addToDebugLayer(paper, "boundaryModel", boundaryModel);
-
-    const partialRect = new paper.Rectangle(
+    const partialRect: paper.Rectangle = new paper.Rectangle(
       boundaryModel.bounds.topLeft,
       new paper.Size(colOffset, rowOffset)
     );
+
+    addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
+    addToDebugLayer(paper, "boundaryModel", boundaryModel);
 
     addToDebugLayer(
       paper,
@@ -98,29 +99,30 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       }
     }
 
-    const seedPoints = [];
+    const seedPoints: paper.Point[] = [];
 
-    const addSeedPoint = (testPoint: paper.Point, layerName: string) => {
-      // I've gone back and forth on if these should be 0->rows, or -1 -> rows +1 (or +2??)
-      // increasingly the bounds obvioiusly helps a bit with periodicity of the pattern, making
-      // sure it still looks like it's repeating at the edges. I don't know why I undid it at one point
-      const startR = -1;
-      const endR = rows + 1;
-      const startC = -1;
-      const endC = cols + 1;
+    const addSeedPoint = (
+      testPointLike: paper.PointLike,
+      layerName: string
+    ) => {
+      const startR = 0 - (1 - overlapInterferencePercentage / 100);
+      const endR = rows + (1 - overlapInterferencePercentage / 100);
+      const startC = 0 - (1 - overlapInterferencePercentage / 100);
+      const endC = cols + (1 - overlapInterferencePercentage / 100);
 
-      // if (rows > 1) {
-      //   startR = -2;
-      //   endR = rows + 2;
-      // }
+      console.log({ overlapInterferencePercentage });
+      const testPoint = new paper.Point(testPointLike);
 
-      // if (cols > 1) {
-      //   startC = -2;
-      //   endC = cols + 2;
-      // }
-
-      for (let r = startR; r < endR; r++) {
-        for (let c = startC; c < endC; c++) {
+      for (
+        let r = startR;
+        r < endR;
+        r += 1 - overlapInterferencePercentage / 100
+      ) {
+        for (
+          let c = startC;
+          c < endC;
+          c += 1 - overlapInterferencePercentage / 100
+        ) {
           const relativePoint = testPoint.subtract(
             boundaryModel.bounds.topLeft
           );
@@ -130,16 +132,12 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
           if (mirror && c % 2 == 1) {
             x =
-              colOffset * (c + 1) +
-              boundaryModel.bounds.topLeft.x -
-              relativePoint.x;
+              colOffset * c + boundaryModel.bounds.topLeft.x - relativePoint.x;
           }
 
           if (mirror && r % 2 == 1) {
             y =
-              rowOffset * (r + 1) +
-              boundaryModel.bounds.topLeft.y -
-              relativePoint.y;
+              rowOffset * r + boundaryModel.bounds.topLeft.y - relativePoint.y;
           }
 
           addToDebugLayer(paper, layerName, new paper.Point(x, y));
@@ -154,7 +152,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       } else if (pointStrategy === "sunflower") {
         return phyllotaxisPoints({
           paper,
-          boundaryModel,
+          bounds: partialRect,
           numDots: numPoints,
           angle: sunflowerAngle,
           scalingParam: sunflowerScalingParam,
@@ -205,6 +203,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       pointStrategy = "random",
       sunflowerAngle,
       sunflowerScalingParam,
+      overlapInterferencePercentage,
     } = params;
 
     const boundaryModel: paper.PathItem = params.boundaryModel;
@@ -223,6 +222,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       pointStrategy,
       sunflowerAngle,
       sunflowerScalingParam,
+      overlapInterferencePercentage,
     });
 
     // console.log(seedPoints.length);
@@ -354,6 +354,16 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
         title: "Remove Edge Polygons",
         value: false,
         name: "removeEdgePolygons",
+      }),
+
+      new RangeMetaParameter({
+        title: "Overlap interference percentage",
+        min: 0,
+        max: 100,
+        step: 0.5,
+        value: 0,
+        name: "overlapInterferencePercentage",
+        // shouldDisplay: (params: any) => params.rows > 1 || params.height > 1
       }),
 
       // sunflower params
