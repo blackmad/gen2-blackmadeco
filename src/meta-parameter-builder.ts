@@ -505,7 +505,7 @@ export class MetaParameterBuilder {
         // );
         const renderedMetaParameter = this.buildMetaParameterWidget(
           metaParam,
-          this.initialParams[modelMaker.constructor.name][metaParameter.name]
+          this.initialParams[modelMaker.constructor.name]?.[metaParameter.name]
         );
         this.renderedMetaParameters.push(renderedMetaParameter);
         divToAppendTo.append(renderedMetaParameter.el());

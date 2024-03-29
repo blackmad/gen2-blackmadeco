@@ -1,5 +1,7 @@
 import { BoxOuter } from "./box";
 import { EllipseOuter } from "./ellipse";
+import { FemaleThongBack } from "./female-thong-back";
+import { FemaleThongFront } from "./female-thong-front";
 import { MaleThongBack } from "./male-thong-back";
 import { MaleThongFront } from "./male-thong-front";
 import { NecklaceOuter } from "./necklace";
@@ -8,8 +10,6 @@ import { RegularPolygonOuter } from "./regular-polygon";
 import { StraightCollarOuter } from "./straight-collar";
 import { StraightCuffOuter } from "./straight-cuff";
 import { TraceOuter } from "./trace";
-import { FemaleThongBack } from "./womens-thong-back";
-import { FemaleThongFront } from "./womens-thong-front";
 
 export const AllOuterDesigns = [
   StraightCollarOuter,

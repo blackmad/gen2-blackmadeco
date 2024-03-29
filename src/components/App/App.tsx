@@ -174,7 +174,9 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   const changeCallback = useCallback(
     (change: MetaParameterChange) => {
       const parts = change.metaParameter.name.split(".");
-      modelParams[parts[0]][parts[1]] = change.value;
+      if (modelParams[parts[0]]) {
+        modelParams[parts[0]][parts[1]] = change.value;
+      }
     },
     [modelParams]
   );
