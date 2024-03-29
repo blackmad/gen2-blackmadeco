@@ -1,4 +1,4 @@
-import { MetaParameter } from "../../meta-parameter";
+import { MetaParameter, SelectMetaParameter } from "../../meta-parameter";
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { pathItemArea } from "../../utils/paperjs-utils";
 import {
@@ -11,7 +11,15 @@ export class InternalSvgOuter extends AbstractPathOuter {
   public get outerMetaParameters(): MetaParameter<any>[] {
     return [
       ...super.abstractPathOuterMetaParameters({}),
-      ...makeImageTraceMetaParameters("/internal-images/Page 9.png"),
+      ...makeImageTraceMetaParameters("/internal-images/Page 9.png").filter(
+        (n) => n.name !== "url"
+      ),
+      new SelectMetaParameter({
+        title: "Image",
+        options: ["38brastrap.png", "a cup left.png", "a cup right.png"],
+        value: "Page 9.png",
+        name: "url",
+      }),
     ];
   }
 
@@ -26,10 +34,7 @@ export class InternalSvgOuter extends AbstractPathOuter {
           Math.abs(pathItemArea(paths[i]) - pathItemArea(paths[j])) /
           pathItemArea(paths[i]);
 
-        if (
-          centerDistance < 0.1 * paths[i].bounds.width &&
-          areaPercentageDifference < 0.1
-        ) {
+        if (centerDistance < 0.1 && areaPercentageDifference < 0.1) {
           isUnique = false;
           break;
         }
@@ -52,9 +57,11 @@ export class InternalSvgOuter extends AbstractPathOuter {
       {
         bounds: new paper.Rectangle(0, 0, height, width),
         ...params,
+        url: `/internal-images/${params.url}`,
       }
     );
 
+    // const paths = nondedupedPaths;
     const paths = this.removeDuplicateOverlappingPaths(nondedupedPaths);
 
     if (paths.length === 0 || !item) {
