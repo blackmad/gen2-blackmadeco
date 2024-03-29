@@ -1,8 +1,26 @@
 import { PaperOffset } from "paperjs-offset";
 
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
 import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
+
+export async function basicPercentageMakeSafeCone(
+  paper: paper.PaperScope,
+  params: any,
+  outerModel: paper.Path,
+  percentage: number
+): Promise<paper.Path> {
+  const bounds = outerModel.bounds;
+  const newBounds = new paper.Rectangle(bounds.topLeft, [
+    bounds.width,
+    bounds.height * percentage,
+  ]);
+  addToDebugLayer(paper, "safeConeBounds", new paper.Path.Rectangle(newBounds));
+  const safeCone = outerModel.intersect(new paper.Path.Rectangle(newBounds));
+  addToDebugLayer(paper, "safeCone1", safeCone);
+  return flattenArrayOfPathItems(paper, safeCone)[0];
+}
 
 export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurvedOuterModelMaker {
   abstract unitsPerA: number;
@@ -14,7 +32,7 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
         title: "Body Circumference Around the Navel (inches)",
         min: 0.1,
         max: 20,
-        value: 30,
+        value: 38,
         step: 0.01,
         name: "bodyCircumferenceAroundTheNavel",
       }),
@@ -33,7 +51,22 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
     params: any
   ): Promise<paper.Path>;
 
-  public async makePath(paper: paper.PaperScope, params: any) {
+  public async makeSafeCone(
+    paper: paper.PaperScope,
+    params: any,
+    outerModel: paper.Path
+  ): Promise<paper.Path> {
+    console.log("existing makeSafeCone impl");
+    return outerModel;
+  }
+
+  public async makePath(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<{
+    outerModel: paper.Path;
+    safeCone?: paper.Path;
+  }> {
     const { bodyCircumferenceAroundTheNavel, seamAllowance } = params;
 
     const outerModel = await this.makeUpsideDownUnscaledOuter(paper, params);
@@ -56,6 +89,15 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
       PaperOffset.offset(outerModel, seamAllowance - 3 / 8)
     )[0];
 
-    return outerModelAdjustedForSeamAllowance;
+    const firstSafeCone = await this.makeSafeCone(
+      paper,
+      params,
+      outerModelAdjustedForSeamAllowance
+    );
+
+    return {
+      outerModel: outerModelAdjustedForSeamAllowance,
+      safeCone: firstSafeCone,
+    };
   }
 }

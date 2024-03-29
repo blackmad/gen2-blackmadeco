@@ -1,7 +1,7 @@
 // TODO: add incisions
 import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
-export class WomensThongFront extends AbstractNavelCircumferenceScaledOuter {
+export class FemaleThongFront extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;
   navelCircumferenceToAMultiplier = 0.4;
 

@@ -91,6 +91,9 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
         .forEach((param) => {
           const [key, value] = param.split("=");
           const [model, name] = decodeURIComponent(key).split(".");
+          if (!params[model]) {
+            return;
+          }
           params[model][name] = getParsedValue(
             model,
             name,
@@ -154,8 +157,8 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
     const path = window.location.hash.split("?")[0];
     const hashParams = makeUriQueryString(modelParams);
 
-    // history.replaceState(undefined, "", "#" + path + "?" + hashParams);
-    // window.location.hash = path + "?" + hashParams;
+    // history.pushState(undefined, "", "#" + path + "?" + hashParams);
+    window.location.hash = path + "?" + hashParams;
 
     modelMaker
       .make(paper, modelParams)

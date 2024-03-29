@@ -2,7 +2,7 @@
 
 import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
-export class WomensThongBack extends AbstractNavelCircumferenceScaledOuter {
+export class FemaleThongBack extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;
   navelCircumferenceToAMultiplier = 0.4;
 

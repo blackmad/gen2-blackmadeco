@@ -6,19 +6,25 @@ export abstract class GenericCurvedOuterModelMaker extends OuterPaperModelMaker 
     super();
   }
 
-  abstract makePath(paper: paper.PaperScope, params: any): Promise<paper.Path>;
+  abstract makePath(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<{
+    outerModel: paper.Path;
+    safeCone?: paper.Path;
+  }>;
 
   public async make(
     paper: paper.PaperScope,
     options: any
   ): Promise<CompletedModel> {
-    const outerModel = await this.makePath(
+    const { outerModel, safeCone } = await this.makePath(
       paper,
       options[this.constructor.name]
     );
 
     const innerOptions = options[this.subModel.constructor.name] || {};
-    innerOptions.safeCone = outerModel.clone().scale(5, 5);
+    innerOptions.safeCone = safeCone ?? outerModel.clone().scale(5, 5);
     innerOptions.outerModel = outerModel;
 
     // TODO awful awful awful fix

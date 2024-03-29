@@ -8,8 +8,8 @@ import { RegularPolygonOuter } from "./regular-polygon";
 import { StraightCollarOuter } from "./straight-collar";
 import { StraightCuffOuter } from "./straight-cuff";
 import { TraceOuter } from "./trace";
-import { WomensThongBack } from "./womens-thong-back";
-import { WomensThongFront } from "./womens-thong-front";
+import { FemaleThongBack } from "./womens-thong-back";
+import { FemaleThongFront } from "./womens-thong-front";
 
 export const AllOuterDesigns = [
   StraightCollarOuter,
@@ -21,8 +21,8 @@ export const AllOuterDesigns = [
   NecklaceOuter,
   RegularPolygonOuter,
   TraceOuter,
-  WomensThongFront,
-  WomensThongBack,
+  FemaleThongFront,
+  FemaleThongBack,
   MaleThongFront,
   MaleThongBack,
 ];

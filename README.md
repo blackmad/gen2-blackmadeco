@@ -15,10 +15,10 @@
 ![public/demo-output/RegularPolygonOuter.png](public/demo-output/RegularPolygonOuter.png)
 ## TraceOuter
 ![public/demo-output/TraceOuter.png](public/demo-output/TraceOuter.png)
-## WomensThongFront
-![public/demo-output/WomensThongFront.png](public/demo-output/WomensThongFront.png)
-## WomensThongBack
-![public/demo-output/WomensThongBack.png](public/demo-output/WomensThongBack.png)
+## FemaleThongFront
+![public/demo-output/FemaleThongFront.png](public/demo-output/FemaleThongFront.png)
+## FemaleThongBack
+![public/demo-output/FemaleThongBack.png](public/demo-output/FemaleThongBack.png)
 ## MaleThongFront
 ![public/demo-output/MaleThongFront.png](public/demo-output/MaleThongFront.png)
 ## MaleThongBack
