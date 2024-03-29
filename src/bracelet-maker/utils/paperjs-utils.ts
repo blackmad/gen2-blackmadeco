@@ -465,12 +465,13 @@ export function clampPathsToBoundary(
   paths: paper.PathItem[],
   boundary: paper.PathItem,
   debugLayerName: string = "clampedPaths"
-) {
-  return paths.map((m) => {
-    const newP = m.intersect(boundary, { insert: false });
-    addToDebugLayer(paper, debugLayerName, newP.clone());
-    return newP;
-  });
+): paper.PathItem[] {
+  const allPaths = new paper.CompoundPath([paths]);
+  addToDebugLayer(paper, debugLayerName, allPaths.clone());
+  return flattenArrayOfPathItems(
+    paper,
+    boundary.intersect(allPaths, { insert: false })
+  );
 }
 
 export function hasHoles(path: paper.CompoundPath) {
