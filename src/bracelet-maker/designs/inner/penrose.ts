@@ -1,4 +1,5 @@
 import { RangeMetaParameter } from "../../meta-parameter";
+import { penroseTilingRhombus } from "../../utils/lsystem-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 
 export class InnerDesignPenrose extends FastAbstractInnerDesign {
@@ -10,7 +11,7 @@ export class InnerDesignPenrose extends FastAbstractInnerDesign {
   makeDesign(paper: paper.PaperScope, params: any) {
     const { boundaryModel, numRows, stretchWidth } = params;
 
-    penroseTilingRhombus({
+    const tiling = penroseTilingRhombus({
       paper,
       bounds: boundaryModel.bounds,
       numDots: 100,

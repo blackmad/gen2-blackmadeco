@@ -111,7 +111,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
 
     return new CompletedModel({
       outer: finalOuterModel,
-      holes: [],
+      holes,
       design: innerDesign.paths,
     });
   }

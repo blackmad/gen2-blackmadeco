@@ -7,7 +7,9 @@ export class ImageDownloaderImpl {
       return this.lastBuffer;
     }
 
-    const corsUrl = "https://corsproxy.io/?" + encodeURIComponent(url);
+    const corsUrl = url.includes("http")
+      ? "https://corsproxy.io/?" + encodeURIComponent(url)
+      : url;
     const response = await fetch(corsUrl);
     this.lastBuffer = Buffer.from(await response.arrayBuffer());
     return this.lastBuffer;

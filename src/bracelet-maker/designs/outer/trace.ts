@@ -19,7 +19,7 @@ export class TraceOuter extends AbstractPathOuter {
   async makeOuterModel(
     paper: paper.PaperScope,
     params: any
-  ): Promise<paper.PathItem> {
+  ): Promise<{ path: paper.PathItem; holes: paper.PathItem[] }> {
     const { height, width } = params;
 
     const { paths, item } = await downloadAndTraceImage(paper, {
@@ -28,7 +28,7 @@ export class TraceOuter extends AbstractPathOuter {
     });
 
     if (paths.length === 0 || !item) {
-      return new paper.Path();
+      return { path: new paper.Path(), holes: [] };
     }
 
     const biggestPath = paths.reduce((acc, path) => {
@@ -36,6 +36,6 @@ export class TraceOuter extends AbstractPathOuter {
     });
     addToDebugLayer(paper, "biggestPath", biggestPath);
 
-    return biggestPath;
+    return { path: biggestPath, holes: [] };
   }
 }

@@ -259,7 +259,7 @@ export function makeImageTraceMetaParameters(defaultUrl?: string) {
       title: "Simplification Tolerance",
       min: 0,
       max: 1000,
-      value: 10,
+      value: 1,
       step: 1,
       name: "simplificationTolerance",
     }),

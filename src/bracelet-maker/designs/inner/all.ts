@@ -1,5 +1,6 @@
 import { InnerDesignCirclePacking } from "./circle-packing";
 import { InnerDesignCurves } from "./curves";
+import { InnerDesignEmpty } from "./empty";
 import { InnerDesignHashmarks } from "./hashmarks";
 import { InnerDesignHexes } from "./hexes";
 import { InnerDesignImageTrace } from "./image-trace";
@@ -37,7 +38,7 @@ export const AllInnerDesigns = [
   // InnerDesignPerlinDots,
   // InnerDesignTactile, - UNFINISHED
   // InnerDesignExplode, - BROKEN
-  // InnerDesignEmpty,
+  InnerDesignEmpty,
 ];
 
 export const InnerDesignsToAnimate = [
