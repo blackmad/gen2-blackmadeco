@@ -30,6 +30,12 @@ export class InnerDesignTessagon extends FastAbstractInnerDesign {
       x_cyclic,
       y_cyclic,
       rot_factor,
+      xScale,
+      yScale,
+      xSkew,
+      ySkew,
+      xShear,
+      yShear,
     } = params;
 
     // u_range: a list with two items indicating the minimum and maximum values for u (the first argument to the function passed);
@@ -76,9 +82,15 @@ export class InnerDesignTessagon extends FastAbstractInnerDesign {
         return new paper.Point(vertices[vertIndex][0], vertices[vertIndex][1]);
       });
       const bufferedShape = bufferPointstoPathItem(paper, -borderSize, points);
+
       return bufferedShape;
       // return new paper.Path(points);
     });
+
+    const group = new paper.Group(paths);
+    group.scale(xScale, yScale);
+    group.skew(xSkew, ySkew);
+    group.shear(xShear, yShear);
 
     return Promise.resolve({
       paths,
@@ -147,6 +159,54 @@ export class InnerDesignTessagon extends FastAbstractInnerDesign {
         value: 0.04,
         step: 0.01,
         name: "borderSize",
+      }),
+      new RangeMetaParameter({
+        title: "xScale",
+        min: 0.1,
+        max: 100,
+        value: 1,
+        step: 0.01,
+        name: "xScale",
+      }),
+      new RangeMetaParameter({
+        title: "yScale",
+        min: 0.1,
+        max: 100,
+        value: 1,
+        step: 0.01,
+        name: "yScale",
+      }),
+      new RangeMetaParameter({
+        title: "xSkew",
+        min: 0.1,
+        max: 180,
+        value: 0,
+        step: 0.01,
+        name: "xSkew",
+      }),
+      new RangeMetaParameter({
+        title: "ySkew",
+        min: 0.1,
+        max: 180,
+        value: 0,
+        step: 0.01,
+        name: "ySkew",
+      }),
+      new RangeMetaParameter({
+        title: "xShear",
+        min: 0.1,
+        max: 1,
+        value: 0,
+        step: 0.01,
+        name: "xShear",
+      }),
+      new RangeMetaParameter({
+        title: "yShear",
+        min: 0.1,
+        max: 1,
+        value: 0,
+        step: 0.01,
+        name: "yShear",
       }),
     ];
   }

@@ -135,12 +135,20 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         name: "smoothCorners",
       }),
       new RangeMetaParameter({
-        title: "bottomRingLength",
+        title: "Bottom Ring Attachment Length (zero for none)",
         min: 0,
         max: 10,
         value: 0,
         step: 0.1,
         name: "bottomRingLength",
+      }),
+      new RangeMetaParameter({
+        title: "Middle Reserved Space (inches, zero for none)",
+        min: 0,
+        max: 10,
+        value: 0,
+        step: 0.1,
+        name: "middleSeparation",
       }),
     ];
   }
@@ -158,6 +166,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     mainCollarCurve,
     numBuckles,
     numHoles,
+    bottomRingLength,
   }: {
     paper: paper.PaperScope;
     numHoles: number;
@@ -167,6 +176,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     mainCollarCurve: paper.Path;
   }) {
     let modelInProgress: paper.PathItem = mainCollarCurve;
+
     let allHoles: paper.Path[] = [];
 
     console.log(`
@@ -226,6 +236,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
       numBuckles,
       smoothCorners,
       numHoles,
+      bottomRingLength,
     } = params;
 
     if (buckleHeight * numBuckles > minHeight) {
@@ -294,13 +305,27 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
     addToDebugLayer(paper, "pre-finalOuterModel", finalOuterModel.clone());
     const outerPaths = flattenArrayOfPathItems(paper, [finalOuterModel]);
 
-    const finalOuter = smoothCorners
+    let finalOuter = smoothCorners
       ? tryToSmoothRightAngles({
           outerPaths,
           paper,
           mainCollarCurve,
         })
       : outerPaths[0];
+
+    // Lastly, stick a ring attachment point the bottom if needed
+    // We do this last because otherwise the smoothing logic will mess it up
+    if (bottomRingLength > 0) {
+      const bottomRingHeight = 0.75;
+      const bottomRing = new paper.Path.Rectangle(
+        new paper.Rectangle(
+          mainCollarCurve.bounds.bottomCenter,
+          new paper.Size(bottomRingLength, bottomRingHeight)
+        )
+      );
+      bottomRing.translate([-bottomRingLength / 2, -bottomRingHeight / 2]);
+      finalOuter = finalOuter.unite(bottomRing);
+    }
 
     return new CompletedModel({
       outer: finalOuter,
@@ -321,7 +346,7 @@ function tryToSmoothRightAngles({
   mainCollarCurve: paper.Path;
 }) {
   console.groupCollapsed("tryToSmoothRightAngles");
-  const newOuterPaths = [];
+  const newOuterPaths: paper.Path[] = [];
 
   outerPaths.forEach((p) => {
     const diamonds: paper.Path[] = [];
