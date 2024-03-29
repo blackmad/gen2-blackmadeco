@@ -2,6 +2,7 @@ import { BoxOuter } from "./box";
 import { EllipseOuter } from "./ellipse";
 import { FemaleThongBack } from "./female-thong-back";
 import { FemaleThongFront } from "./female-thong-front";
+import { InternalSvgOuter } from "./internal-svg-do-not-distribute";
 import { MaleThongBack } from "./male-thong-back";
 import { MaleThongFront } from "./male-thong-front";
 import { NecklaceOuter } from "./necklace";
@@ -25,4 +26,5 @@ export const AllOuterDesigns = [
   FemaleThongBack,
   MaleThongFront,
   MaleThongBack,
+  InternalSvgOuter,
 ];

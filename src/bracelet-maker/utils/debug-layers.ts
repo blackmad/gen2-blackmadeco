@@ -1,3 +1,4 @@
+import _ from "lodash";
 import randomColor from "randomcolor";
 
 const debugLayers: Record<string, paper.Group> = {};
@@ -5,8 +6,13 @@ const debugLayers: Record<string, paper.Group> = {};
 export function addToDebugLayer(
   paper: paper.PaperScope,
   layerName: string,
-  item: paper.Item | paper.Point | paper.Rectangle
+  item: paper.Item | paper.Item[]
 ) {
+  if (_.isArray(item)) {
+    item.forEach((i) => addToDebugLayer(paper, layerName, i));
+    return;
+  }
+
   if (!debugLayers[layerName]) {
     const newLayer = new paper.Group();
     debugLayers[layerName] = newLayer;
