@@ -10,7 +10,6 @@ import { addToDebugLayer } from "../../utils/debug-layers";
 import { allLSystems } from "../../utils/lsystem-utils";
 import {
   bufferPointstoPathItem,
-  flattenArrayOfPathItems,
   randomPointInPolygon,
 } from "../../utils/paperjs-utils";
 import { phyllotaxisPoints } from "../../utils/phyllotaxis-utils";
@@ -282,20 +281,20 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
       breakThePlane,
     });
 
-    if (numBorderPoints > 0) {
-      const paths = flattenArrayOfPathItems(paper, params.safeCone);
-      paths.forEach((path) => {
-        const numPointsOnPath = Math.floor(numBorderPoints / paths.length);
-        for (let i = 0; i < numPointsOnPath; i++) {
-          const testPoint = path.getPointAt(
-            path.length * (i / numPointsOnPath)
-          );
-          seedPoints.push([testPoint.x, testPoint.y]);
-          addToDebugLayer(paper, "borderPoints", testPoint);
-          addToDebugLayer(paper, "seedPoints", testPoint);
-        }
-      });
-    }
+    // if (numBorderPoints > 0) {
+    //   const paths = flattenArrayOfPathItems(paper, params.safeCone);
+    //   paths.forEach((path) => {
+    //     const numPointsOnPath = Math.floor(numBorderPoints / paths.length);
+    //     for (let i = 0; i < numPointsOnPath; i++) {
+    //       const testPoint = path.getPointAt(
+    //         path.length * (i / numPointsOnPath)
+    //       );
+    //       seedPoints.push([testPoint.x, testPoint.y]);
+    //       addToDebugLayer(paper, "borderPoints", testPoint);
+    //       addToDebugLayer(paper, "seedPoints", testPoint);
+    //     }
+    //   });
+    // }
 
     // console.log(seedPoints.length);
     // console.log(seedPoints);

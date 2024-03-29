@@ -2,13 +2,24 @@
 
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
-import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
+import {
+  AbstractNavelCircumferenceScaledOuter,
+  basicPercentageMakeSafeCone,
+} from "./abstract-navel-circumference-scaled-outer";
 
 export class FemaleThongBack extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;
   navelCircumferenceToAMultiplier = 0.4;
 
   public controlInfo = "It's a box";
+
+  override async makeSafeCone(
+    paper: paper.PaperScope,
+    params: any,
+    outerModel: paper.Path
+  ): Promise<paper.Path> {
+    return basicPercentageMakeSafeCone(paper, params, outerModel, 0.55);
+  }
 
   public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {
     const outerModel: paper.Path = new paper.Path();

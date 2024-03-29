@@ -19,7 +19,8 @@ export async function basicPercentageMakeSafeCone(
   addToDebugLayer(paper, "safeConeBounds", new paper.Path.Rectangle(newBounds));
   const safeCone = outerModel.intersect(new paper.Path.Rectangle(newBounds));
   addToDebugLayer(paper, "safeCone1", safeCone);
-  return flattenArrayOfPathItems(paper, safeCone)[0];
+  const inner = flattenArrayOfPathItems(paper, safeCone)[0];
+  return flattenArrayOfPathItems(paper, PaperOffset.offset(inner, 0.5))[0];
 }
 
 export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurvedOuterModelMaker {
