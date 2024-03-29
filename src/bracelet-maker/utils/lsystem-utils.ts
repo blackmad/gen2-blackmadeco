@@ -22,6 +22,7 @@ const basicLSystem = ({
   productions: typeof LSystem.prototype.productions;
 }) => {
   const points: paper.PointLike[] = [];
+  const lines: paper.Path.Line[] = [];
   let currentPoint = new paper.Point(bounds.x, bounds.y);
   points.push(currentPoint);
 
@@ -43,6 +44,11 @@ const basicLSystem = ({
           Math.sin((currentAngle * Math.PI) / 180.0) / (koch.iterations + 1),
         ]);
         points.push(currentPoint);
+        if (points.length > 1) {
+          lines.push(
+            new paper.Path.Line(points[points.length - 1], currentPoint)
+          );
+        }
       },
     },
   });
@@ -84,6 +90,19 @@ export function dragonCurve(params: BasicLSystemArgs) {
     ...params,
     axiom: "FX",
     productions: { X: "X+YF+", Y: "-FX-Y" },
+  });
+}
+
+export function penroseTilingRhombus(params: BasicLSystemArgs) {
+  return basicLSystem({
+    ...params,
+    axiom: "[X]++[X]++[X]++[X]++[X]",
+    productions: {
+      W: "YF++ZF----XF[-YF----WF]++",
+      X: "+YF--ZF[---WF--XF]+",
+      Y: "-WF++XF[+++YF++ZF]-",
+      Z: "--YF++++WF[+ZF++++XF]--XF",
+    },
   });
 }
 
