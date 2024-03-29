@@ -1,7 +1,9 @@
 TODAY
 DONE - implemement women's panties
-- implement men's panties
+DONE - implement men's panties
 - implement vest pieces
+- implement bottom tab and center split for posture collar
+- fix posture collar to be able to be straight
 - implement samurai gauntlets
 - implement gothic gauntlets
 

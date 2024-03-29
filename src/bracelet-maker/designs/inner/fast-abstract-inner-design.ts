@@ -527,7 +527,12 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       );
     }
 
-    addToDebugLayer(paper, "safeBoundaryModel", safeBoundaryModel);
+    console.log(
+      "boundaryModel",
+      params.boundaryModel,
+      params.boundaryModel.bounds,
+      params.boundaryModel.bounds.area
+    );
 
     const design = await this.makeDesign(paper, params);
 

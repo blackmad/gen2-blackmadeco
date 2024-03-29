@@ -103,7 +103,7 @@ const Renderer = ({ modelMaker }: { modelMaker: OuterPaperModelMaker }) => {
   }, [modelMaker]);
 
   const changeDesign = useCallback(() => {
-    window.location.pathname = "/";
+    // window.location.hash = "#"
   }, []);
 
   const [error, setError] = useState("");
