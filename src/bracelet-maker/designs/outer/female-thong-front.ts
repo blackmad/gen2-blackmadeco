@@ -1,4 +1,6 @@
 // TODO: add incisions
+import { addToDebugLayer } from "../../utils/debug-layers";
+import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
 import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
 export class FemaleThongFront extends AbstractNavelCircumferenceScaledOuter {
@@ -32,6 +34,13 @@ export class FemaleThongFront extends AbstractNavelCircumferenceScaledOuter {
       [-1.5, 10], // through
       [-10, 19] // to
     );
+
+    outerModel.flatten(0.01);
+    const flipped = mirrorPath({ path: outerModel, orientation: "horizontal" });
+    addToDebugLayer(paper, "flipped", flipped);
+    addToDebugLayer(paper, "outerModel", outerModel.clone());
+
+    return flattenArrayOfPathItems(paper, outerModel.unite(flipped))[0];
     return outerModel;
   }
 }

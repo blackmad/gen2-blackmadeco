@@ -343,7 +343,15 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
     }
 
     const pathGroup = new paper.Group(polys);
-    pathGroup.fitBounds(boundaryModel.bounds, true);
+    const betterBounds = new paper.Rectangle(
+      boundaryModel.bounds.topLeft.subtract([borderSize, borderSize]),
+      [
+        boundaryModel.bounds.width + borderSize,
+        boundaryModel.bounds.height + borderSize,
+      ]
+    );
+
+    pathGroup.fitBounds(betterBounds, true);
 
     return Promise.resolve({ paths: polys });
   }
