@@ -88,9 +88,12 @@ export class InnerDesignTessagon extends FastAbstractInnerDesign {
     });
 
     const group = new paper.Group(paths);
+
+    group.fitBounds(boundaryModel.bounds);
     group.scale(xScale, yScale);
     group.skew(xSkew, ySkew);
     group.shear(xShear, yShear);
+    group.fitBounds(boundaryModel.bounds);
 
     return Promise.resolve({
       paths,

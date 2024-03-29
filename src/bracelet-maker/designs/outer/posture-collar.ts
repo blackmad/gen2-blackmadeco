@@ -237,6 +237,7 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
       smoothCorners,
       numHoles,
       bottomRingLength,
+      middleSeparation,
     } = params;
 
     if (buckleHeight * numBuckles > minHeight) {
@@ -247,21 +248,36 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
 
     const mainCollarCurve = makeCollarCurve(paper, params);
 
-    const outerModel = mainCollarCurve;
+    let outerModel = mainCollarCurve;
+
+    if (middleSeparation > 0) {
+      const middleSpace = new paper.Path.Rectangle(
+        mainCollarCurve.bounds.topCenter.subtract(middleSeparation / 2, 0),
+        new paper.Size(
+          mainCollarCurve.bounds.width,
+          mainCollarCurve.bounds.height
+        )
+      );
+      outerModel = flattenArrayOfPathItems(
+        paper,
+        outerModel.subtract(middleSpace)
+      )[0];
+    }
 
     const innerOptions = options[this.subModel.constructor.name] || {};
 
     // TODO: wtf is safecone
+
     innerOptions.safeCone = outerModel.clone();
     innerOptions.outerModel = makeSyntheticBoundaryModel(paper, outerModel);
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
-    const slightlySmallerOuterModelBounds = outerModel.bounds
+    const slightlySmallerOuterModelBounds = mainCollarCurve.bounds
       .clone()
       .expand([-2, 0]);
 
-    const slightlySmallerOuterModel = outerModel.intersect(
+    const slightlySmallerOuterModel = mainCollarCurve.intersect(
       new paper.Path.Rectangle(slightlySmallerOuterModelBounds)
     );
     addToDebugLayer(
@@ -286,6 +302,20 @@ export class PostureCollarOuter extends OuterPaperModelMaker {
         roundPrecision: 0.25,
       }
     );
+
+    if (middleSeparation > 0) {
+      const pathGroup = new paper.Group(
+        innerDesign.paths.map((p) => p.clone())
+      );
+      pathGroup.translate([
+        mainCollarCurve.bounds.width / 2 + middleSeparation / 2,
+        0,
+      ]);
+      pathGroup.scale(-1, 1);
+      addToDebugLayer(paper, "middleSpace", pathGroup);
+      innerDesign.paths = [...innerDesign.paths, ...pathGroup.children];
+    }
+
     innerDesign.paths = clampPathsToBoundary(
       innerDesign.paths,
       newSafeBoundaryModel,

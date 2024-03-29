@@ -514,7 +514,11 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       kaleidoscopeMaker = new KaleidoscopeMaker(paper, params);
       console.log("prior bounds", params.outerModel.bounds);
       params.boundaryModel = kaleidoscopeMaker.getBoundarySegment();
-      addToDebugLayer(paper, "getBoundarySegment", params.outerModel.clone());
+      addToDebugLayer(
+        paper,
+        "getBoundarySegment",
+        params.boundaryModel.clone()
+      );
       params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
         insert: false,
       });
