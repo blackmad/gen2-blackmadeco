@@ -47,9 +47,9 @@ function makeCollarCurve(
   const top = makeIncrementalPath(topStart, [
     [distanceToVeryTop, -initialRise],
     // Now dive down to the middle
-    [neckSize / 2 - distanceToVeryTop, initialRise * 2 + dropBelowBuckles],
+    [neckSize / 2 - distanceToVeryTop, -initialRise * 2],
     // mirror
-    [neckSize / 2 - distanceToVeryTop, -initialRise * 2 - dropBelowBuckles],
+    [neckSize / 2 - distanceToVeryTop, initialRise * 2],
     // mirror
     [distanceToVeryTop, initialRise],
   ]);
@@ -82,7 +82,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
       new RangeMetaParameter({
         title: "Max Height",
         min: 1,
-        max: 5,
+        max: 10,
         value: 3.5,
         step: 0.25,
         name: "maxHeight",
@@ -90,7 +90,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
       new RangeMetaParameter({
         title: "Min Height",
         min: 1,
-        max: 5,
+        max: 10,
         value: 2.5,
         step: 0.25,
         name: "minHeight",
@@ -129,7 +129,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
       }),
       new RangeMetaParameter({
         title: "neckDrop",
-        min: 0,
+        min: -10,
         max: 10,
         value: 0.5,
         step: 0.1,
@@ -288,6 +288,28 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
       )[0];
     }
 
+    const { model: finalOuterModel, holes } = this.makeFinalCollarOutline({
+      paper,
+      buckleHeight,
+      minHeight,
+      mainCollarCurve,
+      numBuckles,
+      numHoles,
+    });
+
+    // This is all absolutely absurd 90 degree corner smoothing logic
+    addToDebugLayer(paper, "pre-finalOuterModel", finalOuterModel.clone());
+    const outerPaths = flattenArrayOfPathItems(paper, [finalOuterModel]);
+
+    const finalOuter = smoothCorners
+      ? tryToSmoothRightAngles({
+          outerPaths,
+          paper,
+          mainCollarCurve,
+        })
+      : outerPaths[0];
+    outerModel = finalOuter;
+
     const innerOptions = options[this.subModel.constructor.name] || {};
 
     // TODO: wtf is safecone
@@ -306,11 +328,11 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
 
     const innerDesign = await this.subModel.make(paper, innerOptions);
 
-    const slightlySmallerOuterModelBounds = mainCollarCurve.bounds
+    const slightlySmallerOuterModelBounds = finalOuter.bounds
       .clone()
       .expand([-2, 0]);
 
-    const slightlySmallerOuterModel = mainCollarCurve.intersect(
+    const slightlySmallerOuterModel = finalOuter.intersect(
       new paper.Path.Rectangle(slightlySmallerOuterModelBounds)
     );
     addToDebugLayer(
@@ -354,27 +376,6 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
       newSafeBoundaryModel,
       "tripleClamped"
     );
-
-    const { model: finalOuterModel, holes } = this.makeFinalCollarOutline({
-      paper,
-      buckleHeight,
-      minHeight,
-      mainCollarCurve,
-      numBuckles,
-      numHoles,
-    });
-
-    // This is all absolutely absurd 90 degree corner smoothing logic
-    addToDebugLayer(paper, "pre-finalOuterModel", finalOuterModel.clone());
-    const outerPaths = flattenArrayOfPathItems(paper, [finalOuterModel]);
-
-    let finalOuter = smoothCorners
-      ? tryToSmoothRightAngles({
-          outerPaths,
-          paper,
-          mainCollarCurve,
-        })
-      : outerPaths[0];
 
     // Lastly, stick a ring attachment point the bottom if needed
     // We do this last because otherwise the smoothing logic will mess it up
@@ -501,7 +502,7 @@ function tryToSmoothRightAngles({
         return;
       }
 
-      segment.smooth();
+      segment.smooth({ type: "catmull-rom" });
       console.log("smoothing segment");
     });
 
