@@ -1,9 +1,7 @@
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
-import { addToDebugLayer } from "../../utils/debug-layers";
-import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
 import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
 
-export abstract class VestRearOuter extends GenericCurvedOuterModelMaker {
+export abstract class VestFrontOuter extends GenericCurvedOuterModelMaker {
   abstract unitsPerA: number;
   abstract navelCircumferenceToAMultiplier: number;
 
@@ -59,20 +57,21 @@ export abstract class VestRearOuter extends GenericCurvedOuterModelMaker {
       [0, armpitHeight] // to
     );
 
-    const shoulderRiseLength = (5 / 8) * halfWidth;
-    const neckHoleLength = (3 / 8) * halfWidth;
+    const shoulderRiseLength = (6 / 9) * halfWidth;
+    const neckHoleLength = (3 / 9) * halfWidth;
+    const neckHoleDrop = (7 / 24) * totalHeight;
 
     // shoulder
     path.lineBy([shoulderRiseLength, 2]);
 
     // neck hole
     path.curveBy(
-      [(1 / 3) * neckHoleLength, -0.5], // through
-      [neckHoleLength, -1] // to
+      [(1 / 3) * neckHoleLength, -(4 / 7) * neckHoleDrop], // through
+      [neckHoleLength, -neckHoleDrop] // to
     );
 
     // race down, only doing half
-    path.lineBy([0, -A + 1]);
+    path.lineBy([0, -A + neckHoleDrop]);
 
     // back to start for sanity
     path.lineBy([-8, 0]);
@@ -96,22 +95,8 @@ export abstract class VestRearOuter extends GenericCurvedOuterModelMaker {
     // flip it upside down
     outerModel.scale(1, -1);
 
-    outerModel.flatten(0.005);
-    const flipped = mirrorPath({ path: outerModel, orientation: "horizontal" });
-    flipped.translate([outerModel.bounds.width, 0]);
-    addToDebugLayer(paper, "flipped", flipped);
-    addToDebugLayer(paper, "outerModel", outerModel.clone());
-    addToDebugLayer(paper, "halfOuterModel", outerModel.clone());
-
-    const finalOuterModel = flattenArrayOfPathItems(
-      paper,
-      outerModel.unite(flipped)
-    )[0];
-
-    addToDebugLayer(paper, "finalOuterModel", finalOuterModel.clone());
-
     return {
-      outerModel: finalOuterModel,
+      outerModel,
     };
   }
 }
