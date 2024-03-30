@@ -1,4 +1,5 @@
 import { BoxOuter } from "./box";
+import { CorsetBeltOuter } from "./corset-belt";
 import { EllipseOuter } from "./ellipse";
 import { FemaleThongBack } from "./female-thong-back";
 import { FemaleThongFront } from "./female-thong-front";
@@ -21,6 +22,7 @@ export const AllOuterDesigns = [
   StraightCuffOuter,
   BoxOuter,
   EllipseOuter,
+  CorsetBeltOuter,
   NecklaceOuter,
   RegularPolygonOuter,
   TraceOuter,
