@@ -2,10 +2,7 @@
 
 import { addToDebugLayer } from "../../utils/debug-layers";
 import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
-import {
-  AbstractNavelCircumferenceScaledOuter,
-  basicPercentageMakeSafeCone,
-} from "./vest-rear";
+import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
 export class FemaleThongBack extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;

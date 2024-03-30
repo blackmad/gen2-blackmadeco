@@ -11,6 +11,7 @@ import { RegularPolygonOuter } from "./regular-polygon";
 import { StraightCollarOuter } from "./straight-collar";
 import { StraightCuffOuter } from "./straight-cuff";
 import { TraceOuter } from "./trace";
+import { VestRearOuter } from "./vest-rear";
 
 export const AllOuterDesigns = [
   StraightCollarOuter,
@@ -27,4 +28,5 @@ export const AllOuterDesigns = [
   MaleThongFront,
   MaleThongBack,
   InternalSvgOuter,
+  VestRearOuter,
 ];

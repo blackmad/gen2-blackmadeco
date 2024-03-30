@@ -1,5 +1,6 @@
 // TODO: add incisions
-import { AbstractNavelCircumferenceScaledOuter } from "./vest-rear";
+
+import { AbstractNavelCircumferenceScaledOuter } from "./abstract-navel-circumference-scaled-outer";
 
 export class MaleThongFront extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 10;

@@ -539,7 +539,7 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       );
       params.boundaryModel = params.boundaryModel;
 
-      // If something breaks with kaleido, bring this back?
+      // If something breaks with kaleido, bring this
       // .intersect(params.safeCone, {
       //   insert: false,
       // });
