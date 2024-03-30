@@ -407,7 +407,7 @@ function tryToSmoothRightAngles({
   outerPaths: paper.Path[];
   paper: paper.PaperScope;
   mainCollarCurve: paper.Path;
-}) {
+}): paper.Path {
   addToDebugLayer(paper, "outerPaths", new paper.Group(outerPaths));
   const rounded = roundCorners({
     paper,
@@ -480,11 +480,11 @@ function tryToSmoothRightAngles({
     });
 
     // Next step, union in all the diamonds
-    let newP = p;
-    diamonds.forEach((d) => {
-      newP = newP.unite(d);
-      newP.closePath();
-    });
+    const newP = p;
+    // diamonds.forEach((d) => {
+    //   newP = newP.unite(d);
+    //   newP.closePath();
+    // });
 
     newP.segments.forEach((segment, segmentIndex) => {
       const point1 = segment.previous.point.subtract(segment.point);
