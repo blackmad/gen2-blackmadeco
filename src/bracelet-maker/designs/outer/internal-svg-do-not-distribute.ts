@@ -8,6 +8,11 @@ import {
 import { AbstractPathOuter } from "./abstract-path-outer";
 
 export class InternalSvgOuter extends AbstractPathOuter {
+  controlInfo = `
+  // a cup should go to 4.41w, 7,42h
+  // b cup 5.25w, 8.16h
+  `;
+
   public get outerMetaParameters(): MetaParameter<any>[] {
     return [
       ...super.abstractPathOuterMetaParameters({}),
@@ -16,7 +21,7 @@ export class InternalSvgOuter extends AbstractPathOuter {
       ),
       new SelectMetaParameter({
         title: "Image",
-        options: ["38brastrap.png", "a cup left.png", "a cup right.png"],
+        options: ["38brastrap.png", "a cup left.png", "b cup right.png"],
         value: "Page 9.png",
         name: "url",
       }),

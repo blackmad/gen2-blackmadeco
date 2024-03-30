@@ -4,7 +4,7 @@ import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
 import {
   AbstractNavelCircumferenceScaledOuter,
   basicPercentageMakeSafeCone,
-} from "./abstract-navel-circumference-scaled-outer";
+} from "./vest-rear";
 
 export class FemaleThongFront extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;

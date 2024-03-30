@@ -72,7 +72,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
   abstract makeOuterModel(
     paper: paper.PaperScope,
     params: any
-  ): Promise<{ path: paper.PathItem; holes: paper.PathItem[] }>;
+  ): Promise<{ path: paper.PathItem; holes?: paper.PathItem[] }>;
 
   public async make(paper: paper.PaperScope, options): Promise<CompletedModel> {
     const params = options[this.constructor.name];
@@ -111,7 +111,7 @@ export abstract class AbstractPathOuter extends OuterPaperModelMaker {
 
     return new CompletedModel({
       outer: finalOuterModel,
-      holes,
+      holes: holes ?? [],
       design: innerDesign.paths,
     });
   }

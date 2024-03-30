@@ -7,6 +7,7 @@ import {
   RangeMetaParameter,
   SelectMetaParameter,
 } from "../../meta-parameter";
+import { addToDebugLayer } from "../../utils/debug-layers";
 import { SimplexNoiseUtils } from "../../utils/simplex-noise-utils";
 import { FastAbstractInnerDesign } from "./fast-abstract-inner-design";
 import { ShapeMaker } from "./utils/shape-maker";
@@ -27,7 +28,6 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
       minScale,
       maxScale,
       shapeName,
-      constrainShapes,
       boundaryModel,
     } = params;
 
@@ -99,6 +99,8 @@ export class InnerDesignVera extends FastAbstractInnerDesign {
       const rowModels = _.bind(makeRow, this)(c);
       models = models.concat(rowModels);
     }
+
+    addToDebugLayer(paper, "models", "models");
 
     return Promise.resolve({ paths: models });
   }

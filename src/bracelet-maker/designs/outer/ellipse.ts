@@ -8,12 +8,16 @@ export class EllipseOuter extends AbstractPathOuter {
       }),
     ];
   }
-  makeOuterModel(paper: paper.PaperScope, params: any): paper.PathItem {
+
+  async makeOuterModel(
+    paper: paper.PaperScope,
+    params: any
+  ): Promise<{ path: paper.PathItem; holes: paper.PathItem[] }> {
     const { height, width } = params;
     const rectangle = new paper.Rectangle(
       new paper.Point(0, 0),
       new paper.Size(height, width)
     );
-    return new paper.Path.Ellipse(rectangle);
+    return { path: new paper.Path.Ellipse(rectangle) };
   }
 }

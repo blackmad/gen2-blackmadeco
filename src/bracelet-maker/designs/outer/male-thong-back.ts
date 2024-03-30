@@ -2,7 +2,7 @@
 import {
   AbstractNavelCircumferenceScaledOuter,
   basicPercentageMakeSafeCone,
-} from "./abstract-navel-circumference-scaled-outer";
+} from "./vest-rear";
 
 export class MaleThongBack extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 10;

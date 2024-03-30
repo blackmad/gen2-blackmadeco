@@ -57,6 +57,22 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
   public get metaParameters() {
     let metaParams: MetaParameter<any>[] = [
+      new RangeMetaParameter({
+        title: "xOffset",
+        min: -10.0,
+        max: 1000,
+        value: 0.0,
+        step: 0.01,
+        name: "xOffset",
+      }),
+      new RangeMetaParameter({
+        title: "yOffset",
+        min: -10.0,
+        max: 1000,
+        value: 0.0,
+        step: 0.01,
+        name: "yOffset",
+      }),
       // new OnOffMetaParameter({
       //   title: "Debug",
       //   name: "debug",
@@ -463,6 +479,8 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
       safeBorderWidth: number;
       ellipseExpand: boolean;
       minimumHoleSize: number;
+      xOffset: number;
+      yOffset: number;
     } & KaleidoscopeMakerParams
   ): Promise<InnerCompletedModel> => {
     // NOTE: we are copying this so we don't modify the global object
@@ -519,9 +537,12 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
         "getBoundarySegment",
         params.boundaryModel.clone()
       );
-      params.boundaryModel = params.boundaryModel.intersect(params.safeCone, {
-        insert: false,
-      });
+      params.boundaryModel = params.boundaryModel;
+
+      // If something breaks with kaleido, bring this back?
+      // .intersect(params.safeCone, {
+      //   insert: false,
+      // });
       console.log("new bounds", params.outerModel.bounds);
 
       addToDebugLayer(
@@ -566,6 +587,9 @@ export abstract class FastAbstractInnerDesign implements PaperModelMaker {
 
     const shouldMakeOutline =
       safeBoundaryModel.bounds.height > params.outerModel.bounds.height;
+
+    const pathGroup = new paper.Group(paths);
+    pathGroup.translate([params.xOffset, params.yOffset]);
 
     if ((this.needSubtraction || kaleidoscopeMaker) && !shouldMakeOutline) {
       console.log("clamping to boundary and cone");

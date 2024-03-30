@@ -1,29 +1,10 @@
 import { PaperOffset } from "paperjs-offset";
 
 import { MetaParameter, RangeMetaParameter } from "../../meta-parameter";
-import { addToDebugLayer } from "../../utils/debug-layers";
 import { flattenArrayOfPathItems } from "../../utils/paperjs-utils";
 import { GenericCurvedOuterModelMaker } from "./generic-curved-outer-model-maker";
 
-export async function basicPercentageMakeSafeCone(
-  paper: paper.PaperScope,
-  params: any,
-  outerModel: paper.Path,
-  percentage: number
-): Promise<paper.Path> {
-  const bounds = outerModel.bounds;
-  const newBounds = new paper.Rectangle(bounds.topLeft, [
-    bounds.width,
-    bounds.height * percentage,
-  ]);
-  addToDebugLayer(paper, "safeConeBounds", new paper.Path.Rectangle(newBounds));
-  const safeCone = outerModel.intersect(new paper.Path.Rectangle(newBounds));
-  addToDebugLayer(paper, "safeCone1", safeCone);
-  const inner = flattenArrayOfPathItems(paper, safeCone)[0];
-  return flattenArrayOfPathItems(paper, PaperOffset.offset(inner, 0.5))[0];
-}
-
-export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurvedOuterModelMaker {
+export abstract class VestRearOuter extends GenericCurvedOuterModelMaker {
   abstract unitsPerA: number;
   abstract navelCircumferenceToAMultiplier: number;
 
@@ -47,18 +28,39 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
       }),
     ];
   }
-  abstract makeUpsideDownUnscaledOuter(
+  makeUpsideDownUnscaledOuter(
     paper: paper.PaperScope,
     params: any
-  ): Promise<paper.Path>;
-
-  public async makeSafeCone(
-    paper: paper.PaperScope,
-    params: any,
-    outerModel: paper.Path
   ): Promise<paper.Path> {
-    console.log("existing makeSafeCone impl");
-    return outerModel;
+    const path = new paper.Path();
+
+    path.add(new paper.Point(0, 0));
+
+    // go up left
+    path.lineBy([0, 15]);
+
+    // armpit hole!
+    path.curveBy(
+      [1, 2], // through
+      [0, 7] // to
+    );
+
+    // shoulder
+    path.lineBy([5, 2]);
+
+    // neck hole
+    path.curveBy(
+      [1, -0.5], // through
+      [3, -1] // to
+    );
+
+    // race down, only doing half
+    path.lineBy([0, -23]);
+
+    // back to start for sanity
+    path.lineBy([-8, 0]);
+
+    return path;
   }
 
   public async makePath(
@@ -90,11 +92,7 @@ export abstract class AbstractNavelCircumferenceScaledOuter extends GenericCurve
       PaperOffset.offset(outerModel, seamAllowance - 3 / 8)
     )[0];
 
-    const firstSafeCone = await this.makeSafeCone(
-      paper,
-      params,
-      outerModelAdjustedForSeamAllowance
-    );
+    const firstSafeCone = outerModelAdjustedForSeamAllowance;
 
     return {
       outerModel: outerModelAdjustedForSeamAllowance,

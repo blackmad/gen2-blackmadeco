@@ -5,7 +5,7 @@ import { flattenArrayOfPathItems, mirrorPath } from "../../utils/paperjs-utils";
 import {
   AbstractNavelCircumferenceScaledOuter,
   basicPercentageMakeSafeCone,
-} from "./abstract-navel-circumference-scaled-outer";
+} from "./vest-rear";
 
 export class FemaleThongBack extends AbstractNavelCircumferenceScaledOuter {
   unitsPerA = 24;
@@ -18,7 +18,7 @@ export class FemaleThongBack extends AbstractNavelCircumferenceScaledOuter {
     params: any,
     outerModel: paper.Path
   ): Promise<paper.Path> {
-    return basicPercentageMakeSafeCone(paper, params, outerModel, 0.55);
+    return basicPercentageMakeSafeCone(paper, params, outerModel, 0.45);
   }
 
   public async makeUpsideDownUnscaledOuter(paper: paper.PaperScope) {

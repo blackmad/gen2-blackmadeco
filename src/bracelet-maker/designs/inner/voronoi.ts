@@ -73,6 +73,7 @@ export class InnerDesignVoronoi extends FastAbstractInnerDesign {
 
     addToDebugLayer(paper, "boundaryModel", boundaryModel.bounds.topLeft);
     addToDebugLayer(paper, "boundaryModel", boundaryModel);
+    addToDebugLayer(paper, "boundaryModelBounds", boundaryModel.bounds);
 
     addToDebugLayer(
       paper,
