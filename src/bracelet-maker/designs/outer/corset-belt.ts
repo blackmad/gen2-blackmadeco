@@ -83,7 +83,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "Max Height",
         min: 1,
         max: 10,
-        value: 3.5,
+        value: 6,
         step: 0.25,
         name: "maxHeight",
       }),
@@ -91,7 +91,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "Min Height",
         min: 1,
         max: 10,
-        value: 2.5,
+        value: 4,
         step: 0.25,
         name: "minHeight",
       }),
@@ -99,7 +99,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "Buckle Height",
         min: 1,
         max: 5,
-        value: 0.75,
+        value: 1.0,
         step: 0.25,
         name: "buckleHeight",
       }),
@@ -115,7 +115,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "Num Holes",
         min: 1,
         max: 20,
-        value: 6,
+        value: 8,
         step: 1,
         name: "numHoles",
       }),
@@ -123,7 +123,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "Neck Size",
         min: 8,
         max: 100,
-        value: 38,
+        value: 34,
         step: 0.1,
         name: "neckSize",
       }),
@@ -131,7 +131,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "neckDrop",
         min: -10,
         max: 10,
-        value: 0.5,
+        value: 0,
         step: 0.1,
         name: "neckDrop",
       }),
@@ -168,7 +168,7 @@ export class CorsetBeltOuter extends OuterPaperModelMaker {
         title: "distanceToVeryTopPercentage",
         min: 0,
         max: 100,
-        value: 400 / 13,
+        value: 30,
         step: 0.1,
         name: "distanceToVeryTopPercentage",
       }),
@@ -462,7 +462,6 @@ function tryToSmoothRightAngles({
       // const diamond11 = diamond1.clone();
       // diamonds.push(diamond11);
       // addToDebugLayer(paper,  "diamond", diamond11);
-      addToDebugLayer(paper, "diamond", diamond1);
 
       const diamond2 = new paper.Path.Star({
         center: segment.point,
@@ -470,22 +469,26 @@ function tryToSmoothRightAngles({
         radius1: shortestSide / 2,
         radius2: shortestSide * 2,
       });
-      // diamond2.translate([
-      //   shortestSide * 0.1 * (comingFromRight ? 1 : -1),
-      //   0,
-      // ]);
-      addToDebugLayer(paper, "diamond2", diamond2);
+      // diamond2.translate([shortestSide * 0.1 * (comingFromRight ? -1 : 1), 0]);
 
-      diamonds.push(diamond1);
-      diamonds.push(diamond2);
+      console.log({ angle });
+
+      if (angle >= 0 && angle <= 90) {
+        addToDebugLayer(paper, "diamond", diamond1);
+
+        addToDebugLayer(paper, "diamond2", diamond2);
+
+        diamonds.push(diamond1);
+        diamonds.push(diamond2);
+      }
     });
 
     // Next step, union in all the diamonds
-    const newP = p;
-    // diamonds.forEach((d) => {
-    //   newP = newP.unite(d);
-    //   newP.closePath();
-    // });
+    let newP = p;
+    diamonds.forEach((d) => {
+      newP = newP.unite(d);
+      newP.closePath();
+    });
 
     newP.segments.forEach((segment, segmentIndex) => {
       const point1 = segment.previous.point.subtract(segment.point);
